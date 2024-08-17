@@ -3,10 +3,269 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:behaviors="clr-namespace:yedaisler.Behaviors"
         xmlns:local="clr-namespace:yedaisler"
+        xmlns:menu="clr-namespace:yedaisler.Menu"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
+        Title="yedaisler" MinHeight="30" MinWidth="50"  Height="{Binding Height.Value, Mode=TwoWay}" Width="{Binding Width.Value, Mode=TwoWay}"
+        ResizeMode="CanResizeWithGrip" AllowsTransparency="True" WindowStyle="None" Background="Transparent"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" LocationChanged="Window_LocationChanged" Loaded="Window_Loaded">
+    <i:Interaction.Behaviors>
+        <behaviors:SnapWnd2ScrBehavior SnapDistanceHorizontal="{Binding SnapDistH.Value}" SnapDistanceVertical="{Binding SnapDistV.Value}" />
+    </i:Interaction.Behaviors>
+    <Window.DataContext>
+        <local:MainWindowViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <Style TargetType="{x:Type MenuItem}" x:Key="CustomMenuItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type MenuItem}">
+                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Background="#ffffff">
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type MenuItem}" x:Key="FixPropMenuItem">
+
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+
+
+        <Style TargetType="{x:Type TextBlock}" x:Key="MainDispText">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="{x:Type MenuItem}" x:Key="CommonStyleMenuItem">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Type}" Value="{x:Static menu:ItemType.Separator}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Separator Style="{DynamicResource {x:Static MenuItem.SeparatorStyleKey}}" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Type}" Value="{x:Static menu:ItemType.RootMenuHeader}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" Foreground="Black"/>
+                                    <StackPanel Orientation="Horizontal" >
+                                        <Button Content="1" Width="30"/>
+                                        <Button Content="2" Width="30"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Type}" Value="{x:Static menu:ItemType.ToDoHeader}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Caption}" Foreground="Black"/>
+                                    <TextBlock Text="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}}}" Foreground="Black"/>
+                                    <StackPanel.Resources>
+                                        <Style TargetType="{x:Type MenuItem}">
+                                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                        </Style>
+                                    </StackPanel.Resources>
+                                </StackPanel>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Type}" Value="{x:Static menu:ItemType.None}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <MenuItem Header="Error: ItemType指定ミス"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type MenuItem}" x:Key="RootStyleMenuItem" BasedOn="{StaticResource CommonStyleMenuItem}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Type}" Value="{x:Static menu:ItemType.ToDo}">
+                    <Setter Property="ItemsSource">
+                        <Setter.Value>
+                            <CompositeCollection>
+                                <menu:ToDoHeader />
+                                <MenuItem Header="実行"/>
+                                <menu:Separator />
+                                <MenuItem Header="終了"/>
+                            </CompositeCollection>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Header" Value="{Binding Name.Value}" />
+                    <Setter Property="Tag" Value="{Binding StateDisp.Value}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Type}" Value="{x:Static menu:ItemType.System}">
+                    <Setter Property="ItemsSource">
+                        <Setter.Value>
+                            <CompositeCollection>
+                                <MenuItem Header="設定"/>
+                            </CompositeCollection>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Header" Value="{Binding Name}" />
+                </DataTrigger>
+            </Style.Triggers>
+            <Style.Resources>
+                <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource CommonStyleMenuItem}" />
+            </Style.Resources>
+        </Style>
+
+        <Style TargetType="{x:Type MenuItem}" x:Key="Depth1_MenuItem" BasedOn="{StaticResource RootStyleMenuItem}">
+            <!--<Setter Property="ItemsSource" Value="{Binding Items}" />-->
+            <!--<Setter Property="ItemsSource">
+                <Setter.Value>
+                    <CompositeCollection>
+                        <local_menu:HeaderItem />
+                        <MenuItem Header="実行"/>
+                        <local_menu:SeparatorItem />
+                        <local_menu:SystemItem />
+                        <MenuItem Header="終了"/>
+                    </CompositeCollection>
+                </Setter.Value>
+            </Setter>-->
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+                        <!--
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type MenuItem}">
+                                    <TextBlock Text="{Binding Name.Value}"/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        -->
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Foreground" Value="red"/>
+                                <Setter Property="Background" Value="Yellow"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <CollectionViewSource x:Key="ContextMenuSource" Source="{Binding ToDos}" />
+        <Style TargetType="{x:Type ContextMenu}" x:Key="RootContextMenu">
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Grid.IsSharedSizeScope" Value="true" />
+            <Setter Property="HasDropShadow" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContextMenu}">
+                        <Border BorderThickness="1">
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Background="#ffffff">
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemsSource">
+                <Setter.Value>
+                    <CompositeCollection>
+                        <menu:RootMenuHeader />
+                        <CollectionContainer Collection="{Binding Source={StaticResource ContextMenuSource}}"/>
+                        <menu:Separator />
+                        <menu:SystemItem />
+                        <MenuItem Header="終了" Command="{Binding AppExitCommand}" Style="{StaticResource FixPropMenuItem}" />
+                    </CompositeCollection>
+                </Setter.Value>
+            </Setter>
+            <Style.Resources>
+                <Style TargetType="{x:Type menu:SystemItem}" />
+                <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource Depth1_MenuItem}"/>
+            </Style.Resources>
+        </Style>
+    </Window.Resources>
+    <Window.ContextMenu>
+        <ContextMenu x:Name="menu" Style="{StaticResource RootContextMenu}" >
+            <!--DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"-->
+            <!--
+            <ContextMenu.ItemsSource>
+                <CompositeCollection>
+                    <menu:RootMenuHeader />
+                    <CollectionContainer Collection="{Binding Source={StaticResource ContextMenuSource}}"/>
+                    <menu:Separator />
+                    <menu:SystemItem />
+                    <MenuItem Header="終了" Command="{Binding AppExitCommand}" Style="{StaticResource FixPropMenuItem}" />
+                </CompositeCollection>
+            </ContextMenu.ItemsSource>
+            -->
+            <!--
+            <ContextMenu.ItemContainerStyle>
+                <Style TargetType="MenuItem">
+                    <Setter Property="Header" Value="{Binding Name.Value}" />
+                    <Setter Property="ItemsSource" Value="{Binding Items}" />
+                    <Setter Property="ItemContainerStyle">
+                        <Setter.Value>
+                            <Style TargetType="MenuItem">
+                                <Setter Property="Header" Value="{Binding Name.Value}" />
+                            </Style>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ContextMenu.ItemContainerStyle>
+
+            <Separator/>
+            <MenuItem Header="メニュー1" Foreground="#FFFDF6F6">
+                <MenuItem Header="メニュー1" Foreground="#FFFDF6F6" />
+            </MenuItem>
+            <MenuItem Header="メニュー2" Foreground="#FFFDF6F6" />
+            -->
+        </ContextMenu>
+    </Window.ContextMenu>
+    <Grid Background="#a0ff0000">
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">test</TextBlock>
+
+        <!--
+        <Popup x:Name="menu">
+            <StackPanel Background="#40202020">
+                <ListBox Background="Transparent">
+                    <MenuItem Header="メニュー1" Foreground="#FFFDF6F6">
+                        <MenuItem Header="メニュー1" Foreground="#FFFDF6F6" />
+                    </MenuItem>
+                </ListBox>
+                <Separator/>
+                <MenuItem Header="メニュー1" Foreground="#FFFDF6F6">
+                    <MenuItem Header="メニュー1" Foreground="#FFFDF6F6" />
+                </MenuItem>
+                <MenuItem Header="メニュー2" Foreground="#FFFDF6F6" />
+            </StackPanel>
+            <Popup.ContextMenu>
+                <ContextMenu x:Name="menu2">
+                    <Separator/>
+                    <MenuItem Header="メニュー1" Foreground="#FFFDF6F6">
+                        <MenuItem Header="メニュー1" Foreground="#FFFDF6F6" />
+                    </MenuItem>
+                    <MenuItem Header="メニュー2" Foreground="#FFFDF6F6" />
+                </ContextMenu>
+            </Popup.ContextMenu>
+        </Popup>
+            -->
     </Grid>
 </Window>
