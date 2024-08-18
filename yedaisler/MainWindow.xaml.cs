@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -71,6 +72,80 @@ namespace yedaisler
         {
             isLocationChanged = true;
             this.menu.IsOpen = false;
+        }
+    }
+
+
+    public class ContextMenuTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate IsSeparator { get; set; }
+        public DataTemplate IsCommand { get; set; }
+        public DataTemplate IsToDo { get; set; }
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            if (item == null) return IsCommand;
+            if ((item as MenuItem) != null) return IsCommand;
+            if ((item as ToDo.Item) != null) return IsToDo;
+            if ((item as Menu.Separator) != null) return IsSeparator;
+
+            return IsCommand;
+        }
+    }
+
+    public class ContextMenuElemConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return Menu.ItemType.None;
+            var menu = value as MenuItem;
+            if (menu == null) return Menu.ItemType.None;
+
+            var vm = menu.DataContext;
+            if (vm == null) return Menu.ItemType.None;
+            if ((vm as Menu.Separator) != null) return Menu.ItemType.Separator;
+            if ((vm as ToDo.Item) != null) return Menu.ItemType.ToDo;
+            if ((vm as Menu.RootMenuHeader) != null) return Menu.ItemType.RootMenuHeader;
+            if ((vm as Menu.ToDoHeader) != null) return Menu.ItemType.ToDoHeader;
+            if ((vm as Menu.SystemItem) != null) return Menu.ItemType.System;
+
+            var cmd = vm as Menu.Command;
+            if (cmd != null)
+            {
+                if (menu.Tag != null)
+                {
+                    return Menu.ItemType.None;
+                }
+                else
+                {
+                    menu.Tag = true;
+                    return Menu.ItemType.Command;
+                }
+
+            }
+
+            return Menu.ItemType.None;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class DebugConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            int i = 0;
+            i++;
+
+            return true;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }
