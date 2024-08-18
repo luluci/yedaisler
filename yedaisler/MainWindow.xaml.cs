@@ -10,6 +10,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -75,6 +76,20 @@ namespace yedaisler
         }
     }
 
+    public sealed class BindingResource
+    {
+        public Binding Binding { get; set; } = null;
+    }
+    [MarkupExtensionReturnType(typeof(object))]
+    public sealed class BindingResourceExtension : MarkupExtension
+    {
+        public BindingResource Resource { get; set; } = null;
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return Resource.Binding.ProvideValue(serviceProvider);
+        }
+    }
 
     public class ContextMenuTemplateSelector : DataTemplateSelector
     {
@@ -140,7 +155,7 @@ namespace yedaisler
             int i = 0;
             i++;
 
-            return true;
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
