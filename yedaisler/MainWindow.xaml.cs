@@ -148,6 +148,42 @@ namespace yedaisler
         }
     }
 
+    public class ContextMenuStateBackColorConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                var state = (ToDo.State)values[0];
+                var vm = values[1] as MainWindowViewModel;
+
+                switch (state)
+                {
+                    case ToDo.State.Ready:
+                        return vm.BrushBackReady.Value;
+                    case ToDo.State.Doing:
+                        return vm.BrushBackDoing.Value;
+                    case ToDo.State.Done:
+                        return vm.BrushBackDone.Value;
+
+                    case ToDo.State.None:
+                    default:
+                        return vm.BrushBackNone.Value;
+                }
+            }
+            catch
+            {
+                var vm = values[1] as MainWindowViewModel;
+                return vm.BrushBackNone.Value;
+            }
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class DebugConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -159,6 +195,21 @@ namespace yedaisler
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class DebugMultiConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            int i = 0;
+            i++;
+
+            return values[0];
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
