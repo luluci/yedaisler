@@ -10,7 +10,7 @@
         xmlns:todo="clr-namespace:yedaisler.ToDo"
         mc:Ignorable="d"
         Title="yedaisler" MinHeight="30" MinWidth="50"  Height="{Binding Height.Value, Mode=TwoWay}" Width="{Binding Width.Value, Mode=TwoWay}"
-        ResizeMode="CanResizeWithGrip" AllowsTransparency="True" WindowStyle="None" Background="Transparent"
+        ResizeMode="NoResize" AllowsTransparency="True" WindowStyle="None" Background="Transparent"
         MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" LocationChanged="Window_LocationChanged" Loaded="Window_Loaded">
     <i:Interaction.Behaviors>
         <behaviors:SnapWnd2ScrBehavior SnapDistanceHorizontal="{Binding SnapDistH.Value}" SnapDistanceVertical="{Binding SnapDistV.Value}" />
@@ -554,7 +554,14 @@
             -->
         </ContextMenu>
     </Window.ContextMenu>
-    <Grid >
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+        </Grid.ColumnDefinitions>
         <Grid.Style>
             <Style TargetType="{x:Type Grid}">
                 <Setter Property="Background">
@@ -568,7 +575,8 @@
             </Style>
         </Grid.Style>
 
-        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Grid Grid.Column="0" MinWidth="8"/>
+        <TextBlock x:Name="MainDisp" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock.Style>
                 <Style TargetType="{x:Type TextBlock}">
                     <Setter Property="Foreground">
@@ -579,12 +587,12 @@
                             </MultiBinding>
                         </Setter.Value>
                     </Setter>
-                    <Setter Property="Text">
-                        <Setter.Value>test</Setter.Value>
-                    </Setter>
+                    <Setter Property="Text" Value="{Binding Disp.Value}" />
+                    <Setter Property="FontSize" Value="14"/>
                 </Style>
             </TextBlock.Style>
         </TextBlock>
+        <Grid Grid.Column="4" MinWidth="8"/>
 
         <!--
         <Popup x:Name="menu">

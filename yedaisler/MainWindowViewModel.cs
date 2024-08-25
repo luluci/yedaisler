@@ -15,6 +15,12 @@ namespace yedaisler
 {
     internal class MainWindowViewModel : BindableBase, IDisposable
     {
+        // Window
+        MainWindow window;
+        public ReactivePropertySlim<double> DummyWidth { get; set; }
+
+        // メイン画面
+        public ReactivePropertySlim<string> Disp {  get; set; }
 
         public ReactivePropertySlim<double> Width { get; set; }
         public ReactivePropertySlim<double> Height { get; set; }
@@ -45,6 +51,36 @@ namespace yedaisler
         Config.ConfigViewModel config_vm;
 
         public MainWindowViewModel() {
+            //
+            DummyWidth = new ReactivePropertySlim<double>(0);
+            DummyWidth.AddTo(Disposables);
+            // メイン画面
+            Disp = new ReactivePropertySlim<string>("");
+            Disp.AddTo(Disposables);
+            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.Ready);
+            State.Subscribe(state =>
+            {
+                switch (state)
+                {
+                    case ToDo.State.Ready:
+                        Disp.Value = "Readyタスクあり";
+                        break;
+
+                    case ToDo.State.Doing:
+                        Disp.Value = "Doing";
+                        break;
+
+                    case ToDo.State.Done:
+                        Disp.Value = "全タスクDone";
+                        break;
+
+                    default:
+                        Disp.Value = "bug..";
+                        break;
+                }
+                DummyWidth.ForceNotify();
+            })
+            .AddTo(Disposables);
 
             SnapDistH = new ReactivePropertySlim<double>(1);
             SnapDistH.AddTo(Disposables);
@@ -101,8 +137,6 @@ namespace yedaisler
             BrushFontNone.AddTo(Disposables);
 
             //
-            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.Ready);
-            State.AddTo(Disposables);
             ToDos = new ReactiveCollection<ToDo.Item>();
             ToDos.ObserveElementProperty(x => x.State.Value).Subscribe(x =>
             {
@@ -111,8 +145,17 @@ namespace yedaisler
             ToDos.AddTo(Disposables);
         }
 
-        public void Init(Config.Config config_)
+        public void Init(MainWindow wnd, Config.Config config_)
         {
+            window = wnd;
+
+            //
+            DummyWidth.Subscribe(async x =>
+            {
+                await Task.Delay(1);
+                Width.Value = window.MainDisp.ActualWidth + 16;
+            });
+
             // Configへの参照を記憶
             config = config_;
             config_vm = config.DataContext as Config.ConfigViewModel;
