@@ -58,6 +58,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Behaviors\ActualWidthBehavior.cs" />
     <Compile Include="Config\Config.xaml.cs">
       <DependentUpon>Config.xaml</DependentUpon>
     </Compile>

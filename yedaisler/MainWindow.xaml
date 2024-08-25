@@ -577,6 +577,16 @@
 
         <Grid Grid.Column="0" MinWidth="8"/>
         <TextBlock x:Name="MainDisp" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <!--
+            <i:Interaction.Behaviors>
+                <behaviors:ActualWidthBehavior ActualWidth="{Binding DispWidth.Value}"/>
+            </i:Interaction.Behaviors>
+            -->
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SizeChanged">
+                    <i:InvokeCommandAction Command="{Binding DispSizeChangedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TextBlock}}}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <TextBlock.Style>
                 <Style TargetType="{x:Type TextBlock}">
                     <Setter Property="Foreground">

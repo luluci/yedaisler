@@ -8,7 +8,9 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
+using yedaisler.Behaviors;
 using yedaisler.Utility;
 
 namespace yedaisler
@@ -17,10 +19,11 @@ namespace yedaisler
     {
         // Window
         MainWindow window;
-        public ReactivePropertySlim<double> DummyWidth { get; set; }
 
         // メイン画面
         public ReactivePropertySlim<string> Disp {  get; set; }
+        //public ReactivePropertySlim<double> DispWidth { get; set; }
+        public ReactiveCommand DispSizeChangedCommand { get; private set; }
 
         public ReactivePropertySlim<double> Width { get; set; }
         public ReactivePropertySlim<double> Height { get; set; }
@@ -51,13 +54,27 @@ namespace yedaisler
         Config.ConfigViewModel config_vm;
 
         public MainWindowViewModel() {
-            //
-            DummyWidth = new ReactivePropertySlim<double>(0);
-            DummyWidth.AddTo(Disposables);
             // メイン画面
             Disp = new ReactivePropertySlim<string>("");
             Disp.AddTo(Disposables);
-            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.Ready);
+            //DispWidth = new ReactivePropertySlim<double>(0.0);
+            //DispWidth.Subscribe(x =>
+            //{
+            //    int i = 0;
+            //    i++;
+            //});
+            //DispWidth.AddTo(Disposables);
+            DispSizeChangedCommand = new ReactiveCommand();
+            DispSizeChangedCommand.Subscribe(x =>
+            {
+                if (x is TextBlock obj)
+                {
+                    Width.Value = obj.ActualWidth + 16;
+                }
+            });
+            DispSizeChangedCommand.AddTo(Disposables);
+            // 
+            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
             State.Subscribe(state =>
             {
                 switch (state)
@@ -75,10 +92,9 @@ namespace yedaisler
                         break;
 
                     default:
-                        Disp.Value = "bug..";
+                        Disp.Value = "";
                         break;
                 }
-                DummyWidth.ForceNotify();
             })
             .AddTo(Disposables);
 
@@ -149,13 +165,6 @@ namespace yedaisler
         {
             window = wnd;
 
-            //
-            DummyWidth.Subscribe(async x =>
-            {
-                await Task.Delay(1);
-                Width.Value = window.MainDisp.ActualWidth + 16;
-            });
-
             // Configへの参照を記憶
             config = config_;
             config_vm = config.DataContext as Config.ConfigViewModel;
@@ -167,6 +176,8 @@ namespace yedaisler
                 todo.Init();
                 ToDos.Add(todo);
             }
+
+            State.Value = ToDo.State.Ready;
         }
 
         private void UpdateToDoState()
