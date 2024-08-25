@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -26,8 +27,13 @@ namespace yedaisler
         public ReactiveCommand AppExitCommand { get; set; }
 
         // 色設定
-        public ReactivePropertySlim<SolidColorBrush> BrushBackground { get; private set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushBackMenu { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushBaseFont { get; private set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushBackReady { get; private set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushBackDoing { get; private set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushBackDone { get; private set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushBackSystemHeader { get; private set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushBackNone { get; private set; }
 
         // Config関連
         Config.Config config;
@@ -64,13 +70,28 @@ namespace yedaisler
             var bkcolor = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0x20, 0x20, 0x40));
             var fontcolor = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF));
             // Color
-            BrushBackground = new ReactivePropertySlim<SolidColorBrush>(bkcolor);
-            BrushBackground.AddTo(Disposables);
+            BrushBackMenu = new ReactivePropertySlim<SolidColorBrush>(bkcolor);
+            BrushBackMenu.AddTo(Disposables);
             BrushBaseFont = new ReactivePropertySlim<SolidColorBrush>(fontcolor);
             BrushBaseFont.AddTo(Disposables);
+            BrushBackReady = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0xFF, 0x00, 0x00)));
+            BrushBackReady.AddTo(Disposables);
+            BrushBackDoing = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0xFF, 0xFF, 0x00)));
+            BrushBackDoing.AddTo(Disposables);
+            BrushBackDone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0x20, 0x20, 0x20)));
+            BrushBackDone.AddTo(Disposables);
+            BrushBackSystemHeader = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0x20, 0x20, 0x20)));
+            BrushBackSystemHeader.AddTo(Disposables);
+            BrushBackNone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x00, 0x00, 0x00, 0x00)));
+            BrushBackNone.AddTo(Disposables);
 
             //
             ToDos = new ReactiveCollection<ToDo.Item>();
+            ToDos.ObserveElementProperty(x => x.State.Value).Subscribe(x =>
+            {
+                int x_ = 0;
+                x_++;
+            });
             ToDos.AddTo(Disposables);
         }
 

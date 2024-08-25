@@ -206,6 +206,7 @@
         <local:DebugConverter x:Key="DebugConverter"/>
         <local:DebugMultiConverter x:Key="DebugMultiConverter"/>
         <local:ContextMenuStateBackColorConverter x:Key="ContextMenuStateBackColorConverter"/>
+        <local:ToDoActionDispConverter x:Key="ToDoActionDispConverter"/>
         <local:BindingResource x:Key="BkColor" Binding="{Binding BrushBackMenu.Value}" />
         <local:BindingResource x:Key="BaseFontColor" Binding="{Binding BrushBaseFont.Value}" />
         <local:BindingResource x:Key="BkReadyColor" Binding="{Binding BrushBackReady.Value}" />
@@ -288,7 +289,7 @@
                     <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
                 </Trigger>
                 <Trigger Property="IsHighlighted" Value="True">
-                    <Setter Property="Background" TargetName="templateRoot" Value="Transparent"/>
+                    <!--<Setter Property="Background" TargetName="templateRoot" Value="Transparent"/>-->
                     <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Border}"/>
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
@@ -350,9 +351,11 @@
                                 </Setter.Value>
                             </Setter>
                         </Trigger>
+                        <!--
                         <Trigger Property="Role" Value="SubmenuItem">
                             <Setter Property="Background" Value="#00ff00"/>
                         </Trigger>
+                        -->
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.Separator}">
                             <Setter Property="Template">
                                 <Setter.Value>
@@ -368,8 +371,9 @@
                                 <Setter.Value>
                                     <CompositeCollection>
                                         <menu:ToDoHeader />
-                                        <menu:Command Name="実行"/>
+                                        <menu:ToDoAction />
                                         <menu:Separator />
+                                        <menu:SystemHeader Header="強制実行"/>
                                         <menu:Command Name="終了"/>
                                     </CompositeCollection>
                                 </Setter.Value>
@@ -398,31 +402,98 @@
                                     <ControlTemplate>
                                         <Grid>
                                             <Grid.Resources>
+                                                <Style TargetType="{x:Type Grid}">
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <MultiBinding Converter="{StaticResource ContextMenuStateBackColorConverter}" UpdateSourceTrigger="PropertyChanged">
+                                                                <Binding Path="DataContext.State.Value" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}"/>
+                                                                <Binding Path="DataContext" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                                            </MultiBinding>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
                                                 <Style TargetType="{x:Type TextBlock}">
-                                                    <Setter Property="Foreground" Value="Black"/>
-                                                    <Setter Property="Background" Value="#a0ff0000"/>
+                                                    <Setter Property="Foreground" Value="{Binding DataContext.BrushBaseFont.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
                                                 </Style>
                                             </Grid.Resources>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{Binding Caption}"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding DataContext.StateDisp.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}"/>
+                                            <TextBlock Grid.Column="0" Margin="5,2,5,2" Text="{Binding Caption}"/>
+                                            <TextBlock Grid.Column="1" Margin="0,2,0,2" Text="{Binding DataContext.StateDisp.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}"/>
                                         </Grid>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.SystemHeader}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Border BorderBrush="#d0c0c0c0" BorderThickness="1">
+                                            <Grid>
+                                                <Grid.Resources>
+                                                    <Style TargetType="{x:Type Grid}">
+                                                        <Setter Property="Background" Value="{Binding DataContext.BrushBackSystemHeader.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+                                                    </Style>
+                                                    <Style TargetType="{x:Type TextBlock}">
+                                                        <Setter Property="Background" Value="{Binding DataContext.BrushBackSystemHeader.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+                                                        <Setter Property="Foreground" Value="{Binding DataContext.BrushBaseFont.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+                                                    </Style>
+                                                </Grid.Resources>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Margin="5,2,5,2" Text="{Binding Header}"/>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.System}">
+                            <Setter Property="Template" Value="{StaticResource SubMenuItemControlTemplate}"/>
                             <Setter Property="ItemsSource">
                                 <Setter.Value>
                                     <CompositeCollection>
-                                        <MenuItem Header="設定"/>
+                                        <MenuItem Header="設定" Style="{StaticResource FixPropMenuItem}"/>
                                     </CompositeCollection>
                                 </Setter.Value>
                             </Setter>
                             <Setter Property="Header" Value="{Binding Name}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.ToDoAction}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <MenuItem DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}" d:DataContext="{x:Type todo:Item}">
+                                            <MenuItem.Style>
+                                                <Style TargetType="{x:Type MenuItem}">
+                                                    <Setter Property="Header">
+                                                        <Setter.Value>
+                                                            <MultiBinding Converter="{StaticResource ToDoActionDispConverter}" UpdateSourceTrigger="PropertyChanged">
+                                                                <Binding Path="State.Value" />
+                                                                <Binding Path="DataContext" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem},AncestorLevel=2}"/>
+                                                            </MultiBinding>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="Command">
+                                                        <Setter.Value>
+                                                            <Binding Path="DataContext.OnMenuStateAction" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem},AncestorLevel=2}"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="CommandParameter">
+                                                        <Setter.Value>
+                                                            <Binding Path="DataContext" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </MenuItem.Style>
+                                        </MenuItem>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.Command}">
                             <Setter Property="Template">

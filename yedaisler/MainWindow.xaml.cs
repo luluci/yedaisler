@@ -122,7 +122,9 @@ namespace yedaisler
             if ((vm as ToDo.Item) != null) return Menu.ItemType.ToDo;
             if ((vm as Menu.RootMenuHeader) != null) return Menu.ItemType.RootMenuHeader;
             if ((vm as Menu.ToDoHeader) != null) return Menu.ItemType.ToDoHeader;
+            if ((vm as Menu.SystemHeader) != null) return Menu.ItemType.SystemHeader;
             if ((vm as Menu.SystemItem) != null) return Menu.ItemType.System;
+            if ((vm as Menu.ToDoAction) != null) return Menu.ItemType.ToDoAction;
 
             var cmd = vm as Menu.Command;
             if (cmd != null)
@@ -175,6 +177,40 @@ namespace yedaisler
             {
                 var vm = values[1] as MainWindowViewModel;
                 return vm.BrushBackNone.Value;
+            }
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ToDoActionDispConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var vm = values[1] as ToDo.Item;
+            if (vm != null)
+            {
+                switch (vm.State.Value)
+                {
+                    case ToDo.State.Ready:
+                        return vm.ToDoRef.Ready.Value.Name.Value;
+
+                    case ToDo.State.Doing:
+                        return vm.ToDoRef.Doing.Value.Name.Value;
+
+                    case ToDo.State.Done:
+                        return vm.ToDoRef.Done.Value.Name.Value;
+
+                    default:
+                        return "err: invalid state";
+                }
+            }
+            else
+            {
+                return "err: invalid ViewModel";
             }
         }
 
