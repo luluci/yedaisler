@@ -186,6 +186,42 @@ namespace yedaisler
         }
     }
 
+    public class ContextMenuStateFontColorConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                var state = (ToDo.State)values[0];
+                var vm = values[1] as MainWindowViewModel;
+
+                switch (state)
+                {
+                    case ToDo.State.Ready:
+                        return vm.BrushFontReady.Value;
+                    case ToDo.State.Doing:
+                        return vm.BrushFontDoing.Value;
+                    case ToDo.State.Done:
+                        return vm.BrushFontDone.Value;
+
+                    case ToDo.State.None:
+                    default:
+                        return vm.BrushFontNone.Value;
+                }
+            }
+            catch
+            {
+                var vm = values[1] as MainWindowViewModel;
+                return vm.BrushFontNone.Value;
+            }
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class ToDoActionDispConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

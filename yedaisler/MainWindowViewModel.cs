@@ -23,17 +23,22 @@ namespace yedaisler
         public ReactivePropertySlim<double> SnapDistV { get; set; }
 
         public ReactiveCollection<ToDo.Item> ToDos { get; set; }
+        public ReactivePropertySlim<ToDo.State> State { get; set; }
 
         public ReactiveCommand AppExitCommand { get; set; }
 
         // 色設定
         public ReactivePropertySlim<SolidColorBrush> BrushBackMenu { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushBaseFont { get; private set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushFontReady { get; private set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushFontDoing { get; private set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushFontDone { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushBackReady { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushBackDoing { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushBackDone { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushBackSystemHeader { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushBackNone { get; private set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushFontNone { get; private set; }
 
         // Config関連
         Config.Config config;
@@ -74,6 +79,13 @@ namespace yedaisler
             BrushBackMenu.AddTo(Disposables);
             BrushBaseFont = new ReactivePropertySlim<SolidColorBrush>(fontcolor);
             BrushBaseFont.AddTo(Disposables);
+            // ToDo Stateに対応したカラー
+            BrushFontReady = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)));
+            BrushFontReady.AddTo(Disposables);
+            BrushFontDoing = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)));
+            BrushFontDoing.AddTo(Disposables);
+            BrushFontDone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)));
+            BrushFontDone.AddTo(Disposables);
             BrushBackReady = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0xFF, 0x00, 0x00)));
             BrushBackReady.AddTo(Disposables);
             BrushBackDoing = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0xFF, 0xFF, 0x00)));
@@ -82,15 +94,19 @@ namespace yedaisler
             BrushBackDone.AddTo(Disposables);
             BrushBackSystemHeader = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0x20, 0x20, 0x20)));
             BrushBackSystemHeader.AddTo(Disposables);
+            // デフォルトカラー
             BrushBackNone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x00, 0x00, 0x00, 0x00)));
             BrushBackNone.AddTo(Disposables);
+            BrushFontNone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)));
+            BrushFontNone.AddTo(Disposables);
 
             //
+            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.Ready);
+            State.AddTo(Disposables);
             ToDos = new ReactiveCollection<ToDo.Item>();
             ToDos.ObserveElementProperty(x => x.State.Value).Subscribe(x =>
             {
-                int x_ = 0;
-                x_++;
+                UpdateToDoState();
             });
             ToDos.AddTo(Disposables);
         }
@@ -108,6 +124,24 @@ namespace yedaisler
                 todo.Init();
                 ToDos.Add(todo);
             }
+        }
+
+        private void UpdateToDoState()
+        {
+            // ToDo全体状態を更新する
+            ToDo.State state = ToDo.State.Done;
+            foreach (var todo in ToDos)
+            {
+                if (todo.State.Value != ToDo.State.None)
+                {
+                    if ((int)todo.State.Value < (int)state)
+                    {
+                        state = todo.State.Value;
+                    }
+                }
+            }
+
+            State.Value = state;
         }
 
         #region IDisposable Support

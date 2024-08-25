@@ -206,6 +206,7 @@
         <local:DebugConverter x:Key="DebugConverter"/>
         <local:DebugMultiConverter x:Key="DebugMultiConverter"/>
         <local:ContextMenuStateBackColorConverter x:Key="ContextMenuStateBackColorConverter"/>
+        <local:ContextMenuStateFontColorConverter x:Key="ContextMenuStateFontColorConverter"/>
         <local:ToDoActionDispConverter x:Key="ToDoActionDispConverter"/>
         <local:BindingResource x:Key="BkColor" Binding="{Binding BrushBackMenu.Value}" />
         <local:BindingResource x:Key="BaseFontColor" Binding="{Binding BrushBaseFont.Value}" />
@@ -553,8 +554,37 @@
             -->
         </ContextMenu>
     </Window.ContextMenu>
-    <Grid Background="#a0ff0000">
-        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">test</TextBlock>
+    <Grid >
+        <Grid.Style>
+            <Style TargetType="{x:Type Grid}">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <MultiBinding Converter="{StaticResource ContextMenuStateBackColorConverter}" UpdateSourceTrigger="PropertyChanged">
+                            <Binding Path="State.Value" />
+                            <Binding Path="DataContext" RelativeSource="{RelativeSource Self}"/>
+                        </MultiBinding>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Style>
+
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock.Style>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Foreground">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource ContextMenuStateFontColorConverter}" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="State.Value" />
+                                <Binding Path="DataContext" RelativeSource="{RelativeSource Self}"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Text">
+                        <Setter.Value>test</Setter.Value>
+                    </Setter>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
 
         <!--
         <Popup x:Name="menu">
