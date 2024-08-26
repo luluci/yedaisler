@@ -74,7 +74,7 @@ namespace yedaisler
             });
             DispSizeChangedCommand.AddTo(Disposables);
             // 
-            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
+            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.Done);
             State.Subscribe(state =>
             {
                 switch (state)
@@ -177,7 +177,6 @@ namespace yedaisler
                 ToDos.Add(todo);
             }
 
-            State.Value = ToDo.State.Ready;
         }
 
         private void UpdateToDoState()

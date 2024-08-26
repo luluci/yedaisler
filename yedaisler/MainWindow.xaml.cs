@@ -125,6 +125,7 @@ namespace yedaisler
             if ((vm as Menu.SystemHeader) != null) return Menu.ItemType.SystemHeader;
             if ((vm as Menu.SystemItem) != null) return Menu.ItemType.System;
             if ((vm as Menu.ToDoAction) != null) return Menu.ItemType.ToDoAction;
+            if ((vm as Menu.ToDoManual) != null) return Menu.ItemType.ToDoManual;
 
             var cmd = vm as Menu.Command;
             if (cmd != null)
