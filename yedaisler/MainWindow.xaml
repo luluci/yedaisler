@@ -11,10 +11,15 @@
         mc:Ignorable="d"
         Title="yedaisler" MinHeight="30" MinWidth="50"  Height="{Binding Height.Value, Mode=TwoWay}" Width="{Binding Width.Value, Mode=TwoWay}"
         ResizeMode="NoResize" AllowsTransparency="True" WindowStyle="None" Background="Transparent"
-        MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" LocationChanged="Window_LocationChanged" Loaded="Window_Loaded">
+        MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" LocationChanged="Window_LocationChanged" Loaded="Window_Loaded" >
     <i:Interaction.Behaviors>
         <behaviors:SnapWnd2ScrBehavior SnapDistanceHorizontal="{Binding SnapDistH.Value}" SnapDistanceVertical="{Binding SnapDistV.Value}" />
     </i:Interaction.Behaviors>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="ContextMenuService.ContextMenuClosing">
+            <i:InvokeCommandAction Command="{Binding Command2}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Window.DataContext>
         <local:MainWindowViewModel />
     </Window.DataContext>
@@ -307,7 +312,7 @@
         <!-- WPF Default Control -->
 
         <CollectionViewSource x:Key="ContextMenuSource" Source="{Binding ToDos}" />
-        <Style TargetType="{x:Type ContextMenu}" x:Key="RootContextMenu">
+        <Style TargetType="{x:Type ContextMenu}" x:Key="RootContextMenu" BasedOn="{StaticResource {x:Type ContextMenu}}">
             <Setter Property="SnapsToDevicePixels" Value="True" />
             <Setter Property="OverridesDefaultStyle" Value="True" />
             <Setter Property="Grid.IsSharedSizeScope" Value="true" />
@@ -340,6 +345,11 @@
             </Setter>
             <Style.Resources>
                 <Style TargetType="{x:Type MenuItem}">
+                    <!--
+                    <Style.Setters>
+                        <Setter Property="Command" Value="{Binding MenuItemClickCommand}"/>
+                    </Style.Setters>
+                        -->
                     <Style.Triggers>
                         <Trigger Property="Role" Value="SubmenuHeader">
                             <Setter Property="Background">
@@ -367,31 +377,20 @@
                         </DataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.ToDo}">
                             <Setter Property="Template" Value="{StaticResource SubMenuItemControlTemplate}"/>
+                            <!--<Setter Property="IsSubmenuOpen" Value="{Binding IsSubMenuOpen.Value}"/>-->
                             <Setter Property="ItemsSource">
                                 <Setter.Value>
                                     <CompositeCollection>
                                         <menu:ToDoHeader />
                                         <menu:ToDoAction />
-                                        <menu:SystemHeader Header="System"/>
+                                        <!--<menu:SystemHeader Header="System"/>-->
+                                        <menu:Separator />
                                         <menu:ToDoManual />
                                         <menu:Command Name="終了"/>
                                     </CompositeCollection>
                                 </Setter.Value>
                             </Setter>
                             <Setter Property="Header" Value="{Binding Name.Value}" />
-                            <Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Self}}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.ToDoManual}">
-                            <Setter Property="Template" Value="{StaticResource SubMenuItemControlTemplate}"/>
-                            <Setter Property="ItemsSource">
-                                <Setter.Value>
-                                    <CompositeCollection>
-                                        <menu:Command Name="終了"/>
-                                        <menu:Command Name="終了"/>
-                                    </CompositeCollection>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter Property="Header" Value="Action手動実行" />
                             <Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Self}}" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.RootMenuHeader}">
@@ -480,7 +479,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate>
-                                        <MenuItem DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}" d:DataContext="{x:Type todo:Item}">
+                                        <MenuItem StaysOpenOnClick="True" DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}" d:DataContext="{x:Type todo:Item}">
                                             <MenuItem.Style>
                                                 <Style TargetType="{x:Type MenuItem}">
                                                     <Setter Property="Header">
@@ -508,6 +507,19 @@
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.ToDoManual}">
+                            <Setter Property="Template" Value="{StaticResource SubMenuItemControlTemplate}"/>
+                            <Setter Property="ItemsSource">
+                                <Setter.Value>
+                                    <CompositeCollection>
+                                        <menu:Command Name="終了"/>
+                                        <menu:Command Name="終了"/>
+                                    </CompositeCollection>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="Header" Value="Action手動実行" />
+                            <Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Self}}" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.Command}">
                             <Setter Property="Template">
                                 <Setter.Value>
@@ -530,7 +542,7 @@
         </Style>
     </Window.Resources>
     <Window.ContextMenu>
-        <ContextMenu x:Name="menu" Style="{StaticResource RootContextMenu}" >
+        <ContextMenu x:Name="menu" Style="{StaticResource RootContextMenu}" Closed="menu_Closed" >
             <!--DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"-->
             <!--
             <ContextMenu.ItemsSource>

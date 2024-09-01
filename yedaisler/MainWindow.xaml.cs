@@ -24,6 +24,7 @@ namespace yedaisler
     public partial class MainWindow : Window
     {
         bool isLocationChanged = false;
+        bool isContextMenuOpen = false;
 
         Config.Config config = new Config.Config();
 
@@ -62,9 +63,20 @@ namespace yedaisler
         {
             if (!isLocationChanged)
             {
-                this.menu.PlacementTarget = this;
-                this.menu.Placement = PlacementMode.Top;
-                this.menu.IsOpen = true;
+                if (!isContextMenuOpen)
+                {
+                    this.menu.PlacementTarget = this;
+                    this.menu.Placement = PlacementMode.Top;
+                    this.menu.IsOpen = true;
+                    //this.menu.StaysOpen = true;
+                    isContextMenuOpen = true;
+                }
+                else
+                {
+                    //this.menu.StaysOpen = false;
+                    this.menu.IsOpen = false;
+                    isContextMenuOpen = false;
+                }
             }
             isLocationChanged = false;
         }
@@ -72,7 +84,14 @@ namespace yedaisler
         private void Window_LocationChanged(object sender, EventArgs e)
         {
             isLocationChanged = true;
+            //this.menu.StaysOpen = false;
             this.menu.IsOpen = false;
+            isContextMenuOpen = false;
+        }
+
+        private void menu_Closed(object sender, RoutedEventArgs e)
+        {
+            isContextMenuOpen = false;
         }
     }
 
