@@ -145,9 +145,33 @@ namespace yedaisler
             if ((vm as Menu.SystemItem) != null) return Menu.ItemType.System;
             if ((vm as Menu.ToDoAction) != null) return Menu.ItemType.ToDoAction;
             if ((vm as Menu.ToDoManual) != null) return Menu.ItemType.ToDoManual;
+            if ((vm as Menu.ToDoManualAction) != null) return Menu.ItemType.ToDoManualAction;
 
-            var cmd = vm as Menu.Command;
-            if (cmd != null)
+            if (vm is ToDo.StateInfo)
+            {
+                if (menu.Tag != null)
+                {
+                    return Menu.ItemType.None;
+                }
+                else
+                {
+                    menu.Tag = true;
+                    return Menu.ItemType.ToDoManualAction;
+                }
+            }
+            if (vm is Menu.ToDoManualAction)
+            {
+                if (menu.Tag != null)
+                {
+                    return Menu.ItemType.None;
+                }
+                else
+                {
+                    menu.Tag = true;
+                    return Menu.ItemType.ToDoManualAction;
+                }
+            }
+            if (vm is Menu.Command)
             {
                 if (menu.Tag != null)
                 {
@@ -158,7 +182,6 @@ namespace yedaisler
                     menu.Tag = true;
                     return Menu.ItemType.Command;
                 }
-
             }
 
             return Menu.ItemType.None;

@@ -250,7 +250,140 @@
             </Setter>
         </Style>
 
-        <ControlTemplate x:Key="SubMenuItemControlTemplate" TargetType="{x:Type MenuItem}">
+        <ControlTemplate x:Key="{ComponentResourceKey ResourceId=TopLevelItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
+            <Border x:Name="templateRoot" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentPresenter x:Name="Icon" ContentSource="Icon" HorizontalAlignment="Center" Height="16" Margin="3" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center" Width="16"/>
+                    <Path x:Name="GlyphPanel" Data="{StaticResource Checkmark}" FlowDirection="LeftToRight" Fill="{StaticResource Menu.Static.Foreground}" Margin="3" VerticalAlignment="Center" Visibility="Collapsed"/>
+                    <ContentPresenter ContentSource="Header" Grid.Column="1" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Icon" Value="{x:Null}">
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="true">
+                    <Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible"/>
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Background}"/>
+                    <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Border}"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                    <Setter Property="Fill" TargetName="GlyphPanel" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsHighlighted" Value="True"/>
+                        <Condition Property="IsEnabled" Value="False"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Disabled.Background}"/>
+                    <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Disabled.Border}"/>
+                </MultiTrigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate x:Key="{ComponentResourceKey ResourceId=TopLevelHeaderTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
+            <Border x:Name="templateRoot" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentPresenter x:Name="Icon" ContentSource="Icon" HorizontalAlignment="Center" Height="16" Margin="3" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center" Width="16"/>
+                    <Path x:Name="GlyphPanel" Data="{StaticResource Checkmark}" FlowDirection="LeftToRight" Fill="{TemplateBinding Foreground}" Margin="3" VerticalAlignment="Center" Visibility="Collapsed"/>
+                    <ContentPresenter ContentSource="Header" Grid.Column="1" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                    <Popup x:Name="PART_Popup" AllowsTransparency="true" Focusable="false" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" Placement="Bottom" PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}" PlacementTarget="{Binding ElementName=templateRoot}">
+                        <Border x:Name="SubMenuBorder" Background="{StaticResource Menu.Static.Background}" BorderBrush="{StaticResource Menu.Static.Border}" BorderThickness="1" Padding="2">
+                            <ScrollViewer x:Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                                <Grid RenderOptions.ClearTypeHint="Enabled">
+                                    <Canvas HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
+                                        <Rectangle x:Name="OpaqueRect" Fill="{Binding Background, ElementName=SubMenuBorder}" Height="{Binding ActualHeight, ElementName=SubMenuBorder}" Width="{Binding ActualWidth, ElementName=SubMenuBorder}"/>
+                                    </Canvas>
+                                    <Rectangle Fill="{StaticResource Menu.Static.Separator}" HorizontalAlignment="Left" Margin="29,2,0,2" Width="1"/>
+                                    <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle" Grid.IsSharedSizeScope="true" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" KeyboardNavigation.TabNavigation="Cycle"/>
+                                </Grid>
+                            </ScrollViewer>
+                        </Border>
+                    </Popup>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsSuspendingPopupAnimation" Value="true">
+                    <Setter Property="PopupAnimation" TargetName="PART_Popup" Value="None"/>
+                </Trigger>
+                <Trigger Property="Icon" Value="{x:Null}">
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="true">
+                    <Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible"/>
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Background}"/>
+                    <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Border}"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                    <Setter Property="Fill" TargetName="GlyphPanel" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                </Trigger>
+                <Trigger Property="ScrollViewer.CanContentScroll" SourceName="SubMenuScrollViewer" Value="false">
+                    <Setter Property="Canvas.Top" TargetName="OpaqueRect" Value="{Binding VerticalOffset, ElementName=SubMenuScrollViewer}"/>
+                    <Setter Property="Canvas.Left" TargetName="OpaqueRect" Value="{Binding HorizontalOffset, ElementName=SubMenuScrollViewer}"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate x:Key="{ComponentResourceKey ResourceId=SubmenuItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
+            <Border x:Name="templateRoot" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Height="22" SnapsToDevicePixels="true">
+                <Grid Margin="-1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MinWidth="22" SharedSizeGroup="MenuItemIconColumnGroup" Width="Auto"/>
+                        <ColumnDefinition Width="13"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition SharedSizeGroup="MenuItemIGTColumnGroup" Width="Auto"/>
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <ContentPresenter x:Name="Icon" ContentSource="Icon" HorizontalAlignment="Center" Height="16" Margin="3" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center" Width="16"/>
+                    <Border x:Name="GlyphPanel" Background="{StaticResource MenuItem.Selected.Background}" BorderBrush="{StaticResource MenuItem.Selected.Border}" BorderThickness="1" ClipToBounds="False" HorizontalAlignment="Center" Height="22" Margin="-1,0,0,0" VerticalAlignment="Center" Visibility="Hidden" Width="22">
+                        <Path x:Name="Glyph" Data="{StaticResource Checkmark}" FlowDirection="LeftToRight" Fill="{StaticResource Menu.Static.Foreground}" Height="11" Width="10"/>
+                    </Border>
+                    <ContentPresenter x:Name="menuHeaderContainer" ContentSource="Header" Grid.Column="2" HorizontalAlignment="Left" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="menuGestureText" Grid.Column="4" Margin="{TemplateBinding Padding}" Opacity="0.7" Text="{TemplateBinding InputGestureText}" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="Icon" Value="{x:Null}">
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible"/>
+                    <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Background}"/>
+                    <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Border}"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                    <Setter Property="Fill" TargetName="Glyph" Value="{StaticResource Menu.Disabled.Foreground}"/>
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsHighlighted" Value="True"/>
+                        <Condition Property="IsEnabled" Value="False"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Disabled.Background}"/>
+                    <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Disabled.Border}"/>
+                </MultiTrigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate x:Key="SubmenuHeaderTemplateKey" TargetType="{x:Type MenuItem}">
             <Border x:Name="templateRoot" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Height="22" SnapsToDevicePixels="true">
                 <Grid Margin="-1">
                     <Grid.ColumnDefinitions>
@@ -311,6 +444,64 @@
         </ControlTemplate>
         <!-- WPF Default Control -->
 
+
+
+        <Style TargetType="{x:Type MenuItem}" x:Key="ToDoManualActionMenu" BasedOn="{StaticResource {x:Type MenuItem}}">
+            <Setter Property="Header" Value="Manual"/>
+            <Setter Property="ItemsSource" Value="{Binding StateInfos}"/>
+
+            <Setter Property="Template" Value="{StaticResource SubmenuHeaderTemplateKey}"/>
+            <Style.Triggers>
+                <Trigger Property="Role" Value="TopLevelHeader">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="{StaticResource Menu.Static.Foreground}"/>
+                    <Setter Property="Template" Value="{DynamicResource TopLevelHeaderTemplateKey}"/>
+                    <Setter Property="Padding" Value="6,0"/>
+                </Trigger>
+                <Trigger Property="Role" Value="TopLevelItem">
+                    <Setter Property="Background" Value="{StaticResource Menu.Static.Background}"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource Menu.Static.Border}"/>
+                    <Setter Property="Foreground" Value="{StaticResource Menu.Static.Foreground}"/>
+                    <Setter Property="Template" Value="{DynamicResource TopLevelItemTemplateKey}"/>
+                    <Setter Property="Padding" Value="6,0"/>
+                </Trigger>
+                <Trigger Property="Role" Value="SubmenuHeader">
+                    <Setter Property="Template" Value="{DynamicResource SubmenuHeaderTemplateKey}"/>
+                </Trigger>
+            </Style.Triggers>
+
+            <Style.Resources>
+                <Style TargetType="{x:Type MenuItem}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}}" Value="{x:Static menu:ItemType.ToDoManualAction}">
+                            <!--<Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}}}" />-->
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <MenuItem Header="test"  Tag="true" >
+                                            <MenuItem.Style>
+                                                <Style TargetType="{x:Type MenuItem}">
+                                                    <Setter Property="DataContext">
+                                                        <Setter.Value>
+                                                            <Binding Path="DataContext" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=3}" />
+                                                            <!-- Converter="{StaticResource DebugConverter}" -->
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </MenuItem.Style>
+                                        </MenuItem>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Style.Resources>
+        </Style>
+        
+        
+        
         <CollectionViewSource x:Key="ContextMenuSource" Source="{Binding ToDos}" />
         <Style TargetType="{x:Type ContextMenu}" x:Key="RootContextMenu" BasedOn="{StaticResource {x:Type ContextMenu}}">
             <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -376,7 +567,8 @@
                             </Setter>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.ToDo}">
-                            <Setter Property="Template" Value="{StaticResource SubMenuItemControlTemplate}"/>
+                            <Setter Property="Template" Value="{StaticResource SubmenuHeaderTemplateKey}"/>
+                            <Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Self}}" />
                             <!--<Setter Property="IsSubmenuOpen" Value="{Binding IsSubMenuOpen.Value}"/>-->
                             <Setter Property="ItemsSource">
                                 <Setter.Value>
@@ -385,13 +577,13 @@
                                         <menu:ToDoAction />
                                         <!--<menu:SystemHeader Header="System"/>-->
                                         <menu:Separator />
-                                        <menu:ToDoManual />
+                                        <!--<menu:ToDoManual />-->
+                                        <MenuItem Style="{StaticResource ToDoManualActionMenu}"/>
                                         <menu:Command Name="終了"/>
                                     </CompositeCollection>
                                 </Setter.Value>
                             </Setter>
                             <Setter Property="Header" Value="{Binding Name.Value}" />
-                            <Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Self}}" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.RootMenuHeader}">
                             <Setter Property="Template">
@@ -465,7 +657,7 @@
                             </Setter>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.System}">
-                            <Setter Property="Template" Value="{StaticResource SubMenuItemControlTemplate}"/>
+                            <Setter Property="Template" Value="{StaticResource SubmenuHeaderTemplateKey}"/>
                             <Setter Property="ItemsSource">
                                 <Setter.Value>
                                     <CompositeCollection>
@@ -500,6 +692,11 @@
                                                             <Binding Path="DataContext" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}" />
                                                         </Setter.Value>
                                                     </Setter>
+                                                    <Setter Property="DataContext">
+                                                        <Setter.Value>
+                                                            <Binding Path="DataContext" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}" />
+                                                        </Setter.Value>
+                                                    </Setter>
                                                 </Style>
                                             </MenuItem.Style>
                                         </MenuItem>
@@ -507,19 +704,42 @@
                                 </Setter.Value>
                             </Setter>
                         </DataTrigger>
+                        <!--
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.ToDoManual}">
-                            <Setter Property="Template" Value="{StaticResource SubMenuItemControlTemplate}"/>
+                            <Setter Property="Template" Value="{StaticResource SubmenuHeaderTemplateKey}"/>
+                            <Setter Property="Header" Value="Action手動実行" />
+                            <Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}}}" />
                             <Setter Property="ItemsSource">
                                 <Setter.Value>
                                     <CompositeCollection>
-                                        <menu:Command Name="終了"/>
-                                        <menu:Command Name="終了"/>
+                                        <menu:ToDoManualAction State="Ready" />
+                                        <menu:ToDoManualAction State="Doing" />
+                                        <menu:ToDoManualAction State="Done" />
                                     </CompositeCollection>
                                 </Setter.Value>
                             </Setter>
-                            <Setter Property="Header" Value="Action手動実行" />
-                            <Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Self}}" />
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.ToDoManualAction}">
+                            <Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}}}" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <MenuItem Header="test"  Tag="true" >
+                                            <MenuItem.Style>
+                                                <Style TargetType="{x:Type MenuItem}">
+                                                    <Setter Property="DataContext">
+                                                        <Setter.Value>
+                                                            <Binding Path="DataContext" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=3}" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </MenuItem.Style>
+                                        </MenuItem>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        -->
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.Command}">
                             <Setter Property="Template">
                                 <Setter.Value>
