@@ -93,6 +93,17 @@ namespace yedaisler
         {
             isContextMenuOpen = false;
         }
+
+        private void MenuItem_LostFocus(object sender, RoutedEventArgs e)
+        {
+            int i = 0;
+            i++;
+            var item = sender as MenuItem;
+            //if (item != null)
+            //{
+            //    item.IsSubmenuOpen = false;
+            //}
+        }
     }
 
     public sealed class BindingResource
