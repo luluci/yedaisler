@@ -14,8 +14,10 @@ namespace yedaisler.Menu
     {
         None,
         Command,
-        System,
+        SystemItem,
+        Label,
         Separator,
+        //
         RootMenuHeader,
         ToDoHeader,
         SystemHeader,
@@ -28,7 +30,7 @@ namespace yedaisler.Menu
 
     internal class SystemItem
     {
-        public ItemType Type { get; set; } = ItemType.System;
+        public ItemType Type { get; set; } = ItemType.SystemItem;
 
         //public ReactivePropertySlim<string> Name { get; set; }
         public string Name { get; set; } = "System";
@@ -71,6 +73,11 @@ namespace yedaisler.Menu
         public ItemType Type { get; set; } = ItemType.Separator;
     }
 
+    internal class Label
+    {
+        public string Name { get; set; } = string.Empty;
+    }
+
     internal class RootMenuHeader
     {
         public ItemType Type { get; set; } = ItemType.RootMenuHeader;
@@ -88,10 +95,7 @@ namespace yedaisler.Menu
 
         public string Caption { get; set; } = "状態:";
     }
-    internal class SystemHeader
-    {
-        public string Header { get; set; } = "状態:";
-    }
+
 
 
     internal class ToDoAction
@@ -110,8 +114,5 @@ namespace yedaisler.Menu
             State = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
         }
     }
-    internal class ToDoManualAction : FrameworkElement
-    {
 
-    }
 }

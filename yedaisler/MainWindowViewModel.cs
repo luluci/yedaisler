@@ -40,6 +40,7 @@ namespace yedaisler
         // 色設定
         public ReactivePropertySlim<SolidColorBrush> BrushBackMenu { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushBaseFont { get; private set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushBackLabel { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushFontReady { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushFontDoing { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushFontDone { get; private set; }
@@ -149,6 +150,9 @@ namespace yedaisler
             BrushBackMenu.AddTo(Disposables);
             BrushBaseFont = new ReactivePropertySlim<SolidColorBrush>(fontcolor);
             BrushBaseFont.AddTo(Disposables);
+            // Label
+            BrushBackLabel = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0x00, 0x00, 0x00)));
+            BrushBackLabel.AddTo(Disposables);
             // ToDo Stateに対応したカラー
             BrushFontReady = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)));
             BrushFontReady.AddTo(Disposables);

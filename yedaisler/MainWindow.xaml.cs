@@ -138,61 +138,47 @@ namespace yedaisler
         }
     }
 
-    public class ContextMenuElemConverter : IValueConverter
+    public class ContextMenuItemElemConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null) return Menu.ItemType.None;
-            var menu = value as MenuItem;
-            if (menu == null) return Menu.ItemType.None;
-
-            var vm = menu.DataContext;
-            if (vm == null) return Menu.ItemType.None;
-            if ((vm as Menu.Separator) != null) return Menu.ItemType.Separator;
-            if ((vm as ToDo.Item) != null) return Menu.ItemType.ToDo;
-            if ((vm as Menu.RootMenuHeader) != null) return Menu.ItemType.RootMenuHeader;
-            if ((vm as Menu.ToDoHeader) != null) return Menu.ItemType.ToDoHeader;
-            if ((vm as Menu.SystemHeader) != null) return Menu.ItemType.SystemHeader;
-            if ((vm as Menu.SystemItem) != null) return Menu.ItemType.System;
-            if ((vm as Menu.ToDoAction) != null) return Menu.ItemType.ToDoAction;
-            if ((vm as Menu.ToDoManual) != null) return Menu.ItemType.ToDoManual;
-            if ((vm as Menu.ToDoManualAction) != null) return Menu.ItemType.ToDoManualAction;
-
-            if (vm is ToDo.StateInfo)
+            if (value is Menu.RootMenuHeader)
             {
-                if (menu.Tag != null)
-                {
-                    return Menu.ItemType.None;
-                }
-                else
-                {
-                    menu.Tag = true;
-                    return Menu.ItemType.ToDoManualAction;
-                }
+                return Menu.ItemType.RootMenuHeader;
             }
-            if (vm is Menu.ToDoManualAction)
+            if (value is Menu.SystemItem)
             {
-                if (menu.Tag != null)
-                {
-                    return Menu.ItemType.None;
-                }
-                else
-                {
-                    menu.Tag = true;
-                    return Menu.ItemType.ToDoManualAction;
-                }
+                return Menu.ItemType.SystemItem;
             }
-            if (vm is Menu.Command)
+
+            if (value is ToDo.Item)
             {
-                if (menu.Tag != null)
-                {
-                    return Menu.ItemType.None;
-                }
-                else
-                {
-                    menu.Tag = true;
-                    return Menu.ItemType.Command;
-                }
+                return Menu.ItemType.ToDo;
+            }
+            if (value is Menu.ToDoHeader)
+            {
+                return Menu.ItemType.ToDoHeader;
+            }
+            if (value is Menu.ToDoAction)
+            {
+                return Menu.ItemType.ToDoAction;
+            }
+            if (value is Menu.ToDoManual)
+            {
+                return Menu.ItemType.ToDoManual;
+            }
+
+            if (value is Menu.Separator)
+            {
+                return Menu.ItemType.Separator;
+            }
+            if (value is Menu.Command)
+            {
+                return Menu.ItemType.Command;
+            }
+            if (value is Menu.Label)
+            {
+                return Menu.ItemType.Label;
             }
 
             return Menu.ItemType.None;
