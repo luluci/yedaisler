@@ -666,7 +666,7 @@
                                         <!--<menu:SystemHeader Header="System"/>-->
                                         <menu:Separator />
                                         <menu:ToDoManual />
-                                        <menu:Command Name="終了"/>
+                                        <menu:Command Name="Dummy"/>
                                     </CompositeCollection>
                                 </Setter.Value>
                             </Setter>
@@ -688,6 +688,7 @@
                             </Setter>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenuElemConverter}, ConverterParameter=0}" Value="{x:Static menu:ItemType.ToDoHeader}">
+                            <Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=1}}"/>
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate>
@@ -708,11 +709,13 @@
                                                 </Style>
                                             </Grid.Resources>
                                             <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="50px"/>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Margin="5,2,5,2" Text="{Binding Caption}"/>
-                                            <TextBlock Grid.Column="1" Margin="0,2,0,2" Text="{Binding DataContext.StateDisp.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}"/>
+                                            <TextBlock Grid.Column="0" Margin="5,2,5,2" Text="{Binding DataContext.StateDisp.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}"/>
+                                            <TextBlock Grid.Column="1"  Text="|"/>
+                                            <TextBlock Grid.Column="2" Margin="5,2,0,2" Text="{Binding DataContext.StateName.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}"/>
                                         </Grid>
                                     </ControlTemplate>
                                 </Setter.Value>

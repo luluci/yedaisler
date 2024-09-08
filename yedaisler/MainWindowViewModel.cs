@@ -9,6 +9,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using yedaisler.Behaviors;
 using yedaisler.Utility;
@@ -53,7 +54,24 @@ namespace yedaisler
         Config.Config config;
         Config.ConfigViewModel config_vm;
 
+        public ReactiveCommand Command2 { get; private set; }
+        public ReactivePropertySlim<bool> ContextMenuIsOpen { get; private set; }
+
         public MainWindowViewModel() {
+            Command2 = new ReactiveCommand();
+            Command2.Subscribe(x =>
+            {
+                int i = 0;
+                i++;
+            });
+            ContextMenuIsOpen = new ReactivePropertySlim<bool>(false, ReactivePropertyMode.DistinctUntilChanged);
+            ContextMenuIsOpen.Subscribe(x =>
+            {
+                int i = 0;
+                i++;
+            });
+
+
             // メイン画面
             Disp = new ReactivePropertySlim<string>("");
             Disp.AddTo(Disposables);
