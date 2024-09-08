@@ -853,8 +853,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate>
-                                        <MenuItem Header="{Binding Name}" Tag="true" Command="{Binding DataContext.Command1, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}" />
-
+                                        <MenuItem Header="{Binding Name}" Tag="true" Command="{Binding DataContext.OnSystemMenuAction, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}" />
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>

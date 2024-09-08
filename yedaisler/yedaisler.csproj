@@ -67,7 +67,7 @@
     <Compile Include="Config\Model\Config.cs" />
     <Compile Include="Config\Model\ToDo.cs" />
     <Compile Include="Menu\Item.cs" />
-    <Compile Include="ToDo\Action.cs" />
+    <Compile Include="ToDo\StateInfo.cs" />
     <Compile Include="ToDo\Item.cs" />
     <Compile Include="Utility\BindableBase.cs" />
     <Compile Include="Utility\WindowsApi.cs" />
