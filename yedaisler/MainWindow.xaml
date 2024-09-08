@@ -688,7 +688,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate>
-                                <Border BorderThickness="0,1,0,1" BorderBrush="#404040">
+                                <Border BorderThickness="0,1,0,1" BorderBrush="#404040" Margin="0,2,0,0">
                                     <Label Content="{Binding Name}" Padding="10,1,0,1">
                                         <Label.Style>
                                             <Style TargetType="{x:Type Label}">
@@ -731,7 +731,8 @@
                         <menu:RootMenuHeader />
                         <menu:Label Name="ToDo"/>
                         <CollectionContainer Collection="{Binding Source={StaticResource ContextMenuSource}}"/>
-                        <menu:Separator />
+                        <!--<menu:Separator />-->
+                        <menu:Label Name="App"/>
                         <menu:SystemItem />
                         <MenuItem Header="終了" Command="{Binding AppExitCommand}" Style="{StaticResource FixPropMenuItem}" />
                     </CompositeCollection>

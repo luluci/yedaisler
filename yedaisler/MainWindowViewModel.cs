@@ -154,7 +154,7 @@ namespace yedaisler
             // Label
             BrushFontLabel = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xc0, 0xc0, 0xc0)));
             BrushFontLabel.AddTo(Disposables);
-            BrushBackLabel = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x80, 0x20, 0x20, 0x20)));
+            BrushBackLabel = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0x20, 0x20, 0x20)));
             BrushBackLabel.AddTo(Disposables);
             // ToDo Stateに対応したカラー
             BrushFontReady = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)));
