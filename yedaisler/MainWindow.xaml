@@ -24,18 +24,7 @@
         <local:MainWindowViewModel />
     </Window.DataContext>
     <Window.Resources>
-        <!--
-        <Style TargetType="{x:Type MenuItem}" x:Key="CustomMenuItem">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type MenuItem}">
-                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Background="#ffffff">
-                        </StackPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        -->
+
         <Style TargetType="{x:Type MenuItem}" x:Key="FixPropMenuItem">
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -175,37 +164,6 @@
         </Style>
 
 
-
-        <!--
-        <DataTemplate x:Key="SeparatorMenuTemplate" DataType="menu:Separator">
-            <Separator/>
-        </DataTemplate>
-        <DataTemplate x:Key="ToDoMenuTemplate" DataType="todo:Item">
-            <DataTemplate.Resources>
-                <Style TargetType="MenuItem">
-                    <Setter Property="VerticalContentAlignment" Value="Center" />
-                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    <Setter Property="Header" Value="{Binding Name.Value}" />
-                    <Setter Property="ItemsSource">
-                        <Setter.Value>
-                            <CompositeCollection>
-                                <menu:ToDoHeader />
-                                <MenuItem Header="{Binding Name.Value}"/>
-                                <MenuItem Header="{Binding StateDisp.Value}"/>
-                                <MenuItem Header="実行"/>
-                                <menu:Separator />
-                                <MenuItem Header="終了"/>
-                            </CompositeCollection>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </DataTemplate.Resources>
-            <TextBlock Text="{Binding Name.Value}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="CommandMenuTemplate" DataType="MenuItem">
-            <MenuItem Header="{Binding Name}"/>
-        </DataTemplate>
-        -->
 
         <local:ContextMenuItemElemConverter x:Key="ContextMenuItemElemConverter"/>
         <local:DebugConverter x:Key="DebugConverter"/>
@@ -739,50 +697,10 @@
                 </Setter.Value>
             </Setter>
             <Setter Property="ItemContainerStyle" Value="{StaticResource MenuItemStyleTemplate}"/>
-            <!--
-            <Setter Property="ItemTemplateSelector">
-                <Setter.Value>
-                    <local:ContextMenuTemplateSelector IsSeparator="{StaticResource SeparatorMenuTemplate}" IsToDo="{StaticResource ToDoMenuTemplate}" IsCommand="{StaticResource CommandMenuTemplate}" />
-                </Setter.Value>
-            </Setter>
-            -->
         </Style>
     </Window.Resources>
     <Window.ContextMenu>
         <ContextMenu x:Name="menu" Style="{StaticResource RootContextMenu}" Closed="menu_Closed" >
-            <!--DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}"-->
-            <!--
-            <ContextMenu.ItemsSource>
-                <CompositeCollection>
-                    <menu:RootMenuHeader />
-                    <CollectionContainer Collection="{Binding Source={StaticResource ContextMenuSource}}"/>
-                    <menu:Separator />
-                    <menu:SystemItem />
-                    <MenuItem Header="終了" Command="{Binding AppExitCommand}" Style="{StaticResource FixPropMenuItem}" />
-                </CompositeCollection>
-            </ContextMenu.ItemsSource>
-            -->
-            <!--
-            <ContextMenu.ItemContainerStyle>
-                <Style TargetType="MenuItem">
-                    <Setter Property="Header" Value="{Binding Name.Value}" />
-                    <Setter Property="ItemsSource" Value="{Binding Items}" />
-                    <Setter Property="ItemContainerStyle">
-                        <Setter.Value>
-                            <Style TargetType="MenuItem">
-                                <Setter Property="Header" Value="{Binding Name.Value}" />
-                            </Style>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ContextMenu.ItemContainerStyle>
-
-            <Separator/>
-            <MenuItem Header="メニュー1" Foreground="#FFFDF6F6">
-                <MenuItem Header="メニュー1" Foreground="#FFFDF6F6" />
-            </MenuItem>
-            <MenuItem Header="メニュー2" Foreground="#FFFDF6F6" />
-            -->
         </ContextMenu>
     </Window.ContextMenu>
     <Grid>
@@ -834,31 +752,5 @@
             </TextBlock.Style>
         </TextBlock>
         <Grid Grid.Column="4" MinWidth="8"/>
-
-        <!--
-        <Popup x:Name="menu">
-            <StackPanel Background="#40202020">
-                <ListBox Background="Transparent">
-                    <MenuItem Header="メニュー1" Foreground="#FFFDF6F6">
-                        <MenuItem Header="メニュー1" Foreground="#FFFDF6F6" />
-                    </MenuItem>
-                </ListBox>
-                <Separator/>
-                <MenuItem Header="メニュー1" Foreground="#FFFDF6F6">
-                    <MenuItem Header="メニュー1" Foreground="#FFFDF6F6" />
-                </MenuItem>
-                <MenuItem Header="メニュー2" Foreground="#FFFDF6F6" />
-            </StackPanel>
-            <Popup.ContextMenu>
-                <ContextMenu x:Name="menu2">
-                    <Separator/>
-                    <MenuItem Header="メニュー1" Foreground="#FFFDF6F6">
-                        <MenuItem Header="メニュー1" Foreground="#FFFDF6F6" />
-                    </MenuItem>
-                    <MenuItem Header="メニュー2" Foreground="#FFFDF6F6" />
-                </ContextMenu>
-            </Popup.ContextMenu>
-        </Popup>
-            -->
     </Grid>
 </Window>
