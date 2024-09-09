@@ -90,8 +90,8 @@ namespace yedaisler.Behaviors
                 newTop = screen.Bottom - scaledSize.Y;
             }
 
-            window.Left = newLeft;
-            window.Top = newTop;
+            window.Left = newLeft / mat.M11;
+            window.Top = newTop / mat.M22;
         }
     }
 }
