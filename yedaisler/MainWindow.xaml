@@ -16,9 +16,14 @@
         <behaviors:SnapWnd2ScrBehavior SnapDistanceHorizontal="{Binding SnapDistH.Value}" SnapDistanceVertical="{Binding SnapDistV.Value}" />
     </i:Interaction.Behaviors>
     <i:Interaction.Triggers>
+        <i:EventTrigger EventName="ContentRendered">
+            <i:InvokeCommandAction Command="{Binding ContentRenderedCommand}"/>
+        </i:EventTrigger>
+        <!--
         <i:EventTrigger EventName="ContextMenuService.ContextMenuClosing">
             <i:InvokeCommandAction Command="{Binding Command2}"/>
         </i:EventTrigger>
+        -->
     </i:Interaction.Triggers>
     <Window.DataContext>
         <local:MainWindowViewModel />

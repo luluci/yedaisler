@@ -25,6 +25,7 @@ namespace yedaisler
         public ReactivePropertySlim<string> Disp {  get; set; }
         //public ReactivePropertySlim<double> DispWidth { get; set; }
         public ReactiveCommand DispSizeChangedCommand { get; private set; }
+        public ReactiveCommand ContentRenderedCommand { get; private set; }
 
         public ReactivePropertySlim<double> Width { get; set; }
         public ReactivePropertySlim<double> Height { get; set; }
@@ -84,6 +85,18 @@ namespace yedaisler
             //    i++;
             //});
             //DispWidth.AddTo(Disposables);
+            ContentRenderedCommand = new ReactiveCommand();
+            ContentRenderedCommand.Subscribe(x =>
+            {
+                // Window描画後イベント
+                // ToDoアイテムゼロによる表示更新処理
+                // Loadedイベント時はWindowが描画されてなくて表示更新できなかった
+                if (ToDos.Count == 0)
+                {
+                    UpdateTotalState();
+                }
+            })
+            .AddTo(Disposables);
             DispSizeChangedCommand = new ReactiveCommand();
             DispSizeChangedCommand.Subscribe(x =>
             {
@@ -112,7 +125,7 @@ namespace yedaisler
                         break;
 
                     default:
-                        Disp.Value = "";
+                        Disp.Value = "タスクなし";
                         break;
                 }
             })
@@ -172,7 +185,7 @@ namespace yedaisler
             BrushBackSystemHeader = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0x20, 0x20, 0x20)));
             BrushBackSystemHeader.AddTo(Disposables);
             // デフォルトカラー
-            BrushBackNone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x00, 0x00, 0x00, 0x00)));
+            BrushBackNone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0x20, 0x20, 0x20)));
             BrushBackNone.AddTo(Disposables);
             BrushFontNone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)));
             BrushFontNone.AddTo(Disposables);
@@ -181,7 +194,7 @@ namespace yedaisler
             ToDos = new ReactiveCollection<ToDo.Item>();
             ToDos.ObserveElementProperty(x => x.State.Value).Subscribe(x =>
             {
-                UpdateToDoState();
+                UpdateTotalStateByEachStateChange();
             });
             ToDos.AddTo(Disposables);
         }
@@ -201,10 +214,9 @@ namespace yedaisler
                 todo.Init();
                 ToDos.Add(todo);
             }
-
         }
 
-        private void UpdateToDoState()
+        private void UpdateTotalStateByEachStateChange()
         {
             // ToDo全体状態を更新する
             ToDo.State state = ToDo.State.Done;
@@ -220,6 +232,14 @@ namespace yedaisler
             }
 
             State.Value = state;
+        }
+
+        private void UpdateTotalState()
+        {
+            if (ToDos.Count == 0)
+            {
+                State.Value = ToDo.State.None;
+            }
         }
 
         #region IDisposable Support

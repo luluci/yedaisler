@@ -104,6 +104,7 @@ namespace yedaisler
             //    item.IsSubmenuOpen = false;
             //}
         }
+
     }
 
     public sealed class BindingResource
@@ -118,23 +119,6 @@ namespace yedaisler
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return Resource.Binding.ProvideValue(serviceProvider);
-        }
-    }
-
-    public class ContextMenuTemplateSelector : DataTemplateSelector
-    {
-        public DataTemplate IsSeparator { get; set; }
-        public DataTemplate IsCommand { get; set; }
-        public DataTemplate IsToDo { get; set; }
-
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
-        {
-            if (item == null) return IsCommand;
-            if ((item as MenuItem) != null) return IsCommand;
-            if ((item as ToDo.Item) != null) return IsToDo;
-            if ((item as Menu.Separator) != null) return IsSeparator;
-
-            return IsCommand;
         }
     }
 
