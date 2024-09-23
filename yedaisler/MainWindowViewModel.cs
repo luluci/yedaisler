@@ -185,7 +185,7 @@ namespace yedaisler
             BrushBackSystemHeader = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0x20, 0x20, 0x20)));
             BrushBackSystemHeader.AddTo(Disposables);
             // デフォルトカラー
-            BrushBackNone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0x20, 0x20, 0x20)));
+            BrushBackNone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x00, 0x00, 0x00, 0x00)));
             BrushBackNone.AddTo(Disposables);
             BrushFontNone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)));
             BrushFontNone.AddTo(Disposables);
