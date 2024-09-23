@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using yedaisler.Utility;
 
 namespace yedaisler.ToDo
@@ -25,11 +27,12 @@ namespace yedaisler.ToDo
 
     internal class StateInfo : BindableBase
     {
-        Config.ToDoStateInfo stateInfo;
+        public Config.ToDoStateInfo StateInfoRef;
 
         public ReactivePropertySlim<string> Name { get; set; }
 
         public State State { get; internal set; }
+        public ReactivePropertySlim<string> StateName { get; set; }
 
         public ReactivePropertySlim<string> ActionName { get; set; }
 
@@ -39,9 +42,10 @@ namespace yedaisler.ToDo
 
         public StateInfo(State state, Config.ToDoStateInfo info)
         {
-            stateInfo = info;
+            StateInfoRef = info;
 
             State = state;
+            StateName = new ReactivePropertySlim<string>(state.ToString());
 
             HasAction = new ReactivePropertySlim<bool>(true);
 

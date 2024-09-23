@@ -10,9 +10,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Interop;
 using System.Windows.Media;
 using yedaisler.Behaviors;
 using yedaisler.Utility;
+using static yedaisler.Utility.WindowsApi;
 
 namespace yedaisler
 {
@@ -53,9 +55,16 @@ namespace yedaisler
         public ReactivePropertySlim<SolidColorBrush> BrushBackNone { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushFontNone { get; private set; }
 
+        // 機能制御フラグ
+        public ReactivePropertySlim<bool> BlockShutdown { get; private set; }
+        public ReactivePropertySlim<bool> BlockSleep { get; private set; }
+
         // Config関連
         Config.Config config;
         Config.ConfigViewModel config_vm;
+
+        // WindowMessage操作
+        HwndSource hwndSource;
 
         // 周期処理機能
         //Observable.Timer cycleProc;
@@ -197,6 +206,12 @@ namespace yedaisler
             BrushFontNone.AddTo(Disposables);
 
             //
+            BlockShutdown = new ReactivePropertySlim<bool>(false);
+            BlockShutdown.AddTo(Disposables);
+            BlockSleep = new ReactivePropertySlim<bool>(false);
+            BlockSleep.AddTo(Disposables);
+
+            //
             ToDos = new ReactiveCollection<ToDo.Item>();
             ToDos.ObserveElementProperty(x => x.State.Value).Subscribe(x =>
             {
@@ -230,11 +245,16 @@ namespace yedaisler
                 todo.Init();
                 ToDos.Add(todo);
             }
+
+            // WindowMessageハンドル
+            hwndSource = Utility.WindowsApi.GetHwndSource(wnd);
+            hwndSource.AddHook(WndProcHandler);
         }
 
         private void UpdateTotalStateByEachStateChange()
         {
             // ToDo全体状態を更新する
+            var block = new Config.BlockInfo();
             ToDo.State state = ToDo.State.Done;
             foreach (var todo in ToDos)
             {
@@ -245,9 +265,13 @@ namespace yedaisler
                         state = todo.State.Value;
                     }
                 }
+                block.Shutdown |= todo.ActiveStateInfo.Value.StateInfoRef.Block.Shutdown;
+                block.Sleep |= todo.ActiveStateInfo.Value.StateInfoRef.Block.Sleep;
             }
 
             State.Value = state;
+            BlockShutdown.Value = block.Shutdown;
+            BlockSleep.Value = block.Sleep;
         }
 
         private void UpdateTotalState()
@@ -261,6 +285,30 @@ namespace yedaisler
         private void cycleProcHandler(object sender, EventArgs e)
         {
             Clock.Value = DateTime.Now.ToString("HH:mm:ss");
+        }
+
+        public IntPtr WndProcHandler(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            switch (msg)
+            {
+                case (int)WindowMessage.WM_QUERYENDSESSION:
+                    handled = true;
+                    if (BlockShutdown.Value)
+                    {
+                        // シャットダウンをキャンセルする
+                        return (IntPtr)SessionEnding.Cancel;
+                    }
+                    else
+                    {
+                        // シャットダウンをキャンセルしない
+                        return (IntPtr)SessionEnding.Ok;
+                    }
+
+                default:
+                    break;
+            }
+
+            return IntPtr.Zero;
         }
 
         #region IDisposable Support

@@ -571,9 +571,9 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Margin="5,2,5,2" Text="{Binding DataContext.StateDisp.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}"/>
+                                    <TextBlock Grid.Column="0" Margin="5,2,5,2" Text="{Binding DataContext.ActiveStateInfo.Value.StateName.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}"/>
                                     <TextBlock Grid.Column="1"  Text="|"/>
-                                    <TextBlock Grid.Column="2" Margin="5,2,0,2" Text="{Binding DataContext.StateName.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}"/>
+                                    <TextBlock Grid.Column="2" Margin="5,2,0,2" Text="{Binding DataContext.ActiveStateInfo.Value.Name.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}"/>
                                 </Grid>
                             </ControlTemplate>
                         </Setter.Value>

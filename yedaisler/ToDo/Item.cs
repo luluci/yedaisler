@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using yedaisler.Config;
 using yedaisler.Menu;
 using yedaisler.Utility;
 using static System.Windows.Forms.AxHost;
@@ -31,13 +32,18 @@ namespace yedaisler.ToDo
         public ReactivePropertySlim<State> State { get; set; }
 
         public ReactivePropertySlim<string> StateDisp { get; set; }
-        public ReactivePropertySlim<string> StateName { get; set; }
 
         public ReactiveCollection<StateInfo> StateInfos { get; set; }
+        public ReactivePropertySlim<StateInfo> ActiveStateInfo { get; set; }
+        public StateInfo NoneStateInfo { get; set; }
 
         public ReactiveCommand OnMenuStateAction { get; set; }
 
         public ReactiveCommand OnSystemMenuAction {  get; set; }
+
+        // 状態毎制御フラグ
+        public bool BlockShutdown { get; set; }
+        public bool BlockSleep { get; set; }
 
         public Config.ToDo ToDoRef;
 
@@ -47,12 +53,13 @@ namespace yedaisler.ToDo
             Name = new ReactivePropertySlim<string>(todo.Name.Value);
 
             // 現在StateInfo名
-            StateName = new ReactivePropertySlim<string>(string.Empty);
-            StateName.AddTo(Disposables);
             // State表示文字列
             StateDisp = new ReactivePropertySlim<string>(string.Empty);
             StateDisp.AddTo(Disposables);
 
+            //
+            ActiveStateInfo = new ReactivePropertySlim<StateInfo>();
+            ActiveStateInfo.AddTo(Disposables);
             //
             StateInfos = new ReactiveCollection<StateInfo>();
             StateInfos.AddTo(Disposables);
@@ -60,6 +67,8 @@ namespace yedaisler.ToDo
             StateInfos.Add(new StateInfo(ToDo.State.Ready, todo.Ready.Value));
             StateInfos.Add(new StateInfo(ToDo.State.Doing, todo.Doing.Value));
             StateInfos.Add(new StateInfo(ToDo.State.Done, todo.Done.Value));
+            //
+            NoneStateInfo = new StateInfo(ToDo.State.None, new Config.ToDoStateInfo());
 
             //
             OnMenuStateAction = new ReactiveCommand();
@@ -67,6 +76,10 @@ namespace yedaisler.ToDo
             {
                 StateAction();
             });
+
+            //
+            BlockShutdown = false;
+            BlockSleep = false;
 
             ToDoRef = todo;
 
@@ -76,17 +89,17 @@ namespace yedaisler.ToDo
             {
                 // 状態名
                 StateDisp.Value = x.ToString();
-                // StateInfo名
+                // アクティブState選択
                 switch (x)
                 {
                     case ToDo.State.Ready:
                     case ToDo.State.Doing:
                     case ToDo.State.Done:
-                        StateName.Value = StateInfos[(int)x].Name.Value;
+                        ActiveStateInfo.Value = StateInfos[(int)x];
                         break;
 
                     default:
-                        StateName.Value = "<None>";
+                        ActiveStateInfo.Value = NoneStateInfo;
                         break;
                 }
             })

@@ -33,12 +33,17 @@ namespace yedaisler.Config
         public ReactivePropertySlim<string> Name { get; set; }
         public ReactivePropertySlim<yedaisler.ToDo.ActionMode> Mode { get; set; }
         public ReactivePropertySlim<ToDoAction> Action { get; set; }
+        public BlockInfo Block { get; set; }
+
+        // Actionなし用共通オブジェクト
+        private static ToDoAction ActionNone = new ToDoAction();
 
         public ToDoStateInfo()
         {
             Name = new ReactivePropertySlim<string>(string.Empty);
             Mode = new ReactivePropertySlim<yedaisler.ToDo.ActionMode>(yedaisler.ToDo.ActionMode.None);
-            Action = new ReactivePropertySlim<ToDoAction>();
+            Action = new ReactivePropertySlim<ToDoAction>(ActionNone);
+            Block = new BlockInfo();
         }
     }
 
@@ -55,7 +60,7 @@ namespace yedaisler.Config
         {
             Name = new ReactivePropertySlim<string>(string.Empty);
             Type = new ReactivePropertySlim<yedaisler.ToDo.ActionType>(yedaisler.ToDo.ActionType.None);
-            Action = null;
+            Action = ActionNone;
         }
     }
 
@@ -95,6 +100,19 @@ namespace yedaisler.Config
             }
         }
     }
+
+    internal class BlockInfo
+    {
+        public bool Shutdown { get; set; }
+        public bool Sleep { get; set; }
+
+        public BlockInfo()
+        {
+            Shutdown = false;
+            Sleep = false;
+        }
+    }
+
 
     internal partial class ConfigViewModel
     {
@@ -152,6 +170,12 @@ namespace yedaisler.Config
             }
             // Action
             info.Action.Value = MakeToDoAction(m_info.Action);
+            // Block
+            if (!(m_info.Block is null))
+            {
+                info.Block.Shutdown = m_info.Block.Shutdown;
+                info.Block.Sleep = m_info.Block.Sleep;
+            }
 
             return info;
         }
