@@ -57,6 +57,12 @@ namespace yedaisler
         Config.Config config;
         Config.ConfigViewModel config_vm;
 
+        // 周期処理機能
+        //Observable.Timer cycleProc;
+        System.Windows.Threading.DispatcherTimer cycleProc;
+        // Option機能
+        public ReactivePropertySlim<string> Clock {  get; private set; }
+
         public ReactiveCommand Command2 { get; private set; }
         public ReactivePropertySlim<bool> ContextMenuIsOpen { get; private set; }
 
@@ -197,6 +203,16 @@ namespace yedaisler
                 UpdateTotalStateByEachStateChange();
             });
             ToDos.AddTo(Disposables);
+
+            //
+            Clock = new ReactivePropertySlim<string>("xx:xx:xx");
+            Clock.AddTo(Disposables);
+
+            //
+            cycleProc = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.Normal);
+            cycleProc.Interval = new TimeSpan(0, 0, 1);
+            cycleProc.Tick += cycleProcHandler;
+            cycleProc.Start();
         }
 
         public void Init(MainWindow wnd, Config.Config config_)
@@ -240,6 +256,11 @@ namespace yedaisler
             {
                 State.Value = ToDo.State.None;
             }
+        }
+
+        private void cycleProcHandler(object sender, EventArgs e)
+        {
+            Clock.Value = DateTime.Now.ToString("HH:mm:ss");
         }
 
         #region IDisposable Support

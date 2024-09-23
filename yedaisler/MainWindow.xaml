@@ -508,6 +508,9 @@
                                         <Button Content="1" Width="30"/>
                                         <Button Content="2" Width="30"/>
                                     </StackPanel>
+                                    <Grid Margin="10,2,10,2">
+                                        <TextBlock Text="{Binding DataContext.Clock.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" FontFamily="Source Code Pro Semibold" FontSize="16"/>
+                                    </Grid>
                                 </StackPanel>
                             </ControlTemplate>
                         </Setter.Value>
