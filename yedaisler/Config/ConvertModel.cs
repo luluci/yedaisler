@@ -45,6 +45,11 @@ namespace yedaisler.Config
             Action = new ReactivePropertySlim<ToDoAction>(ActionNone);
             Block = new BlockInfo();
         }
+
+        public bool ExecAction()
+        {
+            return Action.Value.Action.Exec();
+        }
     }
 
     internal class ToDoAction

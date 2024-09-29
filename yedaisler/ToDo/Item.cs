@@ -202,7 +202,7 @@ namespace yedaisler.ToDo
             {
                 case ActionMode.Exec:
                     // アクションを実行する
-                    return true;
+                    return action.ExecAction();
 
                 case ActionMode.None:
                 default:
