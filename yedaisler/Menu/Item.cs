@@ -32,7 +32,13 @@ namespace yedaisler.Menu
 
     internal class SystemMenu
     {
+        public ReactivePropertySlim<ToDo.State> State { get; set; }
 
+        public SystemMenu()
+        {
+            // Dummy
+            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
+        }
     }
     internal class SystemAppState
     {
