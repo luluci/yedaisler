@@ -136,7 +136,7 @@ namespace yedaisler.ToDo
             State.Value = state;
         }
 
-        private void StateAction()
+        public void StateAction()
         {
             // 状態初期化
             var state = State.Value;

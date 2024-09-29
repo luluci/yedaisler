@@ -380,14 +380,24 @@ namespace yedaisler
             }
             //
             updateBoxDisplay();
+        }
 
-            //var dispMode = BoxDisplayMode.System;
+        public void ExecAction()
+        {
+            switch (boxDisplayMode)
+            {
+                case BoxDisplayMode.TaskState:
+                    boxDisplayTaskRef.StateAction();
+                    break;
 
-            ////
-            //if (todo.ToDoRef.DisplayInBox.Value)
-            //{
-            //    dispMode = BoxDisplayMode.TaskState;
-            //}
+                case BoxDisplayMode.System:
+                default:
+                    foreach (var todo in ToDos)
+                    {
+                        todo.StateAction();
+                    }
+                    break;
+            }
         }
 
         private void cycleProcHandler(object sender, EventArgs e)

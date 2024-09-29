@@ -59,26 +59,53 @@ namespace yedaisler
             //this.menu.IsOpen = false;
         }
 
-        private void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        int clickCount = 0;
+        bool isDoubleClick = false;
+        private async void Window_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (!isLocationChanged)
+            if (clickCount == 0)
             {
-                if (!isContextMenuOpen)
+                clickCount++;
+                await Task.Delay(100);
+            }
+            else
+            {
+                isDoubleClick = true;
+                return;
+            }
+
+            if (!isDoubleClick)
+            {
+                // single click event
+                if (!isLocationChanged)
                 {
-                    this.menu.PlacementTarget = this;
-                    this.menu.Placement = PlacementMode.Top;
-                    this.menu.IsOpen = true;
-                    //this.menu.StaysOpen = true;
-                    isContextMenuOpen = true;
+                    if (!isContextMenuOpen)
+                    {
+                        this.menu.PlacementTarget = this;
+                        this.menu.Placement = PlacementMode.Top;
+                        this.menu.IsOpen = true;
+                        //this.menu.StaysOpen = true;
+                        isContextMenuOpen = true;
+                    }
+                    else
+                    {
+                        //this.menu.StaysOpen = false;
+                        this.menu.IsOpen = false;
+                        isContextMenuOpen = false;
+                    }
                 }
-                else
+                isLocationChanged = false;
+            }
+            else
+            {
+                // double click event
+                if (DataContext is MainWindowViewModel vm)
                 {
-                    //this.menu.StaysOpen = false;
-                    this.menu.IsOpen = false;
-                    isContextMenuOpen = false;
+                    vm.ExecAction();
                 }
             }
-            isLocationChanged = false;
+            clickCount = 0;
+            isDoubleClick = false;
         }
 
         private void Window_LocationChanged(object sender, EventArgs e)
