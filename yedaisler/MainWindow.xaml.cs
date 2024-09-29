@@ -130,9 +130,9 @@ namespace yedaisler
             {
                 return Menu.ItemType.RootMenuHeader;
             }
-            if (value is Menu.SystemItem)
+            if (value is Menu.SystemMenu)
             {
-                return Menu.ItemType.SystemItem;
+                return Menu.ItemType.SystemMenu;
             }
             if (value is Menu.SystemAppExit)
             {

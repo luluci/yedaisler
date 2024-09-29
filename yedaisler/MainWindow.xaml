@@ -116,7 +116,7 @@
                     <Setter Property="Header" Value="{Binding Name.Value}" />
                     <Setter Property="Tag" Value="{Binding StateDisp.Value}"/>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Type}" Value="{x:Static menu:ItemType.SystemItem}">
+                <DataTrigger Binding="{Binding Type}" Value="{x:Static menu:ItemType.SystemMenu}">
                     <Setter Property="ItemsSource">
                         <Setter.Value>
                             <CompositeCollection>
@@ -517,7 +517,7 @@
                     </Setter>
                 </DataTrigger>
 
-                <DataTrigger Binding="{Binding Converter={StaticResource ContextMenuItemElemConverter}}" Value="{x:Static menu:ItemType.SystemItem}">
+                <DataTrigger Binding="{Binding Converter={StaticResource ContextMenuItemElemConverter}}" Value="{x:Static menu:ItemType.SystemMenu}">
                     <Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
                     <Setter Property="Template" Value="{DynamicResource SubmenuHeaderTemplateKey}"/>
                     <Setter Property="ItemsSource">
@@ -528,7 +528,7 @@
                             </CompositeCollection>
                         </Setter.Value>
                     </Setter>
-                    <Setter Property="Header" Value="{Binding Name}" />
+                    <Setter Property="Header" Value="System" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Converter={StaticResource ContextMenuItemElemConverter}}" Value="{x:Static menu:ItemType.SystemAppExit}">
                     <Setter Property="Template" >
@@ -710,7 +710,7 @@
                         <CollectionContainer Collection="{Binding Source={StaticResource ContextMenuSource}}"/>
                         <!--<menu:Separator />-->
                         <menu:Label Name="App"/>
-                        <menu:SystemItem />
+                        <menu:SystemMenu />
                     </CompositeCollection>
                 </Setter.Value>
             </Setter>

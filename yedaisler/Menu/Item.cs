@@ -14,7 +14,7 @@ namespace yedaisler.Menu
     {
         None,
         Command,
-        SystemItem,
+        SystemMenu,
         SystemAppExit,
         Label,
         Separator,
@@ -29,22 +29,9 @@ namespace yedaisler.Menu
         ToDoManualAction,
     }
 
-    internal class SystemItem
+    internal class SystemMenu
     {
-        public ItemType Type { get; set; } = ItemType.SystemItem;
 
-        //public ReactivePropertySlim<string> Name { get; set; }
-        public string Name { get; set; } = "System";
-
-        public ReactivePropertySlim<ToDo.State> State { get; set; }
-
-        public SystemItem()
-        {
-            //Name = new ReactivePropertySlim<string>("System");
-            Name = "System";
-
-            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
-        }
     }
     internal class SystemAppExit
     {
