@@ -363,7 +363,7 @@
                         <!-- Background="{StaticResource MenuItem.Selected.Background}" BorderBrush="{StaticResource MenuItem.Selected.Border}" BorderThickness="1" -->
                         <Path x:Name="Glyph" Data="{StaticResource Checkmark}" FlowDirection="LeftToRight" Fill="{StaticResource Menu.Static.Checkmark}" Height="11" Width="10"/>
                     </Border>
-                    <ContentPresenter x:Name="menuHeaderContainer" ContentSource="Header" Grid.Column="2" HorizontalAlignment="Left" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
+                    <ContentPresenter x:Name="menuHeaderContainer" TextElement.Foreground="{StaticResource Menu.Disabled.Foreground}" ContentSource="Header" Grid.Column="2" HorizontalAlignment="Left" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
                     <TextBlock x:Name="menuGestureText" Grid.Column="4" Margin="{TemplateBinding Padding}" Opacity="0.7" Text="{TemplateBinding InputGestureText}" VerticalAlignment="Center"/>
                 </Grid>
             </Border>
@@ -374,6 +374,7 @@
                 <Trigger Property="IsChecked" Value="True">
                     <Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible"/>
                     <Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
+                    <Setter Property="TextElement.Foreground" TargetName="menuHeaderContainer" Value="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"/>
                 </Trigger>
                 <Trigger Property="IsHighlighted" Value="True">
                     <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Background}"/>
@@ -539,10 +540,9 @@
                     <Setter Property="Template" >
                         <Setter.Value>
                             <ControlTemplate>
-                                <MenuItem Header="状態">
+                                <MenuItem Header="アプリ制御状態">
                                     <MenuItem.Style>
                                         <Style TargetType="{x:Type MenuItem}">
-
                                             <Setter Property="Template" Value="{StaticResource SubmenuHeaderTemplateKey}"/>
                                         </Style>
                                     </MenuItem.Style>
