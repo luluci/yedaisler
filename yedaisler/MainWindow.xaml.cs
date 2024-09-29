@@ -159,6 +159,10 @@ namespace yedaisler
             {
                 return Menu.ItemType.ToDoManual;
             }
+            if (value is Menu.ToDoDispInBox)
+            {
+                return Menu.ItemType.ToDoDispInBox;
+            }
 
             if (value is Menu.Separator)
             {

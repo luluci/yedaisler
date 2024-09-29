@@ -573,6 +573,7 @@
                                 <menu:ToDoAction />
                                 <menu:Separator />
                                 <menu:ToDoManual />
+                                <menu:ToDoDispInBox />
                                 <menu:Command Name="Dummy"/>
                             </CompositeCollection>
                         </Setter.Value>
@@ -662,6 +663,22 @@
                                 <Setter Property="Command" Value="{Binding Action}"/>
                                 <Setter Property="IsEnabled" Value="{Binding HasAction.Value}"/>
                             </Style>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Converter={StaticResource ContextMenuItemElemConverter}}" Value="{x:Static menu:ItemType.ToDoDispInBox}">
+                    <Setter Property="Template" >
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <MenuItem
+                                    Header="BOXに表示"
+                                    StaysOpenOnClick="True"
+                                    IsCheckable="True"
+                                    IsChecked="{Binding DataContext.DisplayInBox.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem},AncestorLevel=2}}"
+                                    Style="{StaticResource FixPropMenuItem}"
+                                    Template="{StaticResource SubmenuItemTemplateKey}"
+                                />
+                            </ControlTemplate>
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>

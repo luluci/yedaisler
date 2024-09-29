@@ -12,6 +12,9 @@ namespace yedaisler.Config.Model
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
 
+        [JsonPropertyName("displayInBox")]
+        public bool DisplayInBox { get; set; } = false;
+
         [JsonPropertyName("ready")]
         public ToDoStateInfo Ready { get; set; }
 

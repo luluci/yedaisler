@@ -28,6 +28,7 @@ namespace yedaisler.ToDo
         public ItemType Type { get; set; } = ItemType.ToDo;
 
         public ReactivePropertySlim<string> Name { get; set; }
+        public ReactivePropertySlim<bool> DisplayInBox { get; set; }
 
         public ReactivePropertySlim<State> State { get; set; }
 
@@ -51,6 +52,7 @@ namespace yedaisler.ToDo
         {
             //
             Name = new ReactivePropertySlim<string>(todo.Name.Value);
+            DisplayInBox = new ReactivePropertySlim<bool>(todo.DisplayInBox.Value);
 
             // 現在StateInfo名
             // State表示文字列

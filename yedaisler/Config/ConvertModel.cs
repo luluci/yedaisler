@@ -14,6 +14,7 @@ namespace yedaisler.Config
     internal class ToDo
     {
         public ReactivePropertySlim<string> Name { get; set; }
+        public ReactivePropertySlim<bool> DisplayInBox { get; set; }
 
         public ReactivePropertySlim<ToDoStateInfo> Ready { get; set; }
         public ReactivePropertySlim<ToDoStateInfo> Doing { get; set; }
@@ -23,6 +24,10 @@ namespace yedaisler.Config
         public ToDo()
         {
             Name = new ReactivePropertySlim<string>("");
+            // 制御フラグ
+            // デスクトップに表示するBOXに状態を表示する
+            DisplayInBox = new ReactivePropertySlim<bool>();
+            //
             Ready = new ReactivePropertySlim<ToDoStateInfo>();
             Doing = new ReactivePropertySlim<ToDoStateInfo>();
             Done = new ReactivePropertySlim<ToDoStateInfo>();
@@ -136,6 +141,8 @@ namespace yedaisler.Config
             var todo = new ToDo();
             // Name
             todo.Name.Value = m_todo.Name;
+            // Flags
+            todo.DisplayInBox.Value = m_todo.DisplayInBox;
             // Actions
             todo.Ready.Value = MakeToDoStateInfo(m_todo.Ready, "Ready");
             todo.Doing.Value = MakeToDoStateInfo(m_todo.Doing, "Doing");

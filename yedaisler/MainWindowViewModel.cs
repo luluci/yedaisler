@@ -55,6 +55,15 @@ namespace yedaisler
         public ReactivePropertySlim<SolidColorBrush> BrushBackNone { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushFontNone { get; private set; }
 
+        // 表示制御
+        enum BoxDisplayMode
+        {
+            System,     // システム共通表示
+            TaskState,  // タスク状態表示
+        }
+        BoxDisplayMode boxDisplayMode;
+        ToDo.Item boxDisplayTaskRef;
+
         // 機能制御フラグ
         public ReactivePropertySlim<bool> BlockShutdown { get; private set; }
         public ReactivePropertySlim<bool> BlockSleep { get; private set; }
@@ -89,6 +98,9 @@ namespace yedaisler
                 i++;
             });
 
+            // 表示制御
+            boxDisplayMode = BoxDisplayMode.System;
+            boxDisplayTaskRef = null;
 
             // メイン画面
             Disp = new ReactivePropertySlim<string>("");
@@ -125,24 +137,7 @@ namespace yedaisler
             State = new ReactivePropertySlim<ToDo.State>(ToDo.State.Done);
             State.Subscribe(state =>
             {
-                switch (state)
-                {
-                    case ToDo.State.Ready:
-                        Disp.Value = "Readyタスクあり";
-                        break;
-
-                    case ToDo.State.Doing:
-                        Disp.Value = "Doing";
-                        break;
-
-                    case ToDo.State.Done:
-                        Disp.Value = "全タスクDone";
-                        break;
-
-                    default:
-                        Disp.Value = "タスクなし";
-                        break;
-                }
+                updateBoxDisplay();
             })
             .AddTo(Disposables);
 
@@ -217,6 +212,10 @@ namespace yedaisler
             {
                 UpdateTotalStateByEachStateChange();
             });
+            ToDos.ObserveElementProperty(x => x.DisplayInBox.Value).Subscribe(x =>
+            {
+                updateDisplayInBox(x.Instance, x.Value);
+            });
             ToDos.AddTo(Disposables);
 
             //
@@ -265,11 +264,23 @@ namespace yedaisler
                         state = todo.State.Value;
                     }
                 }
+                //
                 block.Shutdown |= todo.ActiveStateInfo.Value.StateInfoRef.Block.Shutdown;
                 block.Sleep |= todo.ActiveStateInfo.Value.StateInfoRef.Block.Sleep;
             }
+            //
+            switch (boxDisplayMode)
+            {
+                case BoxDisplayMode.TaskState:
+                    State.Value = boxDisplayTaskRef.State.Value;
+                    break;
 
-            State.Value = state;
+                case BoxDisplayMode.System:
+                default:
+                    State.Value = state;
+                    break;
+            }
+
             BlockShutdown.Value = block.Shutdown;
             BlockSleep.Value = block.Sleep;
         }
@@ -280,6 +291,103 @@ namespace yedaisler
             {
                 State.Value = ToDo.State.None;
             }
+        }
+
+        private void updateBoxDisplay()
+        {
+            switch (boxDisplayMode)
+            {
+                case BoxDisplayMode.TaskState:
+                    updateBoxDisplayTaskState();
+                    break;
+
+                case BoxDisplayMode.System:
+                default:
+                    updateBoxDisplaySystem();
+                    break;
+            }
+        }
+        private void updateBoxDisplaySystem()
+        {
+            switch (State.Value)
+            {
+                case ToDo.State.Ready:
+                    Disp.Value = "Readyタスクあり";
+                    break;
+
+                case ToDo.State.Doing:
+                    Disp.Value = "Doing";
+                    break;
+
+                case ToDo.State.Done:
+                    Disp.Value = "全タスクDone";
+                    break;
+
+                default:
+                    Disp.Value = "タスクなし";
+                    break;
+            }
+        }
+        private void updateBoxDisplayTaskState()
+        {
+            Disp.Value = boxDisplayTaskRef.ActiveStateInfo.Value.Name.Value;
+        }
+
+        private void updateDisplayInBox(ToDo.Item todo, bool value)
+        {
+            // todo: 複数チェックされたら、全部を流し表示する
+            // 現状で一つだけチェック有効とする
+            if (value)
+            {
+                // その他の項目のチェックを下す
+                bool eventCheck = false;
+                foreach (var item in ToDos)
+                {
+                    if (!Object.ReferenceEquals(todo, item) && item.DisplayInBox.Value == true)
+                    {
+                        // 注意:false設定によるイベントが発生する＝本関数のfalse側パスに入る
+                        item.DisplayInBox.Value = false;
+                        eventCheck = true;
+                    }
+                }
+                // falseに変更していたらイベントが発生しているのでそちらで処置が入る
+                // falseへの変更がなければここで処理する
+                if (!eventCheck)
+                {
+                    boxDisplayTaskRef = todo;
+                    boxDisplayMode = BoxDisplayMode.TaskState;
+                }
+            }
+            else
+            {
+                boxDisplayTaskRef = null;
+                boxDisplayMode = BoxDisplayMode.System;
+                foreach (var item in ToDos)
+                {
+                    if (item.DisplayInBox.Value)
+                    {
+                        boxDisplayTaskRef = item;
+                    }
+                }
+                if (!(boxDisplayTaskRef is null))
+                {
+                    boxDisplayMode = BoxDisplayMode.TaskState;
+                }
+                else
+                {
+                    UpdateTotalStateByEachStateChange();
+                }
+            }
+            //
+            updateBoxDisplay();
+
+            //var dispMode = BoxDisplayMode.System;
+
+            ////
+            //if (todo.ToDoRef.DisplayInBox.Value)
+            //{
+            //    dispMode = BoxDisplayMode.TaskState;
+            //}
         }
 
         private void cycleProcHandler(object sender, EventArgs e)

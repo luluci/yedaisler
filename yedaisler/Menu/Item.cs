@@ -28,6 +28,7 @@ namespace yedaisler.Menu
         ToDoManualHeader,
         ToDoManual,
         ToDoManualAction,
+        ToDoDispInBox,
     }
 
     internal class SystemMenu
@@ -116,6 +117,11 @@ namespace yedaisler.Menu
             // Dummy
             State = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
         }
+    }
+
+    internal class ToDoDispInBox
+    {
+
     }
 
 }
