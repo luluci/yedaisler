@@ -15,6 +15,7 @@ namespace yedaisler.Menu
         None,
         Command,
         SystemItem,
+        SystemAppExit,
         Label,
         Separator,
         //
@@ -44,6 +45,10 @@ namespace yedaisler.Menu
 
             State = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
         }
+    }
+    internal class SystemAppExit
+    {
+
     }
 
     internal class Command

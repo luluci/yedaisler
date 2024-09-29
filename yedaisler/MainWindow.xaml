@@ -518,15 +518,26 @@
                 </DataTrigger>
 
                 <DataTrigger Binding="{Binding Converter={StaticResource ContextMenuItemElemConverter}}" Value="{x:Static menu:ItemType.SystemItem}">
+                    <Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
                     <Setter Property="Template" Value="{DynamicResource SubmenuHeaderTemplateKey}"/>
                     <Setter Property="ItemsSource">
                         <Setter.Value>
                             <CompositeCollection>
                                 <MenuItem Header="設定" Style="{StaticResource FixPropMenuItem}"/>
+                                <menu:SystemAppExit/>
                             </CompositeCollection>
                         </Setter.Value>
                     </Setter>
                     <Setter Property="Header" Value="{Binding Name}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Converter={StaticResource ContextMenuItemElemConverter}}" Value="{x:Static menu:ItemType.SystemAppExit}">
+                    <Setter Property="Template" >
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <MenuItem Header="アプリ終了" Command="{Binding DataContext.AppExitCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Style="{StaticResource FixPropMenuItem}" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </DataTrigger>
 
                 <DataTrigger Binding="{Binding Converter={StaticResource ContextMenuItemElemConverter}}" Value="{x:Static menu:ItemType.ToDo}">
@@ -700,7 +711,6 @@
                         <!--<menu:Separator />-->
                         <menu:Label Name="App"/>
                         <menu:SystemItem />
-                        <MenuItem Header="終了" Command="{Binding AppExitCommand}" Style="{StaticResource FixPropMenuItem}" />
                     </CompositeCollection>
                 </Setter.Value>
             </Setter>
