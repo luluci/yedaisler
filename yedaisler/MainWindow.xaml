@@ -188,6 +188,7 @@
         <SolidColorBrush x:Key="Menu.Static.Border" Color="#FF999999"/>
         <SolidColorBrush x:Key="Menu.Static.Foreground" Color="#FF212121"/>
         <SolidColorBrush x:Key="Menu.Static.Separator" Color="#FFD7D7D7"/>
+        <SolidColorBrush x:Key="Menu.Static.Checkmark" Color="#FF00FF20"/>
         <SolidColorBrush x:Key="Menu.Disabled.Foreground" Color="#FF707070"/>
         <SolidColorBrush x:Key="MenuItem.Selected.Background" Color="#3D26A0DA"/>
         <SolidColorBrush x:Key="MenuItem.Selected.Border" Color="#FF26A0DA"/>
@@ -358,8 +359,9 @@
                         <ColumnDefinition Width="20"/>
                     </Grid.ColumnDefinitions>
                     <ContentPresenter x:Name="Icon" ContentSource="Icon" HorizontalAlignment="Center" Height="16" Margin="3" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center" Width="16"/>
-                    <Border x:Name="GlyphPanel" Background="{StaticResource MenuItem.Selected.Background}" BorderBrush="{StaticResource MenuItem.Selected.Border}" BorderThickness="1" ClipToBounds="False" HorizontalAlignment="Center" Height="22" Margin="-1,0,0,0" VerticalAlignment="Center" Visibility="Hidden" Width="22">
-                        <Path x:Name="Glyph" Data="{StaticResource Checkmark}" FlowDirection="LeftToRight" Fill="{StaticResource Menu.Static.Foreground}" Height="11" Width="10"/>
+                    <Border x:Name="GlyphPanel"  ClipToBounds="False" HorizontalAlignment="Center" Height="22" Margin="-1,0,0,0" VerticalAlignment="Center" Visibility="Hidden" Width="22">
+                        <!-- Background="{StaticResource MenuItem.Selected.Background}" BorderBrush="{StaticResource MenuItem.Selected.Border}" BorderThickness="1" -->
+                        <Path x:Name="Glyph" Data="{StaticResource Checkmark}" FlowDirection="LeftToRight" Fill="{StaticResource Menu.Static.Checkmark}" Height="11" Width="10"/>
                     </Border>
                     <ContentPresenter x:Name="menuHeaderContainer" ContentSource="Header" Grid.Column="2" HorizontalAlignment="Left" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
                     <TextBlock x:Name="menuGestureText" Grid.Column="4" Margin="{TemplateBinding Padding}" Opacity="0.7" Text="{TemplateBinding InputGestureText}" VerticalAlignment="Center"/>
@@ -377,10 +379,12 @@
                     <Setter Property="Background" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Background}"/>
                     <Setter Property="BorderBrush" TargetName="templateRoot" Value="{StaticResource MenuItem.Highlight.Border}"/>
                 </Trigger>
+                <!--
                 <Trigger Property="IsEnabled" Value="False">
                     <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="{StaticResource Menu.Disabled.Foreground}"/>
                     <Setter Property="Fill" TargetName="Glyph" Value="{StaticResource Menu.Disabled.Foreground}"/>
                 </Trigger>
+                -->
                 <MultiTrigger>
                     <MultiTrigger.Conditions>
                         <Condition Property="IsHighlighted" Value="True"/>
@@ -523,12 +527,31 @@
                     <Setter Property="ItemsSource">
                         <Setter.Value>
                             <CompositeCollection>
+                                <menu:SystemAppState/>
                                 <MenuItem Header="設定" Style="{StaticResource FixPropMenuItem}"/>
                                 <menu:SystemAppExit/>
                             </CompositeCollection>
                         </Setter.Value>
                     </Setter>
                     <Setter Property="Header" Value="System" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Converter={StaticResource ContextMenuItemElemConverter}}" Value="{x:Static menu:ItemType.SystemAppState}">
+                    <Setter Property="Template" >
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <MenuItem Header="状態">
+                                    <MenuItem.Style>
+                                        <Style TargetType="{x:Type MenuItem}">
+
+                                            <Setter Property="Template" Value="{StaticResource SubmenuHeaderTemplateKey}"/>
+                                        </Style>
+                                    </MenuItem.Style>
+                                    <MenuItem Header="Block:シャットダウン" IsEnabled="False" Template="{StaticResource SubmenuItemTemplateKey}" IsChecked="{Binding DataContext.BlockShutdown.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+                                    <MenuItem Header="Block:スリープ" IsEnabled="False" Template="{StaticResource SubmenuItemTemplateKey}" IsChecked="{Binding DataContext.BlockSleep.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+                                </MenuItem>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Converter={StaticResource ContextMenuItemElemConverter}}" Value="{x:Static menu:ItemType.SystemAppExit}">
                     <Setter Property="Template" >

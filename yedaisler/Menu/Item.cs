@@ -15,6 +15,7 @@ namespace yedaisler.Menu
         None,
         Command,
         SystemMenu,
+        SystemAppState,
         SystemAppExit,
         Label,
         Separator,
@@ -30,6 +31,10 @@ namespace yedaisler.Menu
     }
 
     internal class SystemMenu
+    {
+
+    }
+    internal class SystemAppState
     {
 
     }

@@ -134,6 +134,10 @@ namespace yedaisler
             {
                 return Menu.ItemType.SystemMenu;
             }
+            if (value is Menu.SystemAppState)
+            {
+                return Menu.ItemType.SystemAppState;
+            }
             if (value is Menu.SystemAppExit)
             {
                 return Menu.ItemType.SystemAppExit;
