@@ -22,10 +22,13 @@ namespace yedaisler.Config
     {
         private JsonSerializerOptions jsonOptions;
 
+        public ReactivePropertySlim<Gui> Gui { get; set; }
         public ReactiveCollection<ToDo> ToDos { get; set; }
 
         public ConfigViewModel()
         {
+            Gui = new ReactivePropertySlim<Gui>(new Gui());
+            Gui.AddTo(Disposables);
             ToDos = new ReactiveCollection<ToDo>();
             ToDos.AddTo(Disposables);
         }

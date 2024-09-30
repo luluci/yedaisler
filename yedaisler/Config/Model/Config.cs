@@ -10,6 +10,9 @@ namespace yedaisler.Config.Model
 {
     internal class Config
     {
+        [JsonPropertyName("gui")]
+        public Gui Gui { get; set; }
+
         [JsonPropertyName("todos")]
         public IList<ToDo> ToDos { get; set; }
     }

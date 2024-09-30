@@ -80,6 +80,7 @@
     <Compile Include="Config\ConfigViewModel.cs" />
     <Compile Include="Config\ConvertModel.cs" />
     <Compile Include="Config\Model\Config.cs" />
+    <Compile Include="Config\Model\Gui.cs" />
     <Compile Include="Config\Model\ToDo.cs" />
     <Compile Include="Menu\Item.cs" />
     <Compile Include="ToDo\StateInfo.cs" />

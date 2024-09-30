@@ -6,12 +6,59 @@ using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Xml.Linq;
 using yedaisler.ToDo;
+using yedaisler.Utility;
 
 namespace yedaisler.Config
 {
-    internal class ToDo
+    internal class Gui : BindableBase
+    {
+        public ReactivePropertySlim<GuiColor> Color { get; set; }
+
+        public Gui() {
+            Color = new ReactivePropertySlim<GuiColor>(new GuiColor());
+        }
+    }
+
+    internal class GuiColor : BindableBase
+    {
+        public ReactivePropertySlim<string> FontReady { get; set; }
+        public ReactivePropertySlim<string> FontDoing { get; set; }
+        public ReactivePropertySlim<string> FontDone { get; set; }
+        public ReactivePropertySlim<string> BackReady { get; set; }
+        public ReactivePropertySlim<string> BackDoing { get; set; }
+        public ReactivePropertySlim<string> BackDone { get; set; }
+
+        //
+        public ReactivePropertySlim<SolidColorBrush> BrushFontReady { get; set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushFontDoing { get; set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushFontDone { get; set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushBackReady { get; set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushBackDoing { get; set; }
+        public ReactivePropertySlim<SolidColorBrush> BrushBackDone { get; set; }
+
+
+        public GuiColor() {
+            FontReady = new ReactivePropertySlim<string>();
+            FontDoing = new ReactivePropertySlim<string>();
+            FontDone = new ReactivePropertySlim<string>();
+            BackReady = new ReactivePropertySlim<string>();
+            BackDoing = new ReactivePropertySlim<string>();
+            BackDone = new ReactivePropertySlim<string>();
+            //
+            BrushFontReady = new ReactivePropertySlim<SolidColorBrush>();
+            BrushFontDoing = new ReactivePropertySlim<SolidColorBrush>();
+            BrushFontDone = new ReactivePropertySlim<SolidColorBrush>();
+            BrushBackReady = new ReactivePropertySlim<SolidColorBrush>();
+            BrushBackDoing = new ReactivePropertySlim<SolidColorBrush>();
+            BrushBackDone = new ReactivePropertySlim<SolidColorBrush>();
+        }
+    }
+
+
+    internal class ToDo : BindableBase
     {
         public ReactivePropertySlim<string> Name { get; set; }
         public ReactivePropertySlim<bool> DisplayInBox { get; set; }
@@ -33,7 +80,7 @@ namespace yedaisler.Config
             Done = new ReactivePropertySlim<ToDoStateInfo>();
         }
     }
-    internal class ToDoStateInfo
+    internal class ToDoStateInfo : BindableBase
     {
         public ReactivePropertySlim<string> Name { get; set; }
         public ReactivePropertySlim<yedaisler.ToDo.ActionMode> Mode { get; set; }
@@ -57,7 +104,7 @@ namespace yedaisler.Config
         }
     }
 
-    internal class ToDoAction
+    internal class ToDoAction : BindableBase
     {
         public ReactivePropertySlim<string> Name { get; set; }
         public ReactivePropertySlim<yedaisler.ToDo.ActionType> Type { get; set; }
@@ -83,7 +130,7 @@ namespace yedaisler.Config
         public bool Exec() { return true; }
     }
 
-    internal class ToDoActionShellExecute : IToDoAction
+    internal class ToDoActionShellExecute : BindableBase, IToDoAction
     {
         public ReactivePropertySlim<string> Path { get; set; }
         public ToDoActionShellExecute()
@@ -129,11 +176,48 @@ namespace yedaisler.Config
         public void LoadModel(Model.Config config)
         {
             // Model(json)からViewModel(Reactive)を作成する
+            // Gui
+            MakeGui(config.Gui);
+            // ToDos
             foreach (var action in config.ToDos)
             {
                 var todo = MakeToDo(action);
                 ToDos.Add(todo);
             }
+        }
+
+        private void MakeGui(Model.Gui gui)
+        {
+            if (gui is null)
+            {
+                gui = new Model.Gui();
+            }
+
+            // Color
+            MakeGuiColor(gui.Color);
+        }
+        private void MakeGuiColor(Model.Color color)
+        {
+            if (color is null)
+            {
+                color = new Model.Color();
+            }
+
+            //
+            var colorRef = Gui.Value.Color.Value;
+            colorRef.FontReady.Value = color.FontReady;
+            colorRef.FontDoing.Value = color.FontDoing;
+            colorRef.FontDone.Value = color.FontDone;
+            colorRef.BackReady.Value = color.BackReady;
+            colorRef.BackDoing.Value = color.BackDoing;
+            colorRef.BackDone.Value = color.BackDone;
+            //
+            colorRef.BrushFontReady.Value = colorRef.FontReady.Value.ToSolidColorBrush();
+            colorRef.BrushFontDoing.Value = colorRef.FontDoing.Value.ToSolidColorBrush();
+            colorRef.BrushFontDone.Value = colorRef.FontDone.Value.ToSolidColorBrush();
+            colorRef.BrushBackReady.Value = colorRef.BackReady.Value.ToSolidColorBrush();
+            colorRef.BrushBackDoing.Value = colorRef.BackDoing.Value.ToSolidColorBrush();
+            colorRef.BrushBackDone.Value = colorRef.BackDone.Value.ToSolidColorBrush();
         }
 
         private ToDo MakeToDo(Model.ToDo m_todo)

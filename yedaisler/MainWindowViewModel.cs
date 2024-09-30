@@ -166,13 +166,10 @@ namespace yedaisler
                 System.Windows.Application.Current.Shutdown((int)System.Windows.ShutdownMode.OnExplicitShutdown);
             });
 
-            // color
-            var bkcolor = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0x20, 0x20, 0x40));
-            var fontcolor = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF));
             // Color
-            BrushBackMenu = new ReactivePropertySlim<SolidColorBrush>(bkcolor);
+            BrushBackMenu = new ReactivePropertySlim<SolidColorBrush>("#A0202040".ToSolidColorBrush());
             BrushBackMenu.AddTo(Disposables);
-            BrushBaseFont = new ReactivePropertySlim<SolidColorBrush>(fontcolor);
+            BrushBaseFont = new ReactivePropertySlim<SolidColorBrush>("#FFFFFFFF".ToSolidColorBrush());
             BrushBaseFont.AddTo(Disposables);
             // Label
             BrushFontLabel = new ReactivePropertySlim<SolidColorBrush>("#FFC0C0C0".ToSolidColorBrush());
@@ -237,6 +234,13 @@ namespace yedaisler
             config = config_;
             config_vm = config.DataContext as Config.ConfigViewModel;
 
+            // Config.Gui.Colorを制御データに展開
+            BrushFontReady.Value = config_vm.Gui.Value.Color.Value.BrushFontReady.Value;
+            BrushFontDoing.Value = config_vm.Gui.Value.Color.Value.BrushFontDoing.Value;
+            BrushFontDone.Value = config_vm.Gui.Value.Color.Value.BrushFontDone.Value;
+            BrushBackReady.Value = config_vm.Gui.Value.Color.Value.BrushBackReady.Value;
+            BrushBackDoing.Value = config_vm.Gui.Value.Color.Value.BrushBackDoing.Value;
+            BrushBackDone.Value = config_vm.Gui.Value.Color.Value.BrushBackDone.Value;
             // Config.ToDoを制御用データに変換
             foreach (var c_todo in config_vm.ToDos)
             {
