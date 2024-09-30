@@ -175,29 +175,29 @@ namespace yedaisler
             BrushBaseFont = new ReactivePropertySlim<SolidColorBrush>(fontcolor);
             BrushBaseFont.AddTo(Disposables);
             // Label
-            BrushFontLabel = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xc0, 0xc0, 0xc0)));
+            BrushFontLabel = new ReactivePropertySlim<SolidColorBrush>("#FFC0C0C0".ToSolidColorBrush());
             BrushFontLabel.AddTo(Disposables);
-            BrushBackLabel = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0x20, 0x20, 0x20)));
+            BrushBackLabel = new ReactivePropertySlim<SolidColorBrush>("#A0202020".ToSolidColorBrush());
             BrushBackLabel.AddTo(Disposables);
             // ToDo Stateに対応したカラー
-            BrushFontReady = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)));
+            BrushFontReady = new ReactivePropertySlim<SolidColorBrush>("#FFFFFFFF".ToSolidColorBrush());
             BrushFontReady.AddTo(Disposables);
-            BrushFontDoing = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)));
+            BrushFontDoing = new ReactivePropertySlim<SolidColorBrush>("#FF202020".ToSolidColorBrush());
             BrushFontDoing.AddTo(Disposables);
-            BrushFontDone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)));
+            BrushFontDone = new ReactivePropertySlim<SolidColorBrush>("#FFFFFFFF".ToSolidColorBrush());
             BrushFontDone.AddTo(Disposables);
-            BrushBackReady = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0xFF, 0x00, 0x00)));
+            BrushBackReady = new ReactivePropertySlim<SolidColorBrush>("#A0FF0000".ToSolidColorBrush());
             BrushBackReady.AddTo(Disposables);
-            BrushBackDoing = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0xFF, 0xFF, 0x00)));
+            BrushBackDoing = new ReactivePropertySlim<SolidColorBrush>("#A0FFFF00".ToSolidColorBrush());
             BrushBackDoing.AddTo(Disposables);
-            BrushBackDone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xA0, 0x20, 0x20, 0x20)));
+            BrushBackDone = new ReactivePropertySlim<SolidColorBrush>("#A0202020".ToSolidColorBrush());
             BrushBackDone.AddTo(Disposables);
-            BrushBackSystemHeader = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0x20, 0x20, 0x20)));
+            BrushBackSystemHeader = new ReactivePropertySlim<SolidColorBrush>("#FF202020".ToSolidColorBrush());
             BrushBackSystemHeader.AddTo(Disposables);
             // デフォルトカラー
-            BrushBackNone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x00, 0x00, 0x00, 0x00)));
+            BrushBackNone = new ReactivePropertySlim<SolidColorBrush>("#10202020".ToSolidColorBrush());
             BrushBackNone.AddTo(Disposables);
-            BrushFontNone = new ReactivePropertySlim<SolidColorBrush>(new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF)));
+            BrushFontNone = new ReactivePropertySlim<SolidColorBrush>("#FFFFFFFF".ToSolidColorBrush());
             BrushFontNone.AddTo(Disposables);
 
             //

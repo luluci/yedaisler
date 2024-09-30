@@ -85,6 +85,7 @@
     <Compile Include="ToDo\StateInfo.cs" />
     <Compile Include="ToDo\Item.cs" />
     <Compile Include="Utility\BindableBase.cs" />
+    <Compile Include="Utility\Color.cs" />
     <Compile Include="Utility\WindowsApi.cs" />
     <Page Include="Config\Config.xaml">
       <SubType>Designer</SubType>
