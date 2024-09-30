@@ -407,6 +407,8 @@ namespace yedaisler
         private void cycleProcHandler(object sender, EventArgs e)
         {
             Clock.Value = DateTime.Now.ToString("HH:mm:ss");
+
+            window.Topmost = true;
         }
 
         public IntPtr WndProcHandler(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)

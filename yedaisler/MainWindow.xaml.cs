@@ -48,6 +48,9 @@ namespace yedaisler
             //config.ShowDialog();
             var vm = this.DataContext as MainWindowViewModel;
             vm.Init(this, config);
+
+            //
+            this.Topmost = true;
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
