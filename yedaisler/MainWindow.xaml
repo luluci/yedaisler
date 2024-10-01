@@ -10,7 +10,7 @@
         xmlns:todo="clr-namespace:yedaisler.ToDo"
         mc:Ignorable="d"
         Title="yedaisler" MinHeight="30" MinWidth="50"  Height="{Binding Height.Value, Mode=TwoWay}" Width="{Binding Width.Value, Mode=TwoWay}"
-        ShowInTaskbar="False" ResizeMode="NoResize" AllowsTransparency="True" WindowStyle="None" Background="Transparent"
+        Topmost="True" ShowInTaskbar="False" ResizeMode="NoResize" AllowsTransparency="True" WindowStyle="None" Background="Transparent"
         MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" LocationChanged="Window_LocationChanged" Loaded="Window_Loaded" >
     <i:Interaction.Behaviors>
         <behaviors:SnapWnd2ScrBehavior SnapDistanceHorizontal="{Binding SnapDistH.Value}" SnapDistanceVertical="{Binding SnapDistV.Value}" />
