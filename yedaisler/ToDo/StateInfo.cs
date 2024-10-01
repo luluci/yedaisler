@@ -63,7 +63,7 @@ namespace yedaisler.ToDo
             Action = new ReactiveCommand();
             Action.Subscribe(x =>
             {
-                //stateInfo.Action.Value.Action.Exec();
+                StateInfoRef.Action.Value.Action.Exec();
             });
         }
     }
