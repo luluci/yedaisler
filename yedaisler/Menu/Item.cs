@@ -26,8 +26,8 @@ namespace yedaisler.Menu
         ToDo,
         ToDoAction,
         ToDoManualHeader,
-        ToDoManual,
         ToDoManualAction,
+        ToDoManualState,
         ToDoDispInBox,
     }
 
@@ -108,11 +108,22 @@ namespace yedaisler.Menu
         public ItemType Type { get; set; } = ItemType.ToDoAction;
     }
 
-    internal class ToDoManual
+    internal class ToDoManualAction
     {
         public ReactivePropertySlim<ToDo.State> State { get; set; }
 
-        public ToDoManual()
+        public ToDoManualAction()
+        {
+            // Dummy
+            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
+        }
+    }
+
+    internal class ToDoManualState
+    {
+        public ReactivePropertySlim<ToDo.State> State { get; set; }
+
+        public ToDoManualState()
         {
             // Dummy
             State = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);

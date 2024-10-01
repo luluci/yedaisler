@@ -40,6 +40,8 @@ namespace yedaisler.ToDo
 
         public ReactiveCommand OnMenuStateAction { get; set; }
 
+        public ReactiveCommand OnMenuStateChange { get; set; }
+
         public ReactiveCommand OnSystemMenuAction {  get; set; }
 
         // 状態毎制御フラグ
@@ -103,6 +105,15 @@ namespace yedaisler.ToDo
                     default:
                         ActiveStateInfo.Value = NoneStateInfo;
                         break;
+                }
+            })
+            .AddTo(Disposables);
+
+            OnMenuStateChange = new ReactiveCommand();
+            OnMenuStateChange.Subscribe(x =>
+            {
+                if (x is State state){
+                    State.Value = state;
                 }
             })
             .AddTo(Disposables);

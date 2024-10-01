@@ -185,9 +185,13 @@ namespace yedaisler
             {
                 return Menu.ItemType.ToDoAction;
             }
-            if (value is Menu.ToDoManual)
+            if (value is Menu.ToDoManualAction)
             {
-                return Menu.ItemType.ToDoManual;
+                return Menu.ItemType.ToDoManualAction;
+            }
+            if (value is Menu.ToDoManualState)
+            {
+                return Menu.ItemType.ToDoManualState;
             }
             if (value is Menu.ToDoDispInBox)
             {

@@ -580,7 +580,8 @@
                                 <menu:ToDoHeader />
                                 <menu:ToDoAction />
                                 <menu:Separator />
-                                <menu:ToDoManual />
+                                <menu:ToDoManualAction />
+                                <menu:ToDoManualState />
                                 <menu:ToDoDispInBox />
                                 <menu:Command Name="Dummy"/>
                             </CompositeCollection>
@@ -667,7 +668,7 @@
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
-                <DataTrigger Binding="{Binding Converter={StaticResource ContextMenuItemElemConverter}}" Value="{x:Static menu:ItemType.ToDoManual}">
+                <DataTrigger Binding="{Binding Converter={StaticResource ContextMenuItemElemConverter}}" Value="{x:Static menu:ItemType.ToDoManualAction}">
                     <Setter Property="Header" Value="Action手動実行" />
                     <Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}}}" />
                     <Setter Property="Template" Value="{StaticResource SubmenuHeaderTemplateKey}"/>
@@ -678,6 +679,22 @@
                                 <Setter Property="Header" Value="{Binding ActionName.Value}"/>
                                 <Setter Property="Command" Value="{Binding Action}"/>
                                 <Setter Property="IsEnabled" Value="{Binding HasAction.Value}"/>
+                            </Style>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Converter={StaticResource ContextMenuItemElemConverter}}" Value="{x:Static menu:ItemType.ToDoManualState}">
+                    <Setter Property="Header" Value="State手動変更" />
+                    <Setter Property="DataContext" Value="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}}}" />
+                    <Setter Property="Template" Value="{StaticResource SubmenuHeaderTemplateKey}"/>
+                    <Setter Property="ItemsSource" Value="{Binding DataContext.StateInfos, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}}}"/>
+                    <Setter Property="ItemContainerStyle">
+                        <Setter.Value>
+                            <Style TargetType="{x:Type MenuItem}">
+                                <Setter Property="Header" Value="{Binding Name.Value}"/>
+                                <Setter Property="Command" Value="{Binding DataContext.OnMenuStateChange, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem},AncestorLevel=2}}"/>
+                                <Setter Property="CommandParameter" Value="{Binding State}"/>
+                                <Setter Property="StaysOpenOnClick" Value="True"/>
                             </Style>
                         </Setter.Value>
                     </Setter>
@@ -824,6 +841,7 @@
                     </Setter>
                     <Setter Property="Text" Value="{Binding Disp.Value}" />
                     <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
                 </Style>
             </TextBlock.Style>
         </TextBlock>
