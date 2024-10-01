@@ -379,10 +379,11 @@ namespace yedaisler
                 }
                 else
                 {
-                    UpdateTotalStateByEachStateChange();
+                    //UpdateTotalStateByEachStateChange();
                 }
             }
             //
+            UpdateTotalStateByEachStateChange();
             updateBoxDisplay();
         }
 
