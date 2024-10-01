@@ -598,7 +598,14 @@
                                             </Setter>
                                         </Style>
                                         <Style TargetType="{x:Type TextBlock}">
-                                            <Setter Property="Foreground" Value="{Binding DataContext.BrushBaseFont.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+                                            <Setter Property="Foreground">
+                                                <Setter.Value>
+                                                    <MultiBinding Converter="{StaticResource ContextMenuStateFontColorConverter}" UpdateSourceTrigger="PropertyChanged">
+                                                        <Binding Path="DataContext.State.Value" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}"/>
+                                                        <Binding Path="DataContext" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}"/>
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
                                         </Style>
                                     </Grid.Resources>
                                     <Grid.ColumnDefinitions>
