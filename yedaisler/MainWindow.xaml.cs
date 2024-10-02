@@ -53,6 +53,15 @@ namespace yedaisler
             this.Topmost = true;
         }
 
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
+            // Window起動位置
+            var rect = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
+            // 右下
+            this.Top =rect.Bottom - this.Height;
+            this.Left = rect.Right - this.Width;
+        }
+
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             //マウスボタン押下状態でなければ何もしない  

@@ -409,6 +409,7 @@ namespace yedaisler
         {
             Clock.Value = DateTime.Now.ToString("HH:mm:ss");
 
+            window.Topmost = false;
             window.Topmost = true;
         }
 
