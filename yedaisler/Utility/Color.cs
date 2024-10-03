@@ -11,7 +11,8 @@ namespace yedaisler.Utility
     {
         //System.Windows.Media(WPF)とSystem.Drawing.Color(WinForms)
 
-        public static System.Windows.Media.Color ToColorOrDefault(this string code) => ToColorOrNull(code) ?? default;
+        public static System.Windows.Media.Color DefaultColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString("#FF000000");
+        public static System.Windows.Media.Color ToColorOrDefault(this string code) => ToColorOrNull(code) ?? DefaultColor;
 
         public static System.Windows.Media.Color? ToColorOrNull(this string code)
         {

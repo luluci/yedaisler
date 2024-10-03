@@ -57,9 +57,10 @@ namespace yedaisler
         {
             // Window起動位置
             var rect = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
+            var mat = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
             // 右下
-            this.Top =rect.Bottom - this.Height;
-            this.Left = rect.Right - this.Width;
+            this.Left = rect.Right / mat.M11 - this.Width;
+            this.Top =rect.Bottom / mat.M22 - this.Height;
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
