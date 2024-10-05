@@ -65,29 +65,11 @@ namespace yedaisler.Menu
 
     internal class Command
     {
-        public string Name { get; set; } = string.Empty;
-        public ItemType Type { get; set; } = ItemType.Separator;
-        public bool IsInited { get; set; } = false;
-
-        public ReactiveCommand Command1 { get; set; }
-
-        public Command()
-        {
-            Name = "command";
-
-            Command1 = new ReactiveCommand();
-            Command1.Subscribe(x =>
-            {
-                int i = 0;
-                i++;
-            });
-        }
+        public string Name { get; set; } = "command";
     }
 
     internal class Separator
     {
-        public string Name { get; set; } = string.Empty;
-        public ItemType Type { get; set; } = ItemType.Separator;
     }
 
     internal class Label
@@ -97,28 +79,17 @@ namespace yedaisler.Menu
 
     internal class RootMenuHeader
     {
-        public ItemType Type { get; set; } = ItemType.RootMenuHeader;
+        public string Name { get; set; } = "MainMenuHeader";
 
-        public string Name { get; set; } = "Main Menu Header";
-
-        public RootMenuHeader()
-        {
-            Name = "MainMenuHeader";
-        }
     }
     internal class ToDoHeader
     {
-        public ItemType Type { get; set; } = ItemType.ToDoHeader;
-
-        public string Caption { get; set; } = "状態:";
     }
 
 
 
     internal class ToDoAction
     {
-        public string Name { get; set; } = string.Empty;
-        public ItemType Type { get; set; } = ItemType.ToDoAction;
     }
 
     internal class ToDoManualAction
