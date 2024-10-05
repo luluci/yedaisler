@@ -42,7 +42,7 @@ namespace yedaisler
 
         // SystemCommandハンドラ
         public ReactiveCommand OnMenuSystemCommand { get; set; }
-        public ReactiveCommand AppExitCommand { get; set; }
+        public ReactiveCommand OnMenuAppExit { get; set; }
 
         // 色設定
         public ReactivePropertySlim<SolidColorBrush> BrushBackMenu { get; private set; }
@@ -181,8 +181,8 @@ namespace yedaisler
                     }
                 }
             });
-            AppExitCommand = new ReactiveCommand();
-            AppExitCommand.Subscribe(() =>
+            OnMenuAppExit = new ReactiveCommand();
+            OnMenuAppExit.Subscribe(() =>
             {
                 // App終了
                 System.Windows.Application.Current.Shutdown((int)System.Windows.ShutdownMode.OnExplicitShutdown);

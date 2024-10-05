@@ -567,7 +567,7 @@
                     <Setter Property="Template" >
                         <Setter.Value>
                             <ControlTemplate>
-                                <MenuItem Header="アプリ終了" Command="{Binding DataContext.AppExitCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Style="{StaticResource FixPropMenuItem}" />
+                                <MenuItem Header="アプリ終了" Command="{Binding DataContext.OnMenuAppExit, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Style="{StaticResource FixPropMenuItem}" />
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
