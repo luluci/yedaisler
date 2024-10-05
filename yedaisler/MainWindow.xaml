@@ -595,7 +595,7 @@
                             <CompositeCollection>
                                 <menu:ToDoHeader />
                                 <menu:ToDoAction />
-                                <menu:Separator />
+                                <!--<menu:Separator />-->
                                 <menu:Label Name="Option"/>
                                 <menu:ToDoDispInBox />
                                 <menu:ToDoManualAction />
