@@ -17,6 +17,7 @@ namespace yedaisler.Menu
         SystemMenu,
         SystemAppState,
         SystemAppExit,
+        SystemCommand,
         Label,
         Separator,
         //
@@ -48,6 +49,18 @@ namespace yedaisler.Menu
     internal class SystemAppExit
     {
 
+    }
+    internal class SystemCommand
+    {
+        public enum CommandMode
+        {
+            None,
+            ShowNotifyWindow,
+        }
+
+        public string Header { get; set; } = "SystemCommand";
+
+        public CommandMode Mode { get; set; } = CommandMode.None;
     }
 
     internal class Command

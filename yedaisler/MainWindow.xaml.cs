@@ -186,6 +186,10 @@ namespace yedaisler
             {
                 return Menu.ItemType.SystemAppExit;
             }
+            if (value is Menu.SystemCommand)
+            {
+                return Menu.ItemType.SystemCommand;
+            }
 
             if (value is ToDo.Item)
             {

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:yedaisler.Notifier"
         mc:Ignorable="d"
-        ContentRendered="Window_ContentRendered"
+        ContentRendered="Window_ContentRendered" Closing="Window_Closing"
         Title="Notify" Height="200" Width="300">
     <Window.DataContext>
         <local:NotifierViewModel />

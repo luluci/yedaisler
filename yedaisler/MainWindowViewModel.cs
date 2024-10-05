@@ -40,6 +40,8 @@ namespace yedaisler
         public ReactiveCollection<ToDo.Item> ToDos { get; set; }
         public ReactivePropertySlim<ToDo.State> State { get; set; }
 
+        // SystemCommandハンドラ
+        public ReactiveCommand OnMenuSystemCommand { get; set; }
         public ReactiveCommand AppExitCommand { get; set; }
 
         // 色設定
@@ -161,6 +163,24 @@ namespace yedaisler
             })
             .AddTo(Disposables);
 
+            OnMenuSystemCommand = new ReactiveCommand();
+            OnMenuSystemCommand.Subscribe(x =>
+            {
+                if (x is Menu.SystemCommand.CommandMode mode)
+                {
+                    switch (mode)
+                    {
+                        case Menu.SystemCommand.CommandMode.ShowNotifyWindow:
+                            notifier.Show();
+                            break;
+
+                        case Menu.SystemCommand.CommandMode.None:
+                        default:
+                            // nothing
+                            break;
+                    }
+                }
+            });
             AppExitCommand = new ReactiveCommand();
             AppExitCommand.Subscribe(() =>
             {

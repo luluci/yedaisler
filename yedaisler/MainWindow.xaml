@@ -539,7 +539,8 @@
                             <CompositeCollection>
                                 <menu:SystemAppState/>
                                 <MenuItem Header="設定" Style="{StaticResource FixPropMenuItem}"/>
-                                <menu:SystemAppExit/>
+                                <menu:SystemCommand Header="通知ウインドウ表示" Mode="ShowNotifyWindow" />
+                                <menu:SystemAppExit />
                             </CompositeCollection>
                         </Setter.Value>
                     </Setter>
@@ -567,6 +568,20 @@
                         <Setter.Value>
                             <ControlTemplate>
                                 <MenuItem Header="アプリ終了" Command="{Binding DataContext.AppExitCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Style="{StaticResource FixPropMenuItem}" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Converter={StaticResource ContextMenuItemElemConverter}}" Value="{x:Static menu:ItemType.SystemCommand}">
+                    <Setter Property="Foreground" Value="{Binding DataContext.BrushBaseFont.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <MenuItem
+                                    Header="{Binding Header}"
+                                    Command="{Binding DataContext.OnMenuSystemCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+                                    CommandParameter="{Binding Mode}"
+                                    />
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
