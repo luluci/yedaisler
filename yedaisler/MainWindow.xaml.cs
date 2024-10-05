@@ -27,6 +27,8 @@ namespace yedaisler
         bool isContextMenuOpen = false;
 
         Config.Config config = new Config.Config();
+        // Notifier画面
+        Notifier.Notifier notifier = new Notifier.Notifier();
 
         public MainWindow()
         {
@@ -47,8 +49,10 @@ namespace yedaisler
 
             //config.ShowDialog();
             var vm = this.DataContext as MainWindowViewModel;
-            vm.Init(this, config);
+            vm.Init(this, notifier, config);
 
+            //Notifier.Log.NotifierLog.Data.Add("test");
+            //notifier.Show();
             //
             this.Topmost = true;
         }

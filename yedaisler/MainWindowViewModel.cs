@@ -22,6 +22,8 @@ namespace yedaisler
     {
         // Window
         MainWindow window;
+        // Notifier画面
+        Notifier.Notifier notifier;
 
         // メイン画面
         public ReactivePropertySlim<string> Disp {  get; set; }
@@ -226,10 +228,12 @@ namespace yedaisler
             cycleProc.Start();
         }
 
-        public void Init(MainWindow wnd, Config.Config config_)
+        public void Init(MainWindow wnd, Notifier.Notifier notifier_, Config.Config config_)
         {
             window = wnd;
 
+            //
+            notifier = notifier_;
             // Configへの参照を記憶
             config = config_;
             config_vm = config.DataContext as Config.ConfigViewModel;
@@ -409,8 +413,8 @@ namespace yedaisler
         {
             Clock.Value = DateTime.Now.ToString("HH:mm:ss");
 
-            window.Topmost = false;
-            window.Topmost = true;
+            //window.Topmost = false;
+            //window.Topmost = true;
         }
 
         public IntPtr WndProcHandler(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
