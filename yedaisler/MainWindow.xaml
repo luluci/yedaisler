@@ -581,9 +581,10 @@
                                 <menu:ToDoHeader />
                                 <menu:ToDoAction />
                                 <menu:Separator />
+                                <menu:Label Name="Option"/>
+                                <menu:ToDoDispInBox />
                                 <menu:ToDoManualAction />
                                 <menu:ToDoManualState />
-                                <menu:ToDoDispInBox />
                                 <menu:Command Name="Dummy"/>
                             </CompositeCollection>
                         </Setter.Value>
