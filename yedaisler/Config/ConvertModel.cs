@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Xml.Linq;
+using yedaisler.Config.Model;
 using yedaisler.ToDo;
 using yedaisler.Utility;
 
@@ -97,6 +98,7 @@ namespace yedaisler.Config
         public ReactivePropertySlim<string> Name { get; set; }
         public ReactivePropertySlim<yedaisler.ToDo.ActionMode> Mode { get; set; }
         public ReactivePropertySlim<ToDoAction> Action { get; set; }
+        public NotifyInfo Notify { get; set; }
         public BlockInfo Block { get; set; }
 
         // Actionなし用共通オブジェクト
@@ -107,7 +109,8 @@ namespace yedaisler.Config
             Name = new ReactivePropertySlim<string>(string.Empty);
             Mode = new ReactivePropertySlim<yedaisler.ToDo.ActionMode>(yedaisler.ToDo.ActionMode.None);
             Action = new ReactivePropertySlim<ToDoAction>(ActionNone);
-            Block = new BlockInfo();
+            //Notify = new NotifyInfo();
+            //Block = new BlockInfo();
         }
 
         public bool ExecAction()
@@ -167,6 +170,16 @@ namespace yedaisler.Config
             {
                 return false;
             }
+        }
+    }
+
+    internal class NotifyInfo
+    {
+        public bool Active { get; set; }
+
+        public NotifyInfo()
+        {
+            Active = false;
         }
     }
 
@@ -305,12 +318,10 @@ namespace yedaisler.Config
             }
             // Action
             info.Action.Value = MakeToDoAction(m_info.Action);
+            // Notify
+            info.Notify = MakeToDoNotify(m_info.Notify);
             // Block
-            if (!(m_info.Block is null))
-            {
-                info.Block.Shutdown = m_info.Block.Shutdown;
-                info.Block.Sleep = m_info.Block.Sleep;
-            }
+            info.Block = MakeToDoBlock(m_info.Block);
 
             return info;
         }
@@ -370,5 +381,29 @@ namespace yedaisler.Config
             act.Path.Value = path;
             return act;
         }
+
+        private NotifyInfo MakeToDoNotify(Model.ToDoNotify m_notify)
+        {
+            var notify = new NotifyInfo();
+
+            if (!(m_notify is null))
+            {
+                notify.Active = m_notify.Active;
+            }
+
+            return notify;
+        }
+
+        private BlockInfo MakeToDoBlock(Model.ToDoBlock m_block)
+        {
+            var block = new BlockInfo();
+            if (!(m_block is null))
+            {
+                block.Shutdown = m_block.Shutdown;
+                block.Sleep = m_block.Sleep;
+            }
+            return block;
+        }
+
     }
 }

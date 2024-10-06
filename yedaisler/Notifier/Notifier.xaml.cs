@@ -41,5 +41,43 @@ namespace yedaisler.Notifier
             this.Hide();
             e.Cancel = true;
         }
+
+        private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is ListBoxItem listBoxItem)
+            {
+                if (listBoxItem.DataContext is NotifyItem item)
+                {
+                    if (!(item.Object is null))
+                    {
+                        //
+                        switch (item.Type)
+                        {
+                            case NotifyType.ToDoAction:
+                                if (item.Object is ToDo.Item todo)
+                                {
+                                    todo.StateAction();
+                                }
+                                break;
+
+                            case NotifyType.None:
+                            default:
+                                // nothing
+                                break;
+                        }
+                        //
+                        item.IsNotified = true;
+                    }
+                    //
+                    yedaisler.Notifier.Log.NotifierLog.Data.Remove(item);
+                }
+            }
+
+            //
+            if (yedaisler.Notifier.Log.NotifierLog.Data.Count == 0)
+            {
+                Hide();
+            }
+        }
     }
 }

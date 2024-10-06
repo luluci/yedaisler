@@ -51,7 +51,10 @@ namespace yedaisler
             var vm = this.DataContext as MainWindowViewModel;
             vm.Init(this, notifier, config);
 
-            //Notifier.Log.NotifierLog.Data.Add("test");
+            //Notifier.Log.NotifierLog.Data.Add(new Notifier.NotifyItem
+            //{
+            //    Text = "test",
+            //});
             //notifier.Show();
             //
             this.Topmost = true;

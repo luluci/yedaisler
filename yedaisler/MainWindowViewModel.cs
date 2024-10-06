@@ -229,6 +229,20 @@ namespace yedaisler
             ToDos = new ReactiveCollection<ToDo.Item>();
             ToDos.ObserveElementProperty(x => x.State.Value).Subscribe(x =>
             {
+                // Notify
+                if (x.Instance is ToDo.Item item)
+                {
+                    if (item.ActiveStateInfo.Value.StateInfoRef.Notify.Active)
+                    {
+                        Notifier.Log.NotifierLog.Data.Add(new Notifier.NotifyItem
+                        {
+                            Text = $"Exec Action: {item.ActiveStateInfo.Value.Name}",
+                            Object = item,
+                            Type = Notifier.NotifyType.ToDoAction,
+                        });
+                    }
+                }
+                //
                 UpdateTotalStateByEachStateChange();
             });
             ToDos.ObserveElementProperty(x => x.DisplayInBox.Value).Subscribe(x =>
@@ -281,6 +295,7 @@ namespace yedaisler
         private void UpdateTotalStateByEachStateChange()
         {
             // ToDo全体状態を更新する
+            var notify = false;
             var block = new Config.BlockInfo();
             ToDo.State state = ToDo.State.Done;
             foreach (var todo in ToDos)
@@ -291,6 +306,11 @@ namespace yedaisler
                     {
                         state = todo.State.Value;
                     }
+                }
+                // Notify
+                if (todo.ActiveStateInfo.Value.StateInfoRef.Notify.Active)
+                {
+                    notify = true;
                 }
                 //
                 block.Shutdown |= todo.ActiveStateInfo.Value.StateInfoRef.Block.Shutdown;
@@ -309,6 +329,12 @@ namespace yedaisler
                     break;
             }
 
+            //
+            if (notify)
+            {
+                notifier.Show();
+            }
+            //
             BlockShutdown.Value = block.Shutdown;
             BlockSleep.Value = block.Sleep;
         }

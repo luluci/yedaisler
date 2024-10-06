@@ -33,7 +33,9 @@
 					},
 					"data": ""
 				},
-
+				"notify": {
+					"active": true
+				},
 				"block": {
 					"shutdown": false,
 					"sleep": false

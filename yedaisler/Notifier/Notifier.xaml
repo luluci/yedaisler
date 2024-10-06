@@ -45,7 +45,7 @@
     </Window.Resources>
     <Grid>
         <ScrollViewer x:Name="LogScrollbar" HorizontalScrollBarVisibility="Auto">
-            <ListBox x:Name="Log" ItemsSource="{Binding Log}" Style="{StaticResource LogListStyle}">
+            <ListBox x:Name="Log" ItemsSource="{Binding Log}" DisplayMemberPath="Text" Style="{StaticResource LogListStyle}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="コピー" Command="{Binding OnClickLogCopy}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
@@ -53,6 +53,11 @@
                         <MenuItem Header="ログクリア" Command="{Binding OnClickLogClear}"/>
                     </ContextMenu>
                 </ListBox.ContextMenu>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                        <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
             </ListBox>
         </ScrollViewer>
     </Grid>

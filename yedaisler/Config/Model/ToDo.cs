@@ -39,9 +39,13 @@ namespace yedaisler.Config.Model
         [JsonPropertyName("action")]
         public ToDoAction Action { get; set; }
 
+        // 通知情報
+        [JsonPropertyName("notify")]
+        public ToDoNotify Notify { get; set; }
+
         // 指定した動作をブロックする
         [JsonPropertyName("block")]
-        public ToDoActionBlock Block { get; set; }
+        public ToDoBlock Block { get; set; }
     }
 
     internal class ToDoAction
@@ -76,7 +80,13 @@ namespace yedaisler.Config.Model
         public string Url { get; set; } = string.Empty;
     }
 
-    internal class ToDoActionBlock
+    internal class ToDoNotify
+    {
+        [JsonPropertyName("active")]
+        public bool Active { get; set; } = false;
+    }
+
+    internal class ToDoBlock
     {
         [JsonPropertyName("shutdown")]
         public bool Shutdown { get; set; } = false;

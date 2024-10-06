@@ -14,11 +14,13 @@ namespace yedaisler.Notifier
     {
 
         // Logコンテナ参照
-        public ReactiveCollection<string> Log { get; set; }
+        public ReactiveCollection<NotifyItem> Log { get; set; }
 
         //
         public ReactiveCommand OnClickLogCopy { get; set; }
         public ReactiveCommand OnClickLogClear { get; set; }
+
+        public ReactiveCommand OnNotifyAction { get; set; }
 
         public NotifierViewModel()
         {
@@ -37,6 +39,13 @@ namespace yedaisler.Notifier
             OnClickLogClear.Subscribe(x =>
             {
                 Log.Clear();
+            });
+
+            OnNotifyAction = new ReactiveCommand();
+            OnNotifyAction.Subscribe(x =>
+            {
+                int i = 0;
+                i++;
             });
         }
     }

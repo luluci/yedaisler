@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using yedaisler.Utility;
 
 namespace yedaisler.Notifier
@@ -16,15 +17,29 @@ namespace yedaisler.Notifier
         static public LogImpl NotifierLog = new LogImpl();
     }
 
+    public enum NotifyType
+    {
+        None,
+        ToDoAction,
+    }
+    internal class NotifyItem
+    {
+        public string Text { get; set; }
+        public object Object { get; set; } = null;
+        public NotifyType Type { get; set; } = NotifyType.None;
+
+        // 制御フラグ
+        public bool IsNotified { get; set; } = false;
+    }
 
     internal class LogImpl : BindableBase, IDisposable
     {
-        public ReactiveCollection<string> Data { get; set; }
+        public ReactiveCollection<NotifyItem> Data { get; set; }
         public StreamWriter Writer { get; set; }
 
         public LogImpl()
         {
-            Data = new ReactiveCollection<string>();
+            Data = new ReactiveCollection<NotifyItem>();
             Data.AddTo(Disposables);
 
             Writer = null;
