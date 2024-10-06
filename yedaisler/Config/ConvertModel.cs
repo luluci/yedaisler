@@ -17,9 +17,21 @@ namespace yedaisler.Config
     {
         public ReactivePropertySlim<GuiColor> Color { get; set; }
 
+        public ReactivePropertySlim<StartupPosition> StartupPosition { get; set; }
+
         public Gui() {
             Color = new ReactivePropertySlim<GuiColor>(new GuiColor());
+            StartupPosition = new ReactivePropertySlim<StartupPosition>(yedaisler.Config.StartupPosition.None);
         }
+    }
+
+    internal enum StartupPosition
+    {
+        None,
+        BottomRight,
+        BottomLeft,
+        TopRight,
+        TopLeft,
     }
 
     internal class GuiColor : BindableBase
@@ -195,6 +207,33 @@ namespace yedaisler.Config
 
             // Color
             MakeGuiColor(gui.Color);
+
+            // StartupPosition
+            if (gui.StartupLocation is null)
+            {
+                Gui.Value.StartupPosition.Value = StartupPosition.None;
+            }
+            else
+            {
+                switch (gui.StartupLocation)
+                {
+                    case "top-left":
+                        Gui.Value.StartupPosition.Value = StartupPosition.TopLeft;
+                        break;
+                    case "top-right":
+                        Gui.Value.StartupPosition.Value = StartupPosition.TopRight;
+                        break;
+                    case "bottom-left":
+                        Gui.Value.StartupPosition.Value = StartupPosition.BottomLeft;
+                        break;
+                    case "bottom-right":
+                        Gui.Value.StartupPosition.Value = StartupPosition.BottomRight;
+                        break;
+                    default:
+                        Gui.Value.StartupPosition.Value = StartupPosition.None;
+                        break;
+                }
+            }
         }
         private void MakeGuiColor(Model.Color color)
         {

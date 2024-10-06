@@ -11,7 +11,9 @@
 			"backReady": "#A0FF0000",
 			"backDoing": "#A0FFFF00",
 			"backDone": "#A0202020"
-		}
+		},
+		
+		"startupLocation": "bottom-left"
 	},
 
 	"todos": [
@@ -20,11 +22,11 @@
 			"displayInBox": true,
 
 			"ready": {
-				"name": "ログインする",
+				"name": "Aにログインする",
 				"mode": "exec",
 
 				"action": {
-					"name": "URLを開く",
+					"name": "URLを開く1",
 					"type": "openUrl",
 					"openUrl": {
 						"url": "https://www.google.co.jp/"
@@ -38,7 +40,7 @@
 				}
 			},
 			"doing": {
-				"name": "ログアウトする",
+				"name": "Aからログアウトする",
 				"mode": "exec",
 
 				"action": {
@@ -62,11 +64,11 @@
 			"name": "Bにログイン",
 
 			"ready": {
-				"name": "ログインする",
+				"name": "Bにログインする",
 				"mode": "exec",
 
 				"action": {
-					"name": "URLを開く",
+					"name": "URLを開く3",
 					"type": "openUrl",
 					"openUrl": {
 						"url": "https://www.google.co.jp/"

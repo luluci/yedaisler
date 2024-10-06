@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace yedaisler.Config.Model
 {
@@ -12,6 +13,8 @@ namespace yedaisler.Config.Model
         [JsonPropertyName("color")]
         public Color Color { get; set; }
 
+        [JsonPropertyName("startupLocation")]
+        public string StartupLocation {  get; set; }
     }
 
     internal class Color

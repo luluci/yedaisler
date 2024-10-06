@@ -59,12 +59,39 @@ namespace yedaisler
 
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            // Window起動位置
-            var rect = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
-            var mat = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
-            // 右下
-            this.Left = rect.Right / mat.M11 - this.Width;
-            this.Top =rect.Bottom / mat.M22 - this.Height;
+            if (config.DataContext is Config.ConfigViewModel vm)
+            {
+                // Window起動位置
+                var rect = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
+                var mat = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
+                switch (vm.Gui.Value.StartupPosition.Value)
+                {
+                    case Config.StartupPosition.TopLeft:
+                        // 左上
+                        this.Left = rect.Left / mat.M11;
+                        this.Top = rect.Top / mat.M22;
+                        break;
+                    case Config.StartupPosition.TopRight:
+                        // 右上
+                        this.Left = rect.Right / mat.M11 - this.Width;
+                        this.Top = rect.Top / mat.M22;
+                        break;
+                    case Config.StartupPosition.BottomLeft:
+                        // 左下
+                        this.Left = rect.Left / mat.M11;
+                        this.Top = rect.Bottom / mat.M22 - this.Height;
+                        break;
+                    case Config.StartupPosition.BottomRight:
+                        // 右下
+                        this.Left = rect.Right / mat.M11 - this.Width;
+                        this.Top = rect.Bottom / mat.M22 - this.Height;
+                        break;
+
+                    case Config.StartupPosition.None:
+                    default:
+                        break;
+                }
+            }
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
