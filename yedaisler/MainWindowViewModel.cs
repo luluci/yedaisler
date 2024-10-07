@@ -369,7 +369,9 @@ namespace yedaisler
             //
             if (notify)
             {
-                notifier.Show();
+                //notifier.Show();
+                notifier.Owner = window;
+                notifier.ShowDialog();
             }
             //
             BlockShutdown.Value = block.Shutdown;
