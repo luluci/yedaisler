@@ -8,6 +8,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
@@ -36,6 +37,7 @@ namespace yedaisler
 
         public ReactivePropertySlim<double> SnapDistH { get; set; }
         public ReactivePropertySlim<double> SnapDistV { get; set; }
+        public ReactivePropertySlim<Behaviors.SnapWnd2ScrLocation> SnapLocation { get; set; }
 
         public ReactiveCollection<ToDo.Item> ToDos { get; set; }
         public ReactivePropertySlim<ToDo.State> State { get; set; }
@@ -133,7 +135,10 @@ namespace yedaisler
             {
                 if (x is TextBlock obj)
                 {
+                    // ウインドウサイズ更新
                     Width.Value = obj.ActualWidth + 16;
+                    // ウインドウサイズとSnapLocationに合わせて表示位置調整
+                    UpdateSnapLocation(SnapLocation.Value);
                 }
             });
             DispSizeChangedCommand.AddTo(Disposables);
@@ -149,6 +154,8 @@ namespace yedaisler
             SnapDistH.AddTo(Disposables);
             SnapDistV = new ReactivePropertySlim<double>(1);
             SnapDistV.AddTo(Disposables);
+            SnapLocation = new ReactivePropertySlim<SnapWnd2ScrLocation>(SnapWnd2ScrLocation.Any);
+            SnapLocation.AddTo(Disposables);
 
             Width = new ReactivePropertySlim<double>(50);
             Width.Subscribe(x =>
@@ -290,6 +297,36 @@ namespace yedaisler
             // WindowMessageハンドル
             hwndSource = Utility.WindowsApi.GetHwndSource(wnd);
             hwndSource.AddHook(WndProcHandler);
+        }
+
+        public void UpdateSnapLocation(Behaviors.SnapWnd2ScrLocation loc)
+        {
+            // 上下左右辺でなければ更新無し
+            if (loc == SnapWnd2ScrLocation.Any) return;
+            // 指定されたSnap先に合わせてウインドウ座標を更新
+            // ウインドウが存在するスクリーンを取得
+            // DPIから物理ピクセルへ変換する行列を取得してそれぞれの長さを変換
+            var mat = PresentationSource.FromVisual(window).CompositionTarget.TransformToDevice;
+            var wndPos = mat.Transform(new System.Windows.Point(window.Left, window.Top));
+            var wndScr = System.Windows.Forms.Screen.GetWorkingArea(new System.Drawing.Point((int)wndPos.X, (int)wndPos.Y));
+            // 位置調整
+            if ((loc & SnapWnd2ScrLocation.Top) != 0)
+            {
+                window.Top = wndScr.Top / mat.M22;
+            }
+            if ((loc & SnapWnd2ScrLocation.Bottom) != 0)
+            {
+                window.Top = wndScr.Bottom / mat.M22 - window.Height;
+            }
+            if ((loc & SnapWnd2ScrLocation.Left) != 0)
+            {
+                window.Left = wndScr.Left / mat.M11;
+            }
+            if ((loc & SnapWnd2ScrLocation.Right) != 0)
+            {
+                window.Left = wndScr.Right / mat.M11 - window.Width;
+            }
+
         }
 
         private void UpdateTotalStateByEachStateChange()

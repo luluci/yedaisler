@@ -14,7 +14,7 @@
         ContentRendered="Window_ContentRendered"
         MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseLeftButtonUp="Window_MouseLeftButtonUp" LocationChanged="Window_LocationChanged" Loaded="Window_Loaded" >
     <i:Interaction.Behaviors>
-        <behaviors:SnapWnd2ScrBehavior SnapDistanceHorizontal="{Binding SnapDistH.Value}" SnapDistanceVertical="{Binding SnapDistV.Value}" />
+        <behaviors:SnapWnd2ScrBehavior SnapDistanceHorizontal="{Binding SnapDistH.Value}" SnapDistanceVertical="{Binding SnapDistV.Value}" SnapLocation="{Binding SnapLocation.Value, Mode=TwoWay}" />
     </i:Interaction.Behaviors>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="ContentRendered">

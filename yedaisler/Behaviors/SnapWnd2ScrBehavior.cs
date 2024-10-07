@@ -8,6 +8,19 @@ using System.Windows;
 
 namespace yedaisler.Behaviors
 {
+    internal enum SnapWnd2ScrLocation
+    {
+        Any         = 0,                // 任意座標
+        Top         = 0x01,             // 上辺(左端右端以外)
+        Bottom      = 0x02,             // 下辺(左端右端以外)
+        Left        = 0x04,             // 左辺(上端下端以外)
+        Right       = 0x08,             // 右辺(上端下端以外)
+        TopLeft     = Top | Left,       // 左上
+        TopRight    = Top | Right,      // 右上
+        BottomLeft  = Bottom | Left,    // 左下
+        BottomRight = Bottom | Right,   // 右下
+    }
+
     internal class SnapWnd2ScrBehavior : Behavior<Window>
     {
         #region SnapDistanceHorizontal 依存関係プロパティ
@@ -40,6 +53,15 @@ namespace yedaisler.Behaviors
             DependencyProperty.Register("EnableSnap", typeof(bool), typeof(SnapWnd2ScrBehavior), new PropertyMetadata(true));
         #endregion
 
+        #region SnapLocation
+        public SnapWnd2ScrLocation SnapLocation
+        {
+            get { return (SnapWnd2ScrLocation)GetValue(SnapLocationProperty); }
+            set { SetValue(SnapLocationProperty, value); }
+        }
+        public static readonly DependencyProperty SnapLocationProperty =
+            DependencyProperty.Register("SnapLocation", typeof(SnapWnd2ScrLocation), typeof(SnapWnd2ScrBehavior), new PropertyMetadata(SnapWnd2ScrLocation.Any));
+        #endregion
 
         protected override void OnAttached()
         {
@@ -70,28 +92,36 @@ namespace yedaisler.Behaviors
             var newTop = scaledTopLeft.Y;
             var newLeft = scaledTopLeft.X;
 
+            //
+            SnapWnd2ScrLocation snapLoc = SnapWnd2ScrLocation.Any;
+
             // 横方向の調整
             if (Math.Abs(screen.Left - scaledTopLeft.X) <= scaledSnapDisatance.X)
             {
                 newLeft = screen.Left;
+                snapLoc |= SnapWnd2ScrLocation.Left;
             }
             else if (Math.Abs(screen.Right - scaledBottomRight.X) <= scaledSnapDisatance.X)
             {
                 newLeft = screen.Right - scaledSize.X;
+                snapLoc |= SnapWnd2ScrLocation.Right;
             }
 
             // 縦方向の調整
             if (Math.Abs(screen.Top - scaledTopLeft.Y) <= scaledSnapDisatance.Y)
             {
                 newTop = screen.Top;
+                snapLoc |= SnapWnd2ScrLocation.Top;
             }
             else if (Math.Abs(screen.Bottom - scaledBottomRight.Y) <= scaledSnapDisatance.Y)
             {
                 newTop = screen.Bottom - scaledSize.Y;
+                snapLoc |= SnapWnd2ScrLocation.Bottom;
             }
 
             window.Left = newLeft / mat.M11;
             window.Top = newTop / mat.M22;
+            SnapLocation = snapLoc;
         }
     }
 }
