@@ -178,7 +178,7 @@ namespace yedaisler
                     switch (mode)
                     {
                         case Menu.SystemCommand.CommandMode.ShowNotifyWindow:
-                            notifier.Show();
+                            ShowNotifier();
                             break;
 
                         case Menu.SystemCommand.CommandMode.None:
@@ -369,13 +369,18 @@ namespace yedaisler
             //
             if (notify)
             {
-                //notifier.Show();
-                notifier.Owner = window;
-                notifier.ShowDialog();
+                ShowNotifier();
             }
             //
             BlockShutdown.Value = block.Shutdown;
             BlockSleep.Value = block.Sleep;
+        }
+
+        private void ShowNotifier()
+        {
+            notifier.Owner = window;
+            notifier.Show();
+            //notifier.ShowDialog();
         }
 
         private void UpdateTotalState()
