@@ -533,6 +533,12 @@
                                     <Grid Margin="10,2,10,2">
                                         <TextBlock Text="{Binding DataContext.Clock.Value, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" FontFamily="Source Code Pro Semibold" FontSize="16"/>
                                     </Grid>
+                                    <!--
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox Width="100"/>
+                                        <Button Width="50" Content="Add"/>
+                                    </StackPanel>
+                                    -->
                                 </StackPanel>
                             </ControlTemplate>
                         </Setter.Value>
@@ -663,14 +669,7 @@
                                 <MenuItem StaysOpenOnClick="True" DataContext="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem}, AncestorLevel=2}}" d:DataContext="{x:Type todo:Item}">
                                     <MenuItem.Style>
                                         <Style TargetType="{x:Type MenuItem}">
-                                            <Setter Property="Header">
-                                                <Setter.Value>
-                                                    <MultiBinding Converter="{StaticResource ToDoActionDispConverter}" UpdateSourceTrigger="PropertyChanged">
-                                                        <Binding Path="State.Value" />
-                                                        <Binding Path="DataContext" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem},AncestorLevel=2}"/>
-                                                    </MultiBinding>
-                                                </Setter.Value>
-                                            </Setter>
+                                            <Setter Property="Header" Value="{Binding ActiveStateInfo.Value.ActionName.Value}" />
                                             <Setter Property="Command">
                                                 <Setter.Value>
                                                     <Binding Path="DataContext.OnMenuStateAction" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type MenuItem},AncestorLevel=2}"/>
