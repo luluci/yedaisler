@@ -1,7 +1,9 @@
 ﻿using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Reactive.Bindings.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Reactive.Disposables;
@@ -19,33 +21,18 @@ using static yedaisler.Utility.WindowsApi;
 
 namespace yedaisler
 {
+    // 表示制御
+    public enum BoxDisplayMode
+    {
+        System,     // システム共通表示
+        TaskState,  // タスク状態表示
+        MultiTaskState, // 複数タスク表示
+    }
+
     internal class MainWindowViewModel : BindableBase, IDisposable
     {
-        // Window
-        MainWindow window;
-        // Notifier画面
-        Notifier.Notifier notifier;
-
-        // メイン画面
-        public ReactivePropertySlim<string> Disp {  get; set; }
-        //public ReactivePropertySlim<double> DispWidth { get; set; }
-        public ReactiveCommand DispSizeChangedCommand { get; private set; }
-        public ReactiveCommand ContentRenderedCommand { get; private set; }
-
-        public ReactivePropertySlim<double> Width { get; set; }
-        public ReactivePropertySlim<double> Height { get; set; }
-
-        public ReactivePropertySlim<double> SnapDistH { get; set; }
-        public ReactivePropertySlim<double> SnapDistV { get; set; }
-        public ReactivePropertySlim<Behaviors.SnapWnd2ScrLocation> SnapLocation { get; set; }
-
-        public ReactiveCollection<ToDo.Item> ToDos { get; set; }
-        public ReactivePropertySlim<ToDo.State> State { get; set; }
-
-        // SystemCommandハンドラ
-        public ReactiveCommand OnMenuSystemCommand { get; set; }
-        public ReactiveCommand OnMenuAppExit { get; set; }
-
+        // 
+        public ReactivePropertySlim<int> DispBoxFontSize { get; private set; }
         // 色設定
         public ReactivePropertySlim<SolidColorBrush> BrushBackMenu { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushBaseFont { get; private set; }
@@ -61,18 +48,50 @@ namespace yedaisler
         public ReactivePropertySlim<SolidColorBrush> BrushBackNone { get; private set; }
         public ReactivePropertySlim<SolidColorBrush> BrushFontNone { get; private set; }
 
-        // 表示制御
-        enum BoxDisplayMode
-        {
-            System,     // システム共通表示
-            TaskState,  // タスク状態表示
-        }
-        BoxDisplayMode boxDisplayMode;
-        ToDo.Item boxDisplayTaskRef;
-
         // 機能制御フラグ
         public ReactivePropertySlim<bool> BlockShutdown { get; private set; }
         public ReactivePropertySlim<bool> BlockSleep { get; private set; }
+
+
+
+        // Window
+        MainWindow window;
+        // Notifier画面
+        Notifier.Notifier notifier;
+
+
+        // 表示BOX情報
+        public ReactivePropertySlim<string> Disp {  get; set; }
+        //public ReactivePropertySlim<double> DispWidth { get; set; }
+        public ReactiveCommand DispSizeChangedCommand { get; private set; }
+        public ReactiveCommand ContentRenderedCommand { get; private set; }
+
+        public ReactivePropertySlim<BoxDisplayMode> DispBoxMode { get; set; }
+        public ReactivePropertySlim<Visibility> DispBoxSingle {  get; set; }
+        public ReactivePropertySlim<Visibility> DispBoxMulti { get; set; }
+
+        public ReactivePropertySlim<double> DispBoxMultiWidth { get; set; }
+        public ReactivePropertySlim<bool> DispBoxMultiActive { get; set; }
+        // BOX表示設定ToDoカウント
+        private double dispBoxSingleWidth;
+        private int dispInBoxCount;
+        ToDo.Item boxDisplayTaskRef;
+
+        public ReactivePropertySlim<double> Width { get; set; }
+        public ReactivePropertySlim<double> Height { get; set; }
+
+        public ReactivePropertySlim<double> SnapDistH { get; set; }
+        public ReactivePropertySlim<double> SnapDistV { get; set; }
+        public ReactivePropertySlim<Behaviors.SnapWnd2ScrLocation> SnapLocation { get; set; }
+
+        public ReactiveCollection<ToDo.Item> ToDos { get; set; }
+        public ReactivePropertySlim<ToDo.State> State { get; set; }
+
+        // SystemCommandハンドラ
+        public ReactiveCommand OnMenuSystemCommand { get; set; }
+        public ReactiveCommand OnMenuAppExit { get; set; }
+
+        public ObservableCollection<Utility.IConcatTextItem> MultiDispToDos {  get; set; }
 
         // Config関連
         Config.Config config;
@@ -104,97 +123,7 @@ namespace yedaisler
                 i++;
             });
 
-            // 表示制御
-            boxDisplayMode = BoxDisplayMode.System;
-            boxDisplayTaskRef = null;
-
-            // メイン画面
-            Disp = new ReactivePropertySlim<string>("");
-            Disp.AddTo(Disposables);
-            //DispWidth = new ReactivePropertySlim<double>(0.0);
-            //DispWidth.Subscribe(x =>
-            //{
-            //    int i = 0;
-            //    i++;
-            //});
-            //DispWidth.AddTo(Disposables);
-            ContentRenderedCommand = new ReactiveCommand();
-            ContentRenderedCommand.Subscribe(x =>
-            {
-                // Window描画後イベント
-                // ToDoアイテムゼロによる表示更新処理
-                // Loadedイベント時はWindowが描画されてなくて表示更新できなかった
-                if (ToDos.Count == 0)
-                {
-                    UpdateTotalState();
-                }
-            })
-            .AddTo(Disposables);
-            DispSizeChangedCommand = new ReactiveCommand();
-            DispSizeChangedCommand.Subscribe(x =>
-            {
-                if (x is TextBlock obj)
-                {
-                    // ウインドウサイズ更新
-                    Width.Value = obj.ActualWidth + 16;
-                    // ウインドウサイズとSnapLocationに合わせて表示位置調整
-                    UpdateSnapLocation(SnapLocation.Value);
-                }
-            });
-            DispSizeChangedCommand.AddTo(Disposables);
-            // 
-            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.Done);
-            State.Subscribe(state =>
-            {
-                updateBoxDisplay();
-            })
-            .AddTo(Disposables);
-
-            SnapDistH = new ReactivePropertySlim<double>(1);
-            SnapDistH.AddTo(Disposables);
-            SnapDistV = new ReactivePropertySlim<double>(1);
-            SnapDistV.AddTo(Disposables);
-            SnapLocation = new ReactivePropertySlim<SnapWnd2ScrLocation>(SnapWnd2ScrLocation.Any);
-            SnapLocation.AddTo(Disposables);
-
-            Width = new ReactivePropertySlim<double>(50);
-            Width.Subscribe(x =>
-            {
-                SnapDistH.Value = x / 2;
-            })
-            .AddTo(Disposables);
-            Height = new ReactivePropertySlim<double>(30);
-            Height.Subscribe(x =>
-            {
-                SnapDistV.Value = x / 2;
-            })
-            .AddTo(Disposables);
-
-            OnMenuSystemCommand = new ReactiveCommand();
-            OnMenuSystemCommand.Subscribe(x =>
-            {
-                if (x is Menu.SystemCommand.CommandMode mode)
-                {
-                    switch (mode)
-                    {
-                        case Menu.SystemCommand.CommandMode.ShowNotifyWindow:
-                            ShowNotifier();
-                            break;
-
-                        case Menu.SystemCommand.CommandMode.None:
-                        default:
-                            // nothing
-                            break;
-                    }
-                }
-            });
-            OnMenuAppExit = new ReactiveCommand();
-            OnMenuAppExit.Subscribe(() =>
-            {
-                // App終了
-                System.Windows.Application.Current.Shutdown((int)System.Windows.ShutdownMode.OnExplicitShutdown);
-            });
-
+            DispBoxFontSize = new ReactivePropertySlim<int>(14);
             // Color
             BrushBackMenu = new ReactivePropertySlim<SolidColorBrush>("#A0202040".ToSolidColorBrush());
             BrushBackMenu.AddTo(Disposables);
@@ -225,28 +154,175 @@ namespace yedaisler
             BrushBackNone.AddTo(Disposables);
             BrushFontNone = new ReactivePropertySlim<SolidColorBrush>("#FFFFFFFF".ToSolidColorBrush());
             BrushFontNone.AddTo(Disposables);
-
             //
             BlockShutdown = new ReactivePropertySlim<bool>(false);
             BlockShutdown.AddTo(Disposables);
             BlockSleep = new ReactivePropertySlim<bool>(false);
             BlockSleep.AddTo(Disposables);
 
+            SnapDistH = new ReactivePropertySlim<double>(1);
+            SnapDistH.AddTo(Disposables);
+            SnapDistV = new ReactivePropertySlim<double>(1);
+            SnapDistV.AddTo(Disposables);
+            SnapLocation = new ReactivePropertySlim<SnapWnd2ScrLocation>(SnapWnd2ScrLocation.Any);
+            SnapLocation.AddTo(Disposables);
+
+            Width = new ReactivePropertySlim<double>(50);
+            Width.Subscribe(x =>
+            {
+                SnapDistH.Value = x / 2;
+            })
+            .AddTo(Disposables);
+            Height = new ReactivePropertySlim<double>(30);
+            Height.Subscribe(x =>
+            {
+                SnapDistV.Value = x / 2;
+            })
+            .AddTo(Disposables);
+
+
+            // BOX表示モード
+            dispBoxSingleWidth = 0.0;
+            dispInBoxCount = 0;
+            boxDisplayTaskRef = null;
+            DispBoxMultiWidth = new ReactivePropertySlim<double>(120);
+            DispBoxMultiActive = new ReactivePropertySlim<bool>(false);
+            DispBoxSingle = new ReactivePropertySlim<Visibility>(Visibility.Visible);
+            DispBoxMulti = new ReactivePropertySlim<Visibility>(Visibility.Collapsed);
+            DispBoxMode = new ReactivePropertySlim<BoxDisplayMode>(BoxDisplayMode.System);
+            DispBoxMode.Subscribe(x =>
+            {
+                switch (x)
+                {
+                    case BoxDisplayMode.System:
+                    case BoxDisplayMode.TaskState:
+                        DispBoxSingle.Value = Visibility.Visible;
+                        DispBoxMulti.Value = Visibility.Collapsed;
+                        break;
+
+                    case BoxDisplayMode.MultiTaskState:
+                        DispBoxSingle.Value = Visibility.Hidden;
+                        DispBoxMulti.Value = Visibility.Visible;
+                        break;
+
+                    default:
+                        // できる？
+                        DispBoxMode.Value = BoxDisplayMode.System;
+                        break;
+                }
+                //
+                UpdateDispBoxWidth();
+            })
+            .AddTo(Disposables);
+
+            // メイン画面
+            Disp = new ReactivePropertySlim<string>("");
+            Disp.AddTo(Disposables);
+            //DispWidth = new ReactivePropertySlim<double>(0.0);
+            //DispWidth.Subscribe(x =>
+            //{
+            //    int i = 0;
+            //    i++;
+            //});
+            //DispWidth.AddTo(Disposables);
+            ContentRenderedCommand = new ReactiveCommand();
+            ContentRenderedCommand.Subscribe(x =>
+            {
+                // Window描画後イベント
+                // ToDoアイテムゼロによる表示更新処理
+                // Loadedイベント時はWindowが描画されてなくて表示更新できなかった
+                if (ToDos.Count == 0)
+                {
+                    UpdateTotalState();
+                }
+            })
+            .AddTo(Disposables);
+            DispSizeChangedCommand = new ReactiveCommand();
+            DispSizeChangedCommand.Subscribe(x =>
+            {
+                if (x is TextBlock obj && DispBoxMode.Value != BoxDisplayMode.MultiTaskState)
+                {
+                    // ウインドウサイズ更新
+                    dispBoxSingleWidth = obj.ActualWidth + 16;
+                    UpdateDispBoxWidth();
+                }
+            });
+            DispSizeChangedCommand.AddTo(Disposables);
+            // 
+            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.Done);
+            State.Subscribe(state =>
+            {
+                UpdateBoxDisplay();
+            })
+            .AddTo(Disposables);
+
+            OnMenuSystemCommand = new ReactiveCommand();
+            OnMenuSystemCommand.Subscribe(x =>
+            {
+                if (x is Menu.SystemCommand.CommandMode mode)
+                {
+                    switch (mode)
+                    {
+                        case Menu.SystemCommand.CommandMode.ShowNotifyWindow:
+                            ShowNotifier();
+                            break;
+
+                        case Menu.SystemCommand.CommandMode.None:
+                        default:
+                            // nothing
+                            break;
+                    }
+                }
+            });
+            OnMenuAppExit = new ReactiveCommand();
+            OnMenuAppExit.Subscribe(() =>
+            {
+                // App終了
+                System.Windows.Application.Current.Shutdown((int)System.Windows.ShutdownMode.OnExplicitShutdown);
+            });
+
+            // 
+            MultiDispToDos = new ObservableCollection<IConcatTextItem>();
             //
             ToDos = new ReactiveCollection<ToDo.Item>();
             ToDos.ObserveElementProperty(x => x.State.Value).Subscribe(x =>
             {
-                // Notify
                 if (x.Instance is ToDo.Item item)
                 {
+                    // Notify処理
                     if (item.ActiveStateInfo.Value.StateInfoRef.Notify.Active)
                     {
                         Notifier.Log.NotifierLog.Data.Add(new Notifier.NotifyItem
                         {
-                            Text = $"Exec Action: {item.ActiveStateInfo.Value.Name}",
+                            Text = $"Exec Action: {item.ActiveStateInfo.Value.Name.Value}",
                             Object = item,
                             Type = Notifier.NotifyType.ToDoAction,
                         });
+                    }
+                    // MultiDisp処理
+                    item.Text.Value = item.ActiveStateInfo.Value.Name.Value;
+                    //
+                    switch (item.State.Value)
+                    {
+                        case ToDo.State.Ready:
+                            item.Background.Value = BrushBackReady.Value;
+                            item.Foreground.Value = BrushFontReady.Value;
+                            break;
+
+                        case ToDo.State.Doing:
+                            item.Background.Value = BrushBackDoing.Value;
+                            item.Foreground.Value = BrushFontDoing.Value;
+                            break;
+
+                        case ToDo.State.Done:
+                            item.Background.Value = BrushBackDone.Value;
+                            item.Foreground.Value = BrushFontDone.Value;
+                            break;
+
+                        default:
+                            item.Background.Value = BrushBackNone.Value;
+                            item.Foreground.Value = BrushFontNone.Value;
+                            break;
                     }
                 }
                 //
@@ -289,9 +365,13 @@ namespace yedaisler
             // Config.ToDoを制御用データに変換
             foreach (var c_todo in config_vm.ToDos)
             {
+                // todo作成
                 var todo = new ToDo.Item(c_todo);
                 todo.Init();
                 ToDos.Add(todo);
+                // 表示カウントを初期化する
+                // updateDisplayInBoxが初期化時にもコールされてしまうためつじつま合わせしている
+                if (todo.DisplayInBox.Value) dispInBoxCount++;
             }
 
             // WindowMessageハンドル
@@ -353,15 +433,33 @@ namespace yedaisler
                 block.Shutdown |= todo.ActiveStateInfo.Value.StateInfoRef.Block.Shutdown;
                 block.Sleep |= todo.ActiveStateInfo.Value.StateInfoRef.Block.Sleep;
             }
+            // 表示情報更新
+            MultiDispToDos.Clear();
+            boxDisplayTaskRef = null;
+            foreach (var item in ToDos)
+            {
+                if (item.DisplayInBox.Value)
+                {
+                    MultiDispToDos.Add((IConcatTextItem)item);
+                    boxDisplayTaskRef = item;
+                }
+            }
             //
-            switch (boxDisplayMode)
+            switch (DispBoxMode.Value)
             {
                 case BoxDisplayMode.TaskState:
+                    // SingleToDo表示ではそのToDoの表示情報に従う
                     State.Value = boxDisplayTaskRef.State.Value;
+                    break;
+
+                case BoxDisplayMode.MultiTaskState:
+                    State.Value = ToDo.State.None;
                     break;
 
                 case BoxDisplayMode.System:
                 default:
+                    // System表示ではReady>Doing>Doneの優先順位
+                    // MultiToDo表示はこの情報を使わないので適当に更新
                     State.Value = state;
                     break;
             }
@@ -374,6 +472,26 @@ namespace yedaisler
             //
             BlockShutdown.Value = block.Shutdown;
             BlockSleep.Value = block.Sleep;
+        }
+
+        private void UpdateDispBoxWidth()
+        {
+            switch (DispBoxMode.Value)
+            {
+                case BoxDisplayMode.MultiTaskState:
+                    Width.Value = DispBoxMultiWidth.Value;
+                    break;
+
+                case BoxDisplayMode.System:
+                case BoxDisplayMode.TaskState:
+                default:
+                    Width.Value = dispBoxSingleWidth;
+                    break;
+
+            }
+
+            // ウインドウサイズとSnapLocationに合わせて表示位置調整
+            UpdateSnapLocation(SnapLocation.Value);
         }
 
         private void ShowNotifier()
@@ -391,21 +509,25 @@ namespace yedaisler
             }
         }
 
-        private void updateBoxDisplay()
+        private void UpdateBoxDisplay()
         {
-            switch (boxDisplayMode)
+            switch (DispBoxMode.Value)
             {
                 case BoxDisplayMode.TaskState:
                     updateBoxDisplayTaskState();
                     break;
 
+                case BoxDisplayMode.MultiTaskState:
+                    // MultiToDo表示では
+                    break;
+
                 case BoxDisplayMode.System:
                 default:
-                    updateBoxDisplaySystem();
+                    UpdateBoxDisplaySystem();
                     break;
             }
         }
-        private void updateBoxDisplaySystem()
+        private void UpdateBoxDisplaySystem()
         {
             switch (State.Value)
             {
@@ -433,60 +555,49 @@ namespace yedaisler
 
         private void updateDisplayInBox(ToDo.Item todo, bool value)
         {
-            // todo: 複数チェックされたら、全部を流し表示する
-            // 現状で一つだけチェック有効とする
-            if (value)
+            // 表示ToDo数を事前にチェック
+            //if (value) dispInBoxCount++;
+            //else dispInBoxCount--;
+            dispInBoxCount = 0;
+            foreach (var item in ToDos)
             {
-                // その他の項目のチェックを下す
-                bool eventCheck = false;
-                foreach (var item in ToDos)
-                {
-                    if (!Object.ReferenceEquals(todo, item) && item.DisplayInBox.Value == true)
-                    {
-                        // 注意:false設定によるイベントが発生する＝本関数のfalse側パスに入る
-                        item.DisplayInBox.Value = false;
-                        eventCheck = true;
-                    }
-                }
-                // falseに変更していたらイベントが発生しているのでそちらで処置が入る
-                // falseへの変更がなければここで処理する
-                if (!eventCheck)
-                {
-                    boxDisplayTaskRef = todo;
-                    boxDisplayMode = BoxDisplayMode.TaskState;
-                }
+                if (item.DisplayInBox.Value) dispInBoxCount++;
             }
-            else
+
+            switch (dispInBoxCount)
             {
-                boxDisplayTaskRef = null;
-                boxDisplayMode = BoxDisplayMode.System;
-                foreach (var item in ToDos)
-                {
-                    if (item.DisplayInBox.Value)
-                    {
-                        boxDisplayTaskRef = item;
-                    }
-                }
-                if (!(boxDisplayTaskRef is null))
-                {
-                    boxDisplayMode = BoxDisplayMode.TaskState;
-                }
-                else
-                {
-                    //UpdateTotalStateByEachStateChange();
-                }
+                case 0:
+                    DispBoxMode.Value = BoxDisplayMode.System;
+                    DispBoxMultiActive.Value = false;
+                    break;
+                case 1:
+                    DispBoxMode.Value = BoxDisplayMode.TaskState;
+                    DispBoxMultiActive.Value = false;
+                    break;
+                default:
+                    DispBoxMode.Value = BoxDisplayMode.MultiTaskState;
+                    DispBoxMultiActive.Value = true;
+                    break;
             }
-            //
+            // System表示とSingleToDo表示で表示内容が異なるケースがあるため更新
             UpdateTotalStateByEachStateChange();
-            updateBoxDisplay();
+            UpdateBoxDisplay();
         }
 
         public void ExecAction()
         {
-            switch (boxDisplayMode)
+            switch (DispBoxMode.Value)
             {
                 case BoxDisplayMode.TaskState:
                     boxDisplayTaskRef.StateAction();
+                    break;
+
+                case BoxDisplayMode.MultiTaskState:
+                    foreach (var item in MultiDispToDos)
+                    {
+                        var todo = item as ToDo.Item;
+                        todo.StateAction();
+                    }
                     break;
 
                 case BoxDisplayMode.System:

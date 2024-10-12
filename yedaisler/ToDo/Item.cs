@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using yedaisler.Config;
 using yedaisler.Menu;
 using yedaisler.Utility;
@@ -23,8 +24,15 @@ namespace yedaisler.ToDo
         None,
     }
 
-    internal class Item : BindableBase, IDisposable
+    internal class Item : BindableBase, IDisposable, Utility.IConcatTextItem
     {
+        // MultiDisp情報
+        private static readonly SolidColorBrush DefaultBrush = "0xFFFFFFFF".ToSolidColorBrush();
+        public ReactivePropertySlim<string> Text { get; set; } = new ReactivePropertySlim<string>(string.Empty);
+        public ReactivePropertySlim<SolidColorBrush> Background { get; set; } = new ReactivePropertySlim<SolidColorBrush>(DefaultBrush);
+        public ReactivePropertySlim<SolidColorBrush> Foreground { get; set; } = new ReactivePropertySlim<SolidColorBrush>(DefaultBrush);
+
+        // ToDo管理情報
         public ItemType Type { get; set; } = ItemType.ToDo;
 
         public ReactivePropertySlim<string> Name { get; set; }

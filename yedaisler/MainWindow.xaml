@@ -8,6 +8,7 @@
         xmlns:local="clr-namespace:yedaisler"
         xmlns:menu="clr-namespace:yedaisler.Menu"
         xmlns:todo="clr-namespace:yedaisler.ToDo"
+        xmlns:util="clr-namespace:yedaisler.Utility"
         mc:Ignorable="d"
         Title="yedaisler" MinHeight="30" MinWidth="50"  Height="{Binding Height.Value, Mode=TwoWay}" Width="{Binding Width.Value, Mode=TwoWay}"
         Topmost="True" ShowInTaskbar="False" ResizeMode="NoResize" AllowsTransparency="True" WindowStyle="None" Background="Transparent"
@@ -821,28 +822,29 @@
         </ContextMenu>
     </Window.ContextMenu>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="8"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="8"/>
-        </Grid.ColumnDefinitions>
-        <Grid.Style>
-            <Style TargetType="{x:Type Grid}">
-                <Setter Property="Background">
-                    <Setter.Value>
-                        <MultiBinding Converter="{StaticResource ContextMenuStateBackColorConverter}" UpdateSourceTrigger="PropertyChanged">
-                            <Binding Path="State.Value" />
-                            <Binding Path="DataContext" RelativeSource="{RelativeSource Self}"/>
-                        </MultiBinding>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-        </Grid.Style>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+            </Grid.ColumnDefinitions>
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource ContextMenuStateBackColorConverter}" UpdateSourceTrigger="PropertyChanged">
+                                <Binding Path="State.Value" />
+                                <Binding Path="DataContext" RelativeSource="{RelativeSource Self}"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Grid.Style>
 
-        <Grid Grid.Column="0" MinWidth="8"/>
-        <TextBlock x:Name="MainDisp" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Grid Grid.Column="0" MinWidth="8"/>
+            <TextBlock x:Name="MainDisp" Grid.Column="2" Visibility="{Binding DispBoxSingle.Value}" VerticalAlignment="Center" HorizontalAlignment="Center">
             <!--
             <i:Interaction.Behaviors>
                 <behaviors:ActualWidthBehavior ActualWidth="{Binding DispWidth.Value}"/>
@@ -853,21 +855,23 @@
                     <i:InvokeCommandAction Command="{Binding DispSizeChangedCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TextBlock}}}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-            <TextBlock.Style>
-                <Style TargetType="{x:Type TextBlock}">
-                    <Setter Property="Foreground">
-                        <Setter.Value>
-                            <MultiBinding Converter="{StaticResource ContextMenuStateFontColorConverter}" UpdateSourceTrigger="PropertyChanged">
-                                <Binding Path="State.Value" />
-                                <Binding Path="DataContext" RelativeSource="{RelativeSource Self}"/>
-                            </MultiBinding>
-                        </Setter.Value>
-                    </Setter>
-                    <Setter Property="Text" Value="{Binding Disp.Value}" />
-                    <Setter Property="FontSize" Value="14"/>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
-        <Grid Grid.Column="4" MinWidth="8"/>
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Foreground">
+                            <Setter.Value>
+                                <MultiBinding Converter="{StaticResource ContextMenuStateFontColorConverter}" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding Path="State.Value" />
+                                    <Binding Path="DataContext" RelativeSource="{RelativeSource Self}"/>
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Text" Value="{Binding Disp.Value}" />
+                        <Setter Property="FontSize" Value="{Binding DispBoxFontSize.Value}"/>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            <Grid Grid.Column="4" MinWidth="8"/>
+        </Grid>
+        <util:ConcatText Grid.Column="2" FontSize="{Binding DispBoxFontSize.Value}" Width="{Binding DispBoxMultiWidth.Value}" Height="{Binding Height.Value}" Visibility="{Binding DispBoxMulti.Value}" ItemsSource="{Binding MultiDispToDos}" Active="{Binding DispBoxMultiActive.Value}" />
     </Grid>
 </Window>

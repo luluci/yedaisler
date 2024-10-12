@@ -17,9 +17,19 @@ namespace yedaisler.Behaviors
             get => (double)GetValue(ActualWidthProperty);
             set => SetValue(ActualWidthProperty, value);
         }
-
         public static readonly DependencyProperty ActualWidthProperty =
             DependencyProperty.Register("ActualWidth", typeof(double), typeof(ActualWidthBehavior), new PropertyMetadata(50.0));
+
+
+        #region EnableResize 依存関係プロパティ
+        public bool EnableResize
+        {
+            get { return (bool)GetValue(EnableResizeProperty); }
+            set { SetValue(EnableResizeProperty, value); }
+        }
+        public static readonly DependencyProperty EnableResizeProperty =
+            DependencyProperty.Register("EnableResize", typeof(bool), typeof(SnapWnd2ScrBehavior), new PropertyMetadata(true));
+        #endregion
 
         protected override void OnAttached()
         {

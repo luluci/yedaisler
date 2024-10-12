@@ -92,6 +92,9 @@
     <Compile Include="ToDo\Item.cs" />
     <Compile Include="Utility\BindableBase.cs" />
     <Compile Include="Utility\Color.cs" />
+    <Compile Include="Utility\ConcatText.xaml.cs">
+      <DependentUpon>ConcatText.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utility\WindowsApi.cs" />
     <Page Include="Config\Config.xaml">
       <SubType>Designer</SubType>
@@ -113,6 +116,10 @@
     <Page Include="Notifier\Notifier.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Utility\ConcatText.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
