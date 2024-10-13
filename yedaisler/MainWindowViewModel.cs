@@ -25,8 +25,8 @@ namespace yedaisler
     public enum BoxDisplayMode
     {
         System,     // システム共通表示
-        TaskState,  // タスク状態表示
-        MultiTaskState, // 複数タスク表示
+        SingleTask,  // タスク状態表示
+        MultiTask, // 複数タスク表示
     }
 
     internal class MainWindowViewModel : BindableBase, IDisposable
@@ -202,12 +202,12 @@ namespace yedaisler
                 switch (x)
                 {
                     case BoxDisplayMode.System:
-                    case BoxDisplayMode.TaskState:
+                    case BoxDisplayMode.SingleTask:
                         DispBoxSingle.Value = Visibility.Visible;
                         DispBoxMulti.Value = Visibility.Collapsed;
                         break;
 
-                    case BoxDisplayMode.MultiTaskState:
+                    case BoxDisplayMode.MultiTask:
                         DispBoxSingle.Value = Visibility.Hidden;
                         DispBoxMulti.Value = Visibility.Visible;
                         break;
@@ -247,7 +247,7 @@ namespace yedaisler
             DispSizeChangedCommand = new ReactiveCommand();
             DispSizeChangedCommand.Subscribe(x =>
             {
-                if (x is TextBlock obj && DispBoxMode.Value != BoxDisplayMode.MultiTaskState)
+                if (x is TextBlock obj && DispBoxMode.Value != BoxDisplayMode.MultiTask)
                 {
                     // ウインドウサイズ更新
                     dispBoxSingleWidth = obj.ActualWidth + 16;
@@ -259,7 +259,7 @@ namespace yedaisler
             State = new ReactivePropertySlim<ToDo.State>(ToDo.State.Done);
             State.Subscribe(state =>
             {
-                UpdateBoxDisplay();
+                UpdateDisplayBox();
             })
             .AddTo(Disposables);
 
@@ -294,50 +294,20 @@ namespace yedaisler
             ToDos = new ReactiveCollection<ToDo.Item>();
             ToDos.ObserveElementProperty(x => x.State.Value).Subscribe(x =>
             {
+                // ToDoリスト内のある要素の状態が変化した
+                // ToDo要素単体の情報更新を実行
                 if (x.Instance is ToDo.Item item)
                 {
-                    // Notify処理
-                    if (item.ActiveStateInfo.Value.StateInfoRef.Notify.Active)
-                    {
-                        Notifier.Log.NotifierLog.Data.Add(new Notifier.NotifyItem
-                        {
-                            Text = $"Exec Action: {item.ActiveStateInfo.Value.Name.Value}",
-                            Object = item,
-                            Type = Notifier.NotifyType.ToDoAction,
-                        });
-                    }
-                    // MultiDisp処理
-                    item.Text.Value = item.ActiveStateInfo.Value.Name.Value;
-                    //
-                    switch (item.State.Value)
-                    {
-                        case ToDo.State.Ready:
-                            item.Background.Value = BrushBackReady.Value;
-                            item.Foreground.Value = BrushFontReady.Value;
-                            break;
-
-                        case ToDo.State.Doing:
-                            item.Background.Value = BrushBackDoing.Value;
-                            item.Foreground.Value = BrushFontDoing.Value;
-                            break;
-
-                        case ToDo.State.Done:
-                            item.Background.Value = BrushBackDone.Value;
-                            item.Foreground.Value = BrushFontDone.Value;
-                            break;
-
-                        default:
-                            item.Background.Value = BrushBackNone.Value;
-                            item.Foreground.Value = BrushFontNone.Value;
-                            break;
-                    }
+                    UpdateEachStateInfo(item);
                 }
-                //
-                UpdateTotalStateByEachStateChange();
+                // ToDoリスト全体としての情報更新を実行
+                UpdateTotalStateInfo();
             });
             ToDos.ObserveElementProperty(x => x.DisplayInBox.Value).Subscribe(x =>
             {
-                UpdateDisplayInBox(x.Instance, x.Value);
+                // System表示とSingleToDo表示で表示内容が異なるケースがあるため更新
+                UpdateTotalStateInfo();
+                UpdateDisplayBox();
             });
             ToDos.AddTo(Disposables);
 
@@ -413,10 +383,56 @@ namespace yedaisler
 
         }
 
-        private void UpdateTotalStateByEachStateChange()
+        private void UpdateEachStateInfo(ToDo.Item item)
+        {
+            // Notify有効ならNotify表示作成
+            if (item.ActiveStateInfo.Value.StateInfoRef.Notify.Active)
+            {
+                Notifier.Log.NotifierLog.Data.Add(new Notifier.NotifyItem
+                {
+                    Text = $"Exec Action: {item.ActiveStateInfo.Value.Name.Value}",
+                    Object = item,
+                    Type = Notifier.NotifyType.ToDoAction,
+                });
+                ShowNotifier();
+            }
+            // MultiDisp処理
+            item.Text.Value = item.ActiveStateInfo.Value.Name.Value;
+            //
+            switch (item.State.Value)
+            {
+                case ToDo.State.Ready:
+                    item.Background.Value = BrushBackReady.Value;
+                    item.Foreground.Value = BrushFontReady.Value;
+                    break;
+
+                case ToDo.State.Doing:
+                    item.Background.Value = BrushBackDoing.Value;
+                    item.Foreground.Value = BrushFontDoing.Value;
+                    break;
+
+                case ToDo.State.Done:
+                    item.Background.Value = BrushBackDone.Value;
+                    item.Foreground.Value = BrushFontDone.Value;
+                    break;
+
+                default:
+                    item.Background.Value = BrushBackNone.Value;
+                    item.Foreground.Value = BrushFontNone.Value;
+                    break;
+            }
+        }
+
+        private void UpdateTotalStateInfo()
         {
             // ToDo全体状態を更新する
-            var notify = false;
+
+            // DisplayBoxMode: モード決定にToDoリスト全体が影響するのでこの中で判定する
+            // DisplayInBox有効なToDoの数と、Multi表示有効なToDoの数をカウントする
+            // Done状態のToDoは表示しないため個別にカウントする必要あり
+            int dispBoxSimpleCount = 0;
+            int dispBoxActualCount = 0;
+
             var block = new Config.BlockInfo();
             ToDo.State state = ToDo.State.Done;
             foreach (var todo in ToDos)
@@ -427,36 +443,90 @@ namespace yedaisler
                     {
                         state = todo.State.Value;
                     }
-                }
-                // Notify
-                if (todo.ActiveStateInfo.Value.StateInfoRef.Notify.Active)
-                {
-                    notify = true;
+                    // DisplayBoxMode
+                    if (todo.DisplayInBox.Value)
+                    {
+                        dispBoxSimpleCount++;
+                    }
+                    if (CheckIsDisplayInBox(todo))
+                    {
+                        dispBoxActualCount++;
+                    }
                 }
                 //
                 block.Shutdown |= todo.ActiveStateInfo.Value.StateInfoRef.Block.Shutdown;
                 block.Sleep |= todo.ActiveStateInfo.Value.StateInfoRef.Block.Sleep;
             }
+            // DisplayBoxModeを先に更新
+            // Multi表示のときにはMultiDispToDosの更新がアニメ表示要素に反映されるようにActiveにしておく
+            switch (dispBoxActualCount)
+            {
+                case 0:
+                    // 実カウント0のとき
+                    // DisplayInBox設定は有効だが除外条件により除外されているケースがある
+                    // DisplayInBox設定が1つだけならそれを表示する
+                    // 0か2つ以上は共通表示にしておく
+                    if (dispBoxSimpleCount == 1)
+                    {
+                        DispBoxMode.Value = BoxDisplayMode.SingleTask;
+                        DispBoxMultiActive.Value = false;
+                    }
+                    else
+                    {
+                        DispBoxMode.Value = BoxDisplayMode.System;
+                        DispBoxMultiActive.Value = false;
+                    }
+                    break;
+
+                case 1:
+                    // 実カウント1は単独表示
+                    DispBoxMode.Value = BoxDisplayMode.SingleTask;
+                    DispBoxMultiActive.Value = false;
+                    break;
+
+                default:
+                    // 実カウント2以上はマルチ表示
+                    DispBoxMode.Value = BoxDisplayMode.MultiTask;
+                    DispBoxMultiActive.Value = true;
+                    break;
+            }
             // 表示情報更新
             MultiDispToDos.Clear();
+            ToDo.Item singleDispRef = null;
+            ToDo.Item multiDispRef = null;
             boxDisplayTaskRef = null;
             foreach (var item in ToDos)
             {
+                if (item.DisplayInBox.Value)
+                {
+                    singleDispRef = item;
+                }
                 if (CheckIsDisplayInBox(item))
                 {
                     MultiDispToDos.Add((IConcatTextItem)item);
-                    boxDisplayTaskRef = item;
+                    multiDispRef = item;
                 }
             }
+            // DisplayInBox除外条件により何も選択されなかったときに
+            // 単純条件で選択したToDoを単独表示するケースがある
+            if (multiDispRef is null)
+            {
+                boxDisplayTaskRef = singleDispRef;
+            }
+            else
+            {
+                boxDisplayTaskRef = multiDispRef;
+            }
+
             //
             switch (DispBoxMode.Value)
             {
-                case BoxDisplayMode.TaskState:
+                case BoxDisplayMode.SingleTask:
                     // SingleToDo表示ではそのToDoの表示情報に従う
                     State.Value = boxDisplayTaskRef.State.Value;
                     break;
 
-                case BoxDisplayMode.MultiTaskState:
+                case BoxDisplayMode.MultiTask:
                     State.Value = ToDo.State.None;
                     break;
 
@@ -469,11 +539,6 @@ namespace yedaisler
             }
 
             //
-            if (notify)
-            {
-                ShowNotifier();
-            }
-            //
             BlockShutdown.Value = block.Shutdown;
             BlockSleep.Value = block.Sleep;
         }
@@ -482,12 +547,12 @@ namespace yedaisler
         {
             switch (DispBoxMode.Value)
             {
-                case BoxDisplayMode.MultiTaskState:
+                case BoxDisplayMode.MultiTask:
                     Width.Value = DispBoxMultiWidth.Value;
                     break;
 
                 case BoxDisplayMode.System:
-                case BoxDisplayMode.TaskState:
+                case BoxDisplayMode.SingleTask:
                 default:
                     Width.Value = dispBoxSingleWidth;
                     break;
@@ -513,15 +578,15 @@ namespace yedaisler
             }
         }
 
-        private void UpdateBoxDisplay()
+        private void UpdateDisplayBox()
         {
             switch (DispBoxMode.Value)
             {
-                case BoxDisplayMode.TaskState:
+                case BoxDisplayMode.SingleTask:
                     UpdateBoxDisplayTaskState();
                     break;
 
-                case BoxDisplayMode.MultiTaskState:
+                case BoxDisplayMode.MultiTask:
                     // MultiToDo表示では
                     break;
 
@@ -557,36 +622,6 @@ namespace yedaisler
             Disp.Value = boxDisplayTaskRef.ActiveStateInfo.Value.Name.Value;
         }
 
-        private void UpdateDisplayInBox(ToDo.Item todo, bool value)
-        {
-            // 表示ToDo数を事前にチェック
-            //if (value) dispInBoxCount++;
-            //else dispInBoxCount--;
-            dispInBoxCount = 0;
-            foreach (var item in ToDos)
-            {
-                if (CheckIsDisplayInBox(item)) dispInBoxCount++;
-            }
-
-            switch (dispInBoxCount)
-            {
-                case 0:
-                    DispBoxMode.Value = BoxDisplayMode.System;
-                    DispBoxMultiActive.Value = false;
-                    break;
-                case 1:
-                    DispBoxMode.Value = BoxDisplayMode.TaskState;
-                    DispBoxMultiActive.Value = false;
-                    break;
-                default:
-                    DispBoxMode.Value = BoxDisplayMode.MultiTaskState;
-                    DispBoxMultiActive.Value = true;
-                    break;
-            }
-            // System表示とSingleToDo表示で表示内容が異なるケースがあるため更新
-            UpdateTotalStateByEachStateChange();
-            UpdateBoxDisplay();
-        }
         private bool CheckIsDisplayInBox(ToDo.Item item)
         {
             bool result = false;
@@ -615,11 +650,11 @@ namespace yedaisler
         {
             switch (DispBoxMode.Value)
             {
-                case BoxDisplayMode.TaskState:
+                case BoxDisplayMode.SingleTask:
                     boxDisplayTaskRef.StateAction();
                     break;
 
-                case BoxDisplayMode.MultiTaskState:
+                case BoxDisplayMode.MultiTask:
                     foreach (var item in MultiDispToDos)
                     {
                         var todo = item as ToDo.Item;
