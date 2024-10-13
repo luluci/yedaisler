@@ -21,8 +21,8 @@ using static yedaisler.Utility.WindowsApi;
 
 namespace yedaisler
 {
-    // 表示制御
-    public enum BoxDisplayMode
+    // 表示BOX:表示モード
+    public enum DisplayBoxMode
     {
         System,     // システム共通表示
         SingleTask,  // タスク状態表示
@@ -59,14 +59,21 @@ namespace yedaisler
         // Notifier画面
         Notifier.Notifier notifier;
 
+        // 表示BOXウインドウ設定
+        public ReactivePropertySlim<double> Width { get; set; }
+        public ReactivePropertySlim<double> Height { get; set; }
+
+        public ReactivePropertySlim<double> SnapDistH { get; set; }
+        public ReactivePropertySlim<double> SnapDistV { get; set; }
+        public ReactivePropertySlim<Behaviors.SnapWnd2ScrLocation> SnapLocation { get; set; }
 
         // 表示BOX情報
-        public ReactivePropertySlim<string> Disp {  get; set; }
-        //public ReactivePropertySlim<double> DispWidth { get; set; }
+        public ReactivePropertySlim<ToDo.State> DispBoxState { get; set; }
+        public ReactivePropertySlim<string> DispBoxText {  get; set; }
         public ReactiveCommand DispSizeChangedCommand { get; private set; }
         public ReactiveCommand ContentRenderedCommand { get; private set; }
 
-        public ReactivePropertySlim<BoxDisplayMode> DispBoxMode { get; set; }
+        public ReactivePropertySlim<DisplayBoxMode> DispBoxMode { get; set; }
         public ReactivePropertySlim<Visibility> DispBoxSingle {  get; set; }
         public ReactivePropertySlim<Visibility> DispBoxMulti { get; set; }
 
@@ -77,15 +84,7 @@ namespace yedaisler
         private double dispBoxSingleWidth;
         ToDo.Item boxDisplayTaskRef;
 
-        public ReactivePropertySlim<double> Width { get; set; }
-        public ReactivePropertySlim<double> Height { get; set; }
-
-        public ReactivePropertySlim<double> SnapDistH { get; set; }
-        public ReactivePropertySlim<double> SnapDistV { get; set; }
-        public ReactivePropertySlim<Behaviors.SnapWnd2ScrLocation> SnapLocation { get; set; }
-
         public ReactiveCollection<ToDo.Item> ToDos { get; set; }
-        public ReactivePropertySlim<ToDo.State> State { get; set; }
 
         // SystemCommandハンドラ
         public ReactiveCommand OnMenuSystemCommand { get; set; }
@@ -182,25 +181,25 @@ namespace yedaisler
             DispBoxSingle.AddTo(Disposables);
             DispBoxMulti = new ReactivePropertySlim<Visibility>(Visibility.Collapsed);
             DispBoxMulti.AddTo(Disposables);
-            DispBoxMode = new ReactivePropertySlim<BoxDisplayMode>(BoxDisplayMode.System);
+            DispBoxMode = new ReactivePropertySlim<DisplayBoxMode>(DisplayBoxMode.System);
             DispBoxMode.Subscribe(x =>
             {
                 switch (x)
                 {
-                    case BoxDisplayMode.System:
-                    case BoxDisplayMode.SingleTask:
+                    case DisplayBoxMode.System:
+                    case DisplayBoxMode.SingleTask:
                         DispBoxSingle.Value = Visibility.Visible;
                         DispBoxMulti.Value = Visibility.Collapsed;
                         break;
 
-                    case BoxDisplayMode.MultiTask:
+                    case DisplayBoxMode.MultiTask:
                         DispBoxSingle.Value = Visibility.Hidden;
                         DispBoxMulti.Value = Visibility.Visible;
                         break;
 
                     default:
                         // できる？
-                        DispBoxMode.Value = BoxDisplayMode.System;
+                        DispBoxMode.Value = DisplayBoxMode.System;
                         break;
                 }
                 //
@@ -209,8 +208,8 @@ namespace yedaisler
             .AddTo(Disposables);
 
             // メイン画面
-            Disp = new ReactivePropertySlim<string>("");
-            Disp.AddTo(Disposables);
+            DispBoxText = new ReactivePropertySlim<string>("");
+            DispBoxText.AddTo(Disposables);
             //DispWidth = new ReactivePropertySlim<double>(0.0);
             //DispWidth.Subscribe(x =>
             //{
@@ -238,7 +237,7 @@ namespace yedaisler
                     // ウインドウサイズ更新
                     dispBoxSingleWidth = obj.ActualWidth + 16;
 
-                    if (DispBoxMode.Value != BoxDisplayMode.MultiTask)
+                    if (DispBoxMode.Value != DisplayBoxMode.MultiTask)
                     {
                         UpdateDispBoxWidth();
                     }
@@ -246,10 +245,10 @@ namespace yedaisler
             });
             DispSizeChangedCommand.AddTo(Disposables);
             // 
-            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.Done);
-            State.Subscribe(state =>
+            DispBoxState = new ReactivePropertySlim<ToDo.State>(ToDo.State.Done);
+            DispBoxState.Subscribe(state =>
             {
-                UpdateDisplayBox();
+                // UpdateDisplayBox();
             })
             .AddTo(Disposables);
 
@@ -292,6 +291,7 @@ namespace yedaisler
                 }
                 // ToDoリスト全体としての情報更新を実行
                 UpdateTotalStateInfo();
+                UpdateDisplayBox();
             });
             ToDos.ObserveElementProperty(x => x.DisplayInBox.Value).Subscribe(x =>
             {
@@ -308,7 +308,7 @@ namespace yedaisler
             //
             cycleProc = new System.Windows.Threading.DispatcherTimer(System.Windows.Threading.DispatcherPriority.Normal);
             cycleProc.Interval = new TimeSpan(0, 0, 1);
-            cycleProc.Tick += cycleProcHandler;
+            cycleProc.Tick += CycleProcHandler;
             cycleProc.Start();
         }
 
@@ -458,25 +458,25 @@ namespace yedaisler
                     // 0か2つ以上は共通表示にしておく
                     if (dispBoxSimpleCount == 1)
                     {
-                        DispBoxMode.Value = BoxDisplayMode.SingleTask;
+                        DispBoxMode.Value = DisplayBoxMode.SingleTask;
                         DispBoxMultiActive.Value = false;
                     }
                     else
                     {
-                        DispBoxMode.Value = BoxDisplayMode.System;
+                        DispBoxMode.Value = DisplayBoxMode.System;
                         DispBoxMultiActive.Value = false;
                     }
                     break;
 
                 case 1:
                     // 実カウント1は単独表示
-                    DispBoxMode.Value = BoxDisplayMode.SingleTask;
+                    DispBoxMode.Value = DisplayBoxMode.SingleTask;
                     DispBoxMultiActive.Value = false;
                     break;
 
                 default:
                     // 実カウント2以上はマルチ表示
-                    DispBoxMode.Value = BoxDisplayMode.MultiTask;
+                    DispBoxMode.Value = DisplayBoxMode.MultiTask;
                     DispBoxMultiActive.Value = true;
                     break;
             }
@@ -511,20 +511,20 @@ namespace yedaisler
             //
             switch (DispBoxMode.Value)
             {
-                case BoxDisplayMode.SingleTask:
+                case DisplayBoxMode.SingleTask:
                     // SingleToDo表示ではそのToDoの表示情報に従う
-                    State.Value = boxDisplayTaskRef.State.Value;
+                    DispBoxState.Value = boxDisplayTaskRef.State.Value;
                     break;
 
-                case BoxDisplayMode.MultiTask:
-                    State.Value = ToDo.State.None;
+                case DisplayBoxMode.MultiTask:
+                    DispBoxState.Value = ToDo.State.None;
                     break;
 
-                case BoxDisplayMode.System:
+                case DisplayBoxMode.System:
                 default:
                     // System表示ではReady>Doing>Doneの優先順位
                     // MultiToDo表示はこの情報を使わないので適当に更新
-                    State.Value = state;
+                    DispBoxState.Value = state;
                     break;
             }
 
@@ -537,12 +537,12 @@ namespace yedaisler
         {
             switch (DispBoxMode.Value)
             {
-                case BoxDisplayMode.MultiTask:
+                case DisplayBoxMode.MultiTask:
                     Width.Value = DispBoxMultiWidth.Value;
                     break;
 
-                case BoxDisplayMode.System:
-                case BoxDisplayMode.SingleTask:
+                case DisplayBoxMode.System:
+                case DisplayBoxMode.SingleTask:
                 default:
                     Width.Value = dispBoxSingleWidth;
                     break;
@@ -564,7 +564,7 @@ namespace yedaisler
         {
             if (ToDos.Count == 0)
             {
-                State.Value = ToDo.State.None;
+                DispBoxState.Value = ToDo.State.None;
             }
         }
 
@@ -572,15 +572,15 @@ namespace yedaisler
         {
             switch (DispBoxMode.Value)
             {
-                case BoxDisplayMode.SingleTask:
+                case DisplayBoxMode.SingleTask:
                     UpdateBoxDisplayTaskState();
                     break;
 
-                case BoxDisplayMode.MultiTask:
-                    // MultiToDo表示では
+                case DisplayBoxMode.MultiTask:
+                    // MultiDispToDosに構築済み
                     break;
 
-                case BoxDisplayMode.System:
+                case DisplayBoxMode.System:
                 default:
                     UpdateBoxDisplaySystem();
                     break;
@@ -588,28 +588,28 @@ namespace yedaisler
         }
         private void UpdateBoxDisplaySystem()
         {
-            switch (State.Value)
+            switch (DispBoxState.Value)
             {
                 case ToDo.State.Ready:
-                    Disp.Value = "Readyタスクあり";
+                    DispBoxText.Value = "Readyタスクあり";
                     break;
 
                 case ToDo.State.Doing:
-                    Disp.Value = "Doing";
+                    DispBoxText.Value = "Doing";
                     break;
 
                 case ToDo.State.Done:
-                    Disp.Value = "全タスクDone";
+                    DispBoxText.Value = "全タスクDone";
                     break;
 
                 default:
-                    Disp.Value = "タスクなし";
+                    DispBoxText.Value = "タスクなし";
                     break;
             }
         }
         private void UpdateBoxDisplayTaskState()
         {
-            Disp.Value = boxDisplayTaskRef.ActiveStateInfo.Value.Name.Value;
+            DispBoxText.Value = boxDisplayTaskRef.ActiveStateInfo.Value.Name.Value;
         }
 
         private bool CheckIsDisplayInBox(ToDo.Item item)
@@ -640,11 +640,11 @@ namespace yedaisler
         {
             switch (DispBoxMode.Value)
             {
-                case BoxDisplayMode.SingleTask:
+                case DisplayBoxMode.SingleTask:
                     boxDisplayTaskRef.StateAction();
                     break;
 
-                case BoxDisplayMode.MultiTask:
+                case DisplayBoxMode.MultiTask:
                     foreach (var item in MultiDispToDos)
                     {
                         var todo = item as ToDo.Item;
@@ -652,7 +652,7 @@ namespace yedaisler
                     }
                     break;
 
-                case BoxDisplayMode.System:
+                case DisplayBoxMode.System:
                 default:
                     foreach (var todo in ToDos)
                     {
@@ -662,7 +662,7 @@ namespace yedaisler
             }
         }
 
-        private void cycleProcHandler(object sender, EventArgs e)
+        private void CycleProcHandler(object sender, EventArgs e)
         {
             Clock.Value = DateTime.Now.ToString("HH:mm:ss");
 

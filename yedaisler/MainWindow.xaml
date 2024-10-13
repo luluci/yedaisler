@@ -835,7 +835,7 @@
                     <Setter Property="Background">
                         <Setter.Value>
                             <MultiBinding Converter="{StaticResource ContextMenuStateBackColorConverter}" UpdateSourceTrigger="PropertyChanged">
-                                <Binding Path="State.Value" />
+                                <Binding Path="DispBoxState.Value" />
                                 <Binding Path="DataContext" RelativeSource="{RelativeSource Self}"/>
                             </MultiBinding>
                         </Setter.Value>
@@ -860,12 +860,12 @@
                         <Setter Property="Foreground">
                             <Setter.Value>
                                 <MultiBinding Converter="{StaticResource ContextMenuStateFontColorConverter}" UpdateSourceTrigger="PropertyChanged">
-                                    <Binding Path="State.Value" />
+                                    <Binding Path="DispBoxState.Value" />
                                     <Binding Path="DataContext" RelativeSource="{RelativeSource Self}"/>
                                 </MultiBinding>
                             </Setter.Value>
                         </Setter>
-                        <Setter Property="Text" Value="{Binding Disp.Value}" />
+                        <Setter Property="Text" Value="{Binding DispBoxText.Value}" />
                         <Setter Property="FontSize" Value="{Binding DispBoxFontSize.Value}"/>
                     </Style>
                 </TextBlock.Style>
