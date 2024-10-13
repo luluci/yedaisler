@@ -54,11 +54,11 @@
         
     </UserControl.Resources>
     <Grid>
-        <Canvas ClipToBounds="True" x:Name="canvas">
-            <ItemsControl x:Name="disp" Style="{StaticResource ItemsControlStyle}">
+        <Canvas ClipToBounds="True" x:Name="DispArea">
+            <ItemsControl x:Name="DispTgt" Style="{StaticResource ItemsControlStyle}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel x:Name="text" Orientation="Horizontal" SizeChanged="StackPanel_SizeChanged" Tag="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType={x:Type local:ConcatText}}}">
+                        <StackPanel Orientation="Horizontal" SizeChanged="StackPanel_SizeChanged" Tag="{Binding ItemsSource, RelativeSource={RelativeSource AncestorType={x:Type local:ConcatText}}}">
                         </StackPanel>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>

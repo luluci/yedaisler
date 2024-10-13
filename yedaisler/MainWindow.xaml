@@ -872,6 +872,6 @@
             </TextBlock>
             <Grid Grid.Column="4" MinWidth="8"/>
         </Grid>
-        <util:ConcatText Grid.Column="2" FontSize="{Binding DispBoxFontSize.Value}" Width="{Binding DispBoxMultiWidth.Value}" Height="{Binding Height.Value}" Visibility="{Binding DispBoxMulti.Value}" ItemsSource="{Binding MultiDispToDos}" Active="{Binding DispBoxMultiActive.Value}" />
+        <util:ConcatText Grid.Column="2" FontSize="{Binding DispBoxFontSize.Value}" Duration="{Binding DispBoxMultiAnimeDuration.Value}" Width="{Binding DispBoxMultiWidth.Value}" Height="{Binding Height.Value}" Visibility="{Binding DispBoxMulti.Value}" ItemsSource="{Binding MultiDispToDos}" Active="{Binding DispBoxMultiActive.Value}" />
     </Grid>
 </Window>

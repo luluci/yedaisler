@@ -57,8 +57,26 @@ namespace yedaisler.Utility
             }
         }
 
-        bool hasUpdateReq;
-        double animeWidth;
+        public double Duration
+        {
+            get { return (double)GetValue(DurationProperty); }
+            set { SetValue(DurationProperty, value); }
+        }
+        public static readonly DependencyProperty DurationProperty =
+            DependencyProperty.Register(nameof(Duration), typeof(double), typeof(ConcatText), new PropertyMetadata(3.0, DurationChangedCallback));
+
+        private static void DurationChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is ConcatText self)
+            {
+                self.OnDurationChanged();
+            }
+        }
+
+
+        // アニメーション情報
+        int dispTextCount;
+        double dispTgtWidth;
         Storyboard storyboard;
 
         public ConcatText()
@@ -68,72 +86,75 @@ namespace yedaisler.Utility
             //ItemsSource = new ObservableCollection<IConcatTextItem>();
             //ItemsSource.Add(new DummyTextItem { Text = "dummy1" });
             //ItemsSource.Add(new DummyTextItem { Text = "dummy2" });
-
-            hasUpdateReq = false;
         }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (!Active)
             {
-                hasUpdateReq = true;
                 return;
             }
 
             // 表示画面のサイズ変更によるアニメーション更新
             UpdateAnime();
-
-            hasUpdateReq = false;
         }
 
         private void StackPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (!Active)
             {
-                hasUpdateReq = true;
                 return;
             }
 
             // 表示内容変更によるアニメーション更新
-            if (sender is StackPanel tgt && tgt.Tag is ObservableCollection<IConcatTextItem> collection)
+            if (sender is StackPanel tgt)
+            {
+                UpdateTextInfo(tgt);
+            }
+            // アニメーション設定更新
+            UpdateAnime();
+        }
+
+        private void UpdateTextInfo(Panel texts)
+        {
+            // 表示項目についての情報を更新する
+            if (texts.Tag is ObservableCollection<IConcatTextItem> collection)
             {
                 // 先頭要素と同じ内容を末尾に追加して、
                 // GUIとしては必ず2つ以上のTextBlockを生成する構成になっている
-                if (tgt.Children.Count > 0)
+                if (texts.Children.Count > 0)
                 {
                     // 表示内容からアニメーションする内容のWidthを取得
-                    animeWidth = 0.0;
+                    dispTgtWidth = 0.0;
+                    dispTextCount = 0;
                     for (var i = 0; i < collection.Count; i++)
                     {
-                        if (tgt.Children[i] is FrameworkElement txt)
+                        if (texts.Children[i] is FrameworkElement txt)
                         {
-                            animeWidth += txt.ActualWidth;
+                            dispTgtWidth += txt.ActualWidth;
                         }
+                        dispTextCount++;
                     }
-                    // アニメーション設定更新
-                    UpdateAnime();
                 }
             }
-
-            hasUpdateReq = false;
         }
 
         private void UpdateAnime()
         {
-            var dispWidth = canvas.ActualWidth;
+            var dispWidth = DispArea.ActualWidth;
             // 
             // TextBlockセットがcanvasサイズより大きいときにアニメーションする
-            if (dispWidth < animeWidth)
+            if (dispWidth < dispTgtWidth)
             {
                 //末尾要素が左端に到達したタイミングで表示位置をリセットする
                 var anime = new DoubleAnimation
                 {
                     From = 0,
-                    To = -animeWidth,
-                    Duration = TimeSpan.FromSeconds(5),
+                    To = -dispTgtWidth,
+                    Duration = TimeSpan.FromSeconds(Duration * dispTextCount),
                     RepeatBehavior = RepeatBehavior.Forever,
                 };
-                Storyboard.SetTarget(anime, disp);
+                Storyboard.SetTarget(anime, DispTgt);
                 Storyboard.SetTargetProperty(anime, new PropertyPath("(Canvas.Left)"));
                 storyboard = new Storyboard();
                 storyboard.Children.Add(anime);
@@ -149,6 +170,12 @@ namespace yedaisler.Utility
                     storyboard.Stop();
                 }
             }
+        }
+
+        private void OnDurationChanged()
+        {
+            // アニメーション設定更新
+            UpdateAnime();
         }
 
         private void OnActiveChanged()
@@ -169,10 +196,6 @@ namespace yedaisler.Utility
             }
         }
 
-        private void UserControl_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-
-        }
     }
 
     internal class DummyTextItem : IConcatTextItem

@@ -71,6 +71,7 @@ namespace yedaisler
         public ReactivePropertySlim<Visibility> DispBoxMulti { get; set; }
 
         public ReactivePropertySlim<double> DispBoxMultiWidth { get; set; }
+        public ReactivePropertySlim<double> DispBoxMultiAnimeDuration { get; set; }
         public ReactivePropertySlim<bool> DispBoxMultiActive { get; set; }
         // BOX表示設定ToDoカウント
         private double dispBoxSingleWidth;
@@ -186,9 +187,15 @@ namespace yedaisler
             dispInBoxCount = 0;
             boxDisplayTaskRef = null;
             DispBoxMultiWidth = new ReactivePropertySlim<double>(120);
+            DispBoxMultiWidth.AddTo(Disposables);
+            DispBoxMultiAnimeDuration = new ReactivePropertySlim<double>(4.0);
+            DispBoxMultiAnimeDuration.AddTo(Disposables);
             DispBoxMultiActive = new ReactivePropertySlim<bool>(false);
+            DispBoxMultiActive.AddTo(Disposables);
             DispBoxSingle = new ReactivePropertySlim<Visibility>(Visibility.Visible);
+            DispBoxSingle.AddTo(Disposables);
             DispBoxMulti = new ReactivePropertySlim<Visibility>(Visibility.Collapsed);
+            DispBoxMulti.AddTo(Disposables);
             DispBoxMode = new ReactivePropertySlim<BoxDisplayMode>(BoxDisplayMode.System);
             DispBoxMode.Subscribe(x =>
             {
@@ -330,7 +337,7 @@ namespace yedaisler
             });
             ToDos.ObserveElementProperty(x => x.DisplayInBox.Value).Subscribe(x =>
             {
-                updateDisplayInBox(x.Instance, x.Value);
+                UpdateDisplayInBox(x.Instance, x.Value);
             });
             ToDos.AddTo(Disposables);
 
@@ -369,9 +376,6 @@ namespace yedaisler
                 var todo = new ToDo.Item(c_todo);
                 todo.Init();
                 ToDos.Add(todo);
-                // 表示カウントを初期化する
-                // updateDisplayInBoxが初期化時にもコールされてしまうためつじつま合わせしている
-                if (todo.DisplayInBox.Value) dispInBoxCount++;
             }
 
             // WindowMessageハンドル
@@ -438,7 +442,7 @@ namespace yedaisler
             boxDisplayTaskRef = null;
             foreach (var item in ToDos)
             {
-                if (item.DisplayInBox.Value)
+                if (CheckIsDisplayInBox(item))
                 {
                     MultiDispToDos.Add((IConcatTextItem)item);
                     boxDisplayTaskRef = item;
@@ -514,7 +518,7 @@ namespace yedaisler
             switch (DispBoxMode.Value)
             {
                 case BoxDisplayMode.TaskState:
-                    updateBoxDisplayTaskState();
+                    UpdateBoxDisplayTaskState();
                     break;
 
                 case BoxDisplayMode.MultiTaskState:
@@ -548,12 +552,12 @@ namespace yedaisler
                     break;
             }
         }
-        private void updateBoxDisplayTaskState()
+        private void UpdateBoxDisplayTaskState()
         {
             Disp.Value = boxDisplayTaskRef.ActiveStateInfo.Value.Name.Value;
         }
 
-        private void updateDisplayInBox(ToDo.Item todo, bool value)
+        private void UpdateDisplayInBox(ToDo.Item todo, bool value)
         {
             // 表示ToDo数を事前にチェック
             //if (value) dispInBoxCount++;
@@ -561,7 +565,7 @@ namespace yedaisler
             dispInBoxCount = 0;
             foreach (var item in ToDos)
             {
-                if (item.DisplayInBox.Value) dispInBoxCount++;
+                if (CheckIsDisplayInBox(item)) dispInBoxCount++;
             }
 
             switch (dispInBoxCount)
@@ -582,6 +586,29 @@ namespace yedaisler
             // System表示とSingleToDo表示で表示内容が異なるケースがあるため更新
             UpdateTotalStateByEachStateChange();
             UpdateBoxDisplay();
+        }
+        private bool CheckIsDisplayInBox(ToDo.Item item)
+        {
+            bool result = false;
+
+            if (item.DisplayInBox.Value)
+            {
+                // Doneは表示しない
+                switch (item.State.Value)
+                {
+                    case ToDo.State.Ready:
+                    case ToDo.State.Doing:
+                        result = true;
+                        break;
+
+                    case ToDo.State.Done:
+                    case ToDo.State.None:
+                    default:
+                        break;
+                }
+            }
+
+            return result;
         }
 
         public void ExecAction()
