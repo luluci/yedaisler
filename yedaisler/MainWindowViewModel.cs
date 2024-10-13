@@ -247,11 +247,15 @@ namespace yedaisler
             DispSizeChangedCommand = new ReactiveCommand();
             DispSizeChangedCommand.Subscribe(x =>
             {
-                if (x is TextBlock obj && DispBoxMode.Value != BoxDisplayMode.MultiTask)
+                if (x is TextBlock obj)
                 {
                     // ウインドウサイズ更新
                     dispBoxSingleWidth = obj.ActualWidth + 16;
-                    UpdateDispBoxWidth();
+
+                    if (DispBoxMode.Value != BoxDisplayMode.MultiTask)
+                    {
+                        UpdateDispBoxWidth();
+                    }
                 }
             });
             DispSizeChangedCommand.AddTo(Disposables);
