@@ -34,17 +34,15 @@ namespace yedaisler.Menu
 
     internal class SystemMenu
     {
-        public ReactivePropertySlim<ToDo.State> State { get; set; }
+        // Dummy
+        public ReactivePropertySlim<ToDo.State> State { get; set; } = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
 
-        public SystemMenu()
-        {
-            // Dummy
-            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
-        }
+        static public ReactiveCommand OnMenuStateAction { get; set; } = new ReactiveCommand();
     }
     internal class SystemAppState
     {
-
+        // Dummy
+        static public ReactiveCommand OnMenuStateAction { get; set; } = new ReactiveCommand();
     }
     internal class SystemAppExit
     {
@@ -90,28 +88,29 @@ namespace yedaisler.Menu
 
     internal class ToDoAction
     {
+        // dummy
+        static public ReactivePropertySlim<ToDoActionDummy> ActiveStateInfo { get; set; } = new ReactivePropertySlim<ToDoActionDummy>(new ToDoActionDummy());
+    }
+    internal class ToDoActionDummy
+    {
+        // dummy
+        static public ReactivePropertySlim<string> ActionName { get; set; } = new ReactivePropertySlim<string>(string.Empty);
     }
 
     internal class ToDoManualAction
     {
-        public ReactivePropertySlim<ToDo.State> State { get; set; }
+        // Dummy
+        public ReactivePropertySlim<ToDo.State> State { get; set; } = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
 
-        public ToDoManualAction()
-        {
-            // Dummy
-            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
-        }
+        static public ReactiveCommand OnMenuStateAction { get; set; } = new ReactiveCommand();
     }
 
     internal class ToDoManualState
     {
-        public ReactivePropertySlim<ToDo.State> State { get; set; }
+        // dummy
+        public ReactivePropertySlim<ToDo.State> State { get; set; } = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
 
-        public ToDoManualState()
-        {
-            // Dummy
-            State = new ReactivePropertySlim<ToDo.State>(ToDo.State.None);
-        }
+        static public ReactiveCommand OnMenuStateAction { get; set; } = new ReactiveCommand();
     }
 
     internal class ToDoDispInBox

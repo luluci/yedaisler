@@ -75,7 +75,6 @@ namespace yedaisler
         public ReactivePropertySlim<bool> DispBoxMultiActive { get; set; }
         // BOX表示設定ToDoカウント
         private double dispBoxSingleWidth;
-        private int dispInBoxCount;
         ToDo.Item boxDisplayTaskRef;
 
         public ReactivePropertySlim<double> Width { get; set; }
@@ -111,18 +110,6 @@ namespace yedaisler
         public ReactivePropertySlim<bool> ContextMenuIsOpen { get; private set; }
 
         public MainWindowViewModel() {
-            Command2 = new ReactiveCommand();
-            Command2.Subscribe(x =>
-            {
-                int i = 0;
-                i++;
-            });
-            ContextMenuIsOpen = new ReactivePropertySlim<bool>(false, ReactivePropertyMode.DistinctUntilChanged);
-            ContextMenuIsOpen.Subscribe(x =>
-            {
-                int i = 0;
-                i++;
-            });
 
             DispBoxFontSize = new ReactivePropertySlim<int>(14);
             // Color
@@ -184,7 +171,6 @@ namespace yedaisler
 
             // BOX表示モード
             dispBoxSingleWidth = 0.0;
-            dispInBoxCount = 0;
             boxDisplayTaskRef = null;
             DispBoxMultiWidth = new ReactivePropertySlim<double>(120);
             DispBoxMultiWidth.AddTo(Disposables);
