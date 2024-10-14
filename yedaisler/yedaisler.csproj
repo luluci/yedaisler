@@ -96,6 +96,8 @@
     <Compile Include="Utility\ConcatText.xaml.cs">
       <DependentUpon>ConcatText.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utility\EnumBindingSourceExtension.cs" />
+    <Compile Include="Utility\EnumDisplayTypeConverter.cs" />
     <Compile Include="Utility\WindowsApi.cs" />
     <Page Include="Config\Config.xaml">
       <SubType>Designer</SubType>

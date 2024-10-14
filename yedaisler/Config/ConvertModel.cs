@@ -1,6 +1,8 @@
 ﻿using Reactive.Bindings;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Policy;
@@ -26,8 +28,10 @@ namespace yedaisler.Config
         }
     }
 
+    [TypeConverter(typeof(Utility.EnumDisplayTypeConverter))]
     internal enum StartupPosition
     {
+        [Display(Name = "指定なし")]
         None,
         BottomRight,
         BottomLeft,

@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:yedaisler.Config"
+        xmlns:util="clr-namespace:yedaisler.Utility"
         mc:Ignorable="d"
         Title="Config" Height="354" Width="448">
     <Window.DataContext>
@@ -21,7 +22,7 @@
                 <RowDefinition Height="20"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Text="設定"/>
-            <ListBox x:Name="ConfigTarget" Grid.Row="1" d:SelectedIndex="0">
+            <ListBox x:Name="ConfigTarget" Grid.Row="1" d:SelectedIndex="1">
                 <ListBoxItem>ToDo</ListBoxItem>
                 <ListBoxItem>GUI</ListBoxItem>
             </ListBox>
@@ -55,7 +56,13 @@
                         </Style.Triggers>
                     </Style>
                 </Grid.Style>
-                <TextBlock Text="GUI config"/>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="GUI config"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="起動時表示位置"/>
+                        <ComboBox ItemsSource="{Binding Source={util:EnumBindingSource {x:Type local:StartupPosition}}}" />
+                    </StackPanel>
+                </StackPanel>
             </Grid>
             <Grid>
                 <Grid.Style>
