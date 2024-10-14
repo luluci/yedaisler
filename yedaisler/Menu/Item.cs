@@ -54,6 +54,7 @@ namespace yedaisler.Menu
         {
             None,
             ShowNotifyWindow,
+            ShowConfig,
         }
 
         public string Header { get; set; } = "SystemCommand";

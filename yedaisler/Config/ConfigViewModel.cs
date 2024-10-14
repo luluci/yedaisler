@@ -21,14 +21,18 @@ namespace yedaisler.Config
     internal partial class ConfigViewModel : BindableBase, IDisposable
     {
         private JsonSerializerOptions jsonOptions;
+        Model.Config Model { get; set; }
 
-        public ReactivePropertySlim<Gui> Gui { get; set; }
+        public GuiViewModel Gui { get; set; }
         public ReactiveCollection<ToDo> ToDos { get; set; }
+
+        private List<IApplyOrCancel> applier;
 
         public ConfigViewModel()
         {
-            Gui = new ReactivePropertySlim<Gui>(new Gui());
-            Gui.AddTo(Disposables);
+            applier = new List<IApplyOrCancel>();
+
+            Gui = new GuiViewModel();
             ToDos = new ReactiveCollection<ToDo>();
             ToDos.AddTo(Disposables);
         }
@@ -73,10 +77,26 @@ namespace yedaisler.Config
             using (var stream = new FileStream(configPath, FileMode.Open, FileAccess.Read))
             {
                 // jsonファイルパース
-                var model = await JsonSerializer.DeserializeAsync<Model.Config>(stream, jsonOptions);
-                // json読み込み
-                LoadModel(model);
+                Model = await JsonSerializer.DeserializeAsync<Model.Config>(stream, jsonOptions);
             }
+            // ModelからViewModelを作成
+            ConvertModel2ViewModel();
+        }
+
+        private void AddApply(IApplyOrCancel apply)
+        {
+            apply.IsAttachApply = true;
+            applier.Add(apply);
+        }
+        private void ApplySetting()
+        {
+            foreach (var apply in applier)
+            {
+                apply.IsAttachApply = false;
+                apply.ApplyOrCancel(true);
+            }
+            //
+            applier.Clear();
         }
 
 

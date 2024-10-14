@@ -263,6 +263,10 @@ namespace yedaisler
                             ShowNotifier();
                             break;
 
+                        case Menu.SystemCommand.CommandMode.ShowConfig:
+                            ShowConfig();
+                            break;
+
                         case Menu.SystemCommand.CommandMode.None:
                         default:
                             // nothing
@@ -323,12 +327,12 @@ namespace yedaisler
             config_vm = config.DataContext as Config.ConfigViewModel;
 
             // Config.Gui.Colorを制御データに展開
-            BrushFontReady.Value = config_vm.Gui.Value.Color.Value.BrushFontReady.Value;
-            BrushFontDoing.Value = config_vm.Gui.Value.Color.Value.BrushFontDoing.Value;
-            BrushFontDone.Value = config_vm.Gui.Value.Color.Value.BrushFontDone.Value;
-            BrushBackReady.Value = config_vm.Gui.Value.Color.Value.BrushBackReady.Value;
-            BrushBackDoing.Value = config_vm.Gui.Value.Color.Value.BrushBackDoing.Value;
-            BrushBackDone.Value = config_vm.Gui.Value.Color.Value.BrushBackDone.Value;
+            BrushFontReady.Value = config_vm.Gui.Color.Value.BrushFontReady.Value;
+            BrushFontDoing.Value = config_vm.Gui.Color.Value.BrushFontDoing.Value;
+            BrushFontDone.Value = config_vm.Gui.Color.Value.BrushFontDone.Value;
+            BrushBackReady.Value = config_vm.Gui.Color.Value.BrushBackReady.Value;
+            BrushBackDoing.Value = config_vm.Gui.Color.Value.BrushBackDoing.Value;
+            BrushBackDone.Value = config_vm.Gui.Color.Value.BrushBackDone.Value;
             // Config.ToDoを制御用データに変換
             foreach (var c_todo in config_vm.ToDos)
             {
@@ -558,6 +562,12 @@ namespace yedaisler
             notifier.Owner = window;
             notifier.Show();
             //notifier.ShowDialog();
+        }
+
+        private void ShowConfig()
+        {
+            config.Owner = window;
+            config.Show();
         }
 
         private void UpdateTotalState()

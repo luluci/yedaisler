@@ -23,5 +23,6 @@ namespace yedaisler.Config
         {
             InitializeComponent();
         }
+
     }
 }

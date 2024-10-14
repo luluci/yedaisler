@@ -14,15 +14,15 @@ using yedaisler.Utility;
 
 namespace yedaisler.Config
 {
-    internal class Gui : BindableBase
+    internal class GuiViewModel : BindableBase
     {
         public ReactivePropertySlim<GuiColor> Color { get; set; }
 
-        public ReactivePropertySlim<StartupPosition> StartupPosition { get; set; }
+        public ConfigItem<StartupPosition> StartupPosition { get; set; }
 
-        public Gui() {
+        public GuiViewModel() {
             Color = new ReactivePropertySlim<GuiColor>(new GuiColor());
-            StartupPosition = new ReactivePropertySlim<StartupPosition>(yedaisler.Config.StartupPosition.None);
+            StartupPosition = new ConfigItem<StartupPosition>(yedaisler.Config.StartupPosition.None);
         }
     }
 
@@ -198,25 +198,29 @@ namespace yedaisler.Config
 
     internal partial class ConfigViewModel
     {
-        public void LoadModel(Model.Config config)
+        public void ConvertModel2ViewModel()
         {
             // Model(json)からViewModel(Reactive)を作成する
             // Gui
-            MakeGui(config.Gui);
+            MakeViewModelGui();
             // ToDos
-            foreach (var action in config.ToDos)
+            foreach (var action in Model.ToDos)
             {
                 var todo = MakeToDo(action);
                 ToDos.Add(todo);
             }
+
+            // 設定変更を制御に反映
+            ApplySetting();
         }
 
-        private void MakeGui(Model.Gui gui)
+        private void MakeViewModelGui()
         {
-            if (gui is null)
+            if (Model.Gui is null)
             {
-                gui = new Model.Gui();
+                Model.Gui = new Model.Gui();
             }
+            var gui = Model.Gui;
 
             // Color
             MakeGuiColor(gui.Color);
@@ -224,29 +228,32 @@ namespace yedaisler.Config
             // StartupPosition
             if (gui.StartupLocation is null)
             {
-                Gui.Value.StartupPosition.Value = StartupPosition.None;
+                gui.StartupLocation = "None";
+                Gui.StartupPosition.View.Value = StartupPosition.None;
             }
             else
             {
                 switch (gui.StartupLocation)
                 {
                     case "top-left":
-                        Gui.Value.StartupPosition.Value = StartupPosition.TopLeft;
+                        Gui.StartupPosition.View.Value = StartupPosition.TopLeft;
                         break;
                     case "top-right":
-                        Gui.Value.StartupPosition.Value = StartupPosition.TopRight;
+                        Gui.StartupPosition.View.Value = StartupPosition.TopRight;
                         break;
                     case "bottom-left":
-                        Gui.Value.StartupPosition.Value = StartupPosition.BottomLeft;
+                        Gui.StartupPosition.View.Value = StartupPosition.BottomLeft;
                         break;
                     case "bottom-right":
-                        Gui.Value.StartupPosition.Value = StartupPosition.BottomRight;
+                        Gui.StartupPosition.View.Value = StartupPosition.BottomRight;
                         break;
                     default:
-                        Gui.Value.StartupPosition.Value = StartupPosition.None;
+                        gui.StartupLocation = "None";
+                        Gui.StartupPosition.View.Value = StartupPosition.None;
                         break;
                 }
             }
+            AddApply(Gui.StartupPosition);
         }
         private void MakeGuiColor(Model.Color color)
         {
@@ -256,7 +263,7 @@ namespace yedaisler.Config
             }
 
             //
-            var colorRef = Gui.Value.Color.Value;
+            var colorRef = Gui.Color.Value;
             colorRef.FontReady.Value = color.FontReady;
             colorRef.FontDoing.Value = color.FontDoing;
             colorRef.FontDone.Value = color.FontDone;

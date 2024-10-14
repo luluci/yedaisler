@@ -5,11 +5,71 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:yedaisler.Config"
         mc:Ignorable="d"
-        Title="Config" Height="450" Width="800">
+        Title="Config" Height="354" Width="448">
     <Window.DataContext>
         <local:ConfigViewModel/>
     </Window.DataContext>
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="20"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="設定"/>
+            <ListBox x:Name="ConfigTarget" Grid.Row="1" d:SelectedIndex="0">
+                <ListBoxItem>ToDo</ListBoxItem>
+                <ListBoxItem>GUI</ListBoxItem>
+            </ListBox>
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <Button Content="適用"/>
+                <Button Content="キャンセル"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Column="1" >
+            <Grid>
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Visibility" Value="Hidden"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedItem.Content, ElementName=ConfigTarget}" Value="ToDo">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <TextBlock Text="ToDo config"/>
+            </Grid>
+            <Grid>
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Visibility" Value="Hidden"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedItem.Content, ElementName=ConfigTarget}" Value="GUI">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <TextBlock Text="GUI config"/>
+            </Grid>
+            <Grid>
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Visibility" Value="Hidden"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedIndex, ElementName=ConfigTarget}" Value="-1">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <TextBlock Text="設定画面"/>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>

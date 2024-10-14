@@ -67,7 +67,7 @@ namespace yedaisler
                 // Window起動位置
                 var rect = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
                 var mat = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
-                switch (vm.Gui.Value.StartupPosition.Value)
+                switch (vm.Gui.StartupPosition.Model.Value)
                 {
                     case Config.StartupPosition.TopLeft:
                         // 左上
