@@ -60,7 +60,7 @@
                     <TextBlock Text="GUI config"/>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="起動時表示位置"/>
-                        <ComboBox ItemsSource="{Binding Source={util:EnumBindingSource {x:Type local:StartupPosition}}}" />
+                        <ComboBox ItemsSource="{Binding Source={util:EnumBindingSource {x:Type local:StartupPosition}}}" SelectedValue="{Binding Gui.StartupPosition.View.Value}" />
                     </StackPanel>
                 </StackPanel>
             </Grid>

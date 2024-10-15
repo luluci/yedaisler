@@ -22,9 +22,11 @@ namespace yedaisler.Config
 
         public ConfigItem<StartupPosition> StartupPosition { get; set; }
 
-        public GuiViewModel() {
+        public GuiViewModel(ConfigItemApplier applier) {
             Color = new ReactivePropertySlim<GuiColor>(new GuiColor());
-            StartupPosition = new ConfigItem<StartupPosition>(yedaisler.Config.StartupPosition.None);
+
+            //
+            StartupPosition = new ConfigItem<StartupPosition>(yedaisler.Config.StartupPosition.None, applier);
         }
     }
 
@@ -33,9 +35,13 @@ namespace yedaisler.Config
     {
         [Display(Name = "指定なし")]
         None,
+        [Display(Name = "右下")]
         BottomRight,
+        [Display(Name = "左下")]
         BottomLeft,
+        [Display(Name = "右上")]
         TopRight,
+        [Display(Name = "左上")]
         TopLeft,
     }
 
@@ -215,7 +221,7 @@ namespace yedaisler.Config
             }
 
             // 設定変更を制御に反映
-            ApplySetting();
+            applier.Apply();
         }
 
         private void MakeViewModelGui()
@@ -257,7 +263,27 @@ namespace yedaisler.Config
                         break;
                 }
             }
-            AddApply(Gui.StartupPosition);
+            Gui.StartupPosition.WriteBack = (StartupPosition value) =>
+            {
+                switch (value)
+                {
+                    case StartupPosition.TopLeft:
+                        Model.Gui.StartupLocation = "top-left";
+                        break;
+                    case StartupPosition.TopRight:
+                        Model.Gui.StartupLocation = "top-right";
+                        break;
+                    case StartupPosition.BottomLeft:
+                        Model.Gui.StartupLocation = "bottom-left";
+                        break;
+                    case StartupPosition.BottomRight:
+                        Model.Gui.StartupLocation = "bottom-right";
+                        break;
+                    default:
+                        Model.Gui.StartupLocation = "None";
+                        break;
+                }
+            };
         }
         private void MakeGuiColor(Model.Color color)
         {

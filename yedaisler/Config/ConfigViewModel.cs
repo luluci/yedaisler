@@ -26,13 +26,13 @@ namespace yedaisler.Config
         public GuiViewModel Gui { get; set; }
         public ReactiveCollection<ToDo> ToDos { get; set; }
 
-        private List<IApplyOrCancel> applier;
+        private ConfigItemApplier applier;
 
         public ConfigViewModel()
         {
-            applier = new List<IApplyOrCancel>();
+            applier = new ConfigItemApplier();
 
-            Gui = new GuiViewModel();
+            Gui = new GuiViewModel(applier);
             ToDos = new ReactiveCollection<ToDo>();
             ToDos.AddTo(Disposables);
         }
@@ -81,22 +81,6 @@ namespace yedaisler.Config
             }
             // ModelからViewModelを作成
             ConvertModel2ViewModel();
-        }
-
-        private void AddApply(IApplyOrCancel apply)
-        {
-            apply.IsAttachApply = true;
-            applier.Add(apply);
-        }
-        private void ApplySetting()
-        {
-            foreach (var apply in applier)
-            {
-                apply.IsAttachApply = false;
-                apply.ApplyOrCancel(true);
-            }
-            //
-            applier.Clear();
         }
 
 

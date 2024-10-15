@@ -13,6 +13,47 @@ namespace yedaisler.Config
         void ApplyOrCancel(bool apply);
     }
 
+    internal class ConfigItemApplier
+    {
+        private List<IApplyOrCancel> applier;
+
+        public ConfigItemApplier()
+        {
+            applier = new List<IApplyOrCancel>();
+        }
+
+
+        public void Add(IApplyOrCancel apply)
+        {
+            if (!apply.IsAttachApply)
+            {
+                apply.IsAttachApply = true;
+                applier.Add(apply);
+            }
+        }
+
+        public void Confirm(bool apply)
+        {
+            foreach (var item in applier)
+            {
+                item.IsAttachApply = false;
+                item.ApplyOrCancel(apply);
+            }
+            //
+            applier.Clear();
+        }
+
+        public void Apply()
+        {
+            Confirm(true);
+        }
+        public void Cancel()
+        {
+            Confirm(false);
+        }
+
+    }
+
     internal class ConfigItem<T> : IApplyOrCancel
     {
         public delegate void WriteBackHandler(T newValue);
@@ -23,7 +64,7 @@ namespace yedaisler.Config
         public ReactiveProperty<T> View { get; set; }
         public WriteBackHandler WriteBack {  get; set; }
 
-        public ConfigItem(T value)
+        public ConfigItem(T value, ConfigItemApplier applier)
         {
             IsAttachApply = false;
             WriteBack = null;
@@ -39,6 +80,7 @@ namespace yedaisler.Config
                 else
                 {
                     IsChanged = true;
+                    applier.Add(this);
                 }
             });
         }
@@ -50,6 +92,7 @@ namespace yedaisler.Config
                 if (apply)
                 {
                     Model.Value = View.Value;
+                    WriteBack(View.Value);
                 }
                 else
                 {
