@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using yedaisler.Utility;
@@ -17,6 +18,14 @@ namespace yedaisler.Config.ViewModel.Gui
         public ConfigItem<string> Str { get; set; }
         public ReactivePropertySlim<SolidColorBrush> Brush { get; set; }
 
+        // RGB
+        public int R { get; set; }
+        public int G { get; set; }
+        public int B { get; set; }
+        public int A { get; set; }
+        // 解析パターン
+        static Regex re_rgba = new Regex(@"#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})", RegexOptions.Compiled);
+
         //
         private Model.Color model_ref;
 
@@ -24,6 +33,11 @@ namespace yedaisler.Config.ViewModel.Gui
         {
             Id = id;
 
+            //
+            R = 255;
+            G = 255;
+            B = 255;
+            A = 255;
             //
             Str = new ConfigItem<string>("#FFFFFFFF", applier);
             Brush = new ReactivePropertySlim<SolidColorBrush>(Str.View.Value.ToSolidColorBrush());
@@ -39,6 +53,7 @@ namespace yedaisler.Config.ViewModel.Gui
             {
                 SetModelStr(str);
                 Brush.Value = str.ToSolidColorBrush();
+                UpdateArgb(str);
             };
         }
 
@@ -88,6 +103,31 @@ namespace yedaisler.Config.ViewModel.Gui
 
                 default:
                     throw new Exception("unknown id");
+            }
+        }
+
+        private void UpdateArgb(string str)
+        {
+            var match = re_rgba.Match(str);
+            if (match.Success)
+            {
+                int value;
+                if (Int32.TryParse(match.Groups[1].Value, System.Globalization.NumberStyles.HexNumber, null, out value))
+                {
+                    A = value;
+                }
+                if (Int32.TryParse(match.Groups[2].Value, System.Globalization.NumberStyles.HexNumber, null, out value))
+                {
+                    R = value;
+                }
+                if (Int32.TryParse(match.Groups[3].Value, System.Globalization.NumberStyles.HexNumber, null, out value))
+                {
+                    G = value;
+                }
+                if (Int32.TryParse(match.Groups[4].Value, System.Globalization.NumberStyles.HexNumber, null, out value))
+                {
+                    B = value;
+                }
             }
         }
     }
