@@ -12,6 +12,8 @@ using System.Text.Json;
 using System.Text.Unicode;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Shapes;
 using yedaisler.Utility;
@@ -20,21 +22,47 @@ namespace yedaisler.Config
 {
     internal partial class ConfigViewModel : BindableBase, IDisposable
     {
+        // Model
         private JsonSerializerOptions jsonOptions;
         Model.Config Model { get; set; }
 
-        public GuiViewModel Gui { get; set; }
+        // ViewModel
+        public ViewModel.Gui.Gui Gui { get; set; }
         public ReactiveCollection<ToDo> ToDos { get; set; }
 
+        // Model-ViewModel I/F
         private ConfigItemApplier applier;
 
-        public ConfigViewModel()
+        // GUI
+        public ColorPickerDialog ColorPickerDialog { get; set; }
+        public ReactiveCommand OnColorPicker { get; set; }
+
+        public ConfigViewModel(Config window)
         {
             applier = new ConfigItemApplier();
 
-            Gui = new GuiViewModel(applier);
+            Gui = new ViewModel.Gui.Gui(applier);
             ToDos = new ReactiveCollection<ToDo>();
             ToDos.AddTo(Disposables);
+
+            //
+            ColorPickerDialog = new ColorPickerDialog();
+            //
+            OnColorPicker = new ReactiveCommand();
+            OnColorPicker.Subscribe(x => {
+                ColorPickerDialog.Owner = window;
+                if (x is Button btn)
+                {
+                    var pt = btn.PointToScreen(new Point(0.0d, 0.0d));
+                    var transform = PresentationSource.FromVisual(window).CompositionTarget.TransformFromDevice;
+                    var pos = transform.Transform(pt);
+                    ColorPickerDialog.Top = pos.Y + btn.ActualHeight;
+                    ColorPickerDialog.Left = pos.X;
+                }
+                ColorPickerDialog.ShowDialog();
+            })
+            .AddTo(Disposables);
+
         }
 
         public async Task InitAsync()

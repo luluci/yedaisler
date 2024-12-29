@@ -57,17 +57,20 @@ namespace yedaisler.Config
     internal class ConfigItem<T> : IApplyOrCancel
     {
         public delegate void WriteBackHandler(T newValue);
+        public delegate bool ValidateHandler(T newValue);
 
         public bool IsAttachApply {  get; set; }
         public bool IsChanged { get; set; }
         public ReactiveProperty<T> Model { get; set; }
         public ReactiveProperty<T> View { get; set; }
         public WriteBackHandler WriteBack {  get; set; }
+        public ValidateHandler Validator { get; set; }
 
         public ConfigItem(T value, ConfigItemApplier applier)
         {
             IsAttachApply = false;
             WriteBack = null;
+            Validator = null;
             IsChanged = false;
             Model = new ReactiveProperty<T>(value);
             View = new ReactiveProperty<T>(value);
@@ -81,6 +84,11 @@ namespace yedaisler.Config
                 {
                     IsChanged = true;
                     applier.Add(this);
+
+                    if (!(Validator is null))
+                    {
+
+                    }
                 }
             });
         }
@@ -92,7 +100,10 @@ namespace yedaisler.Config
                 if (apply)
                 {
                     Model.Value = View.Value;
-                    WriteBack(View.Value);
+                    if (!(WriteBack is null))
+                    {
+                        WriteBack(View.Value);
+                    }
                 }
                 else
                 {

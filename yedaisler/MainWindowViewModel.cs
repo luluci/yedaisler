@@ -327,12 +327,12 @@ namespace yedaisler
             config_vm = config.DataContext as Config.ConfigViewModel;
 
             // Config.Gui.Colorを制御データに展開
-            BrushFontReady.Value = config_vm.Gui.Color.Value.BrushFontReady.Value;
-            BrushFontDoing.Value = config_vm.Gui.Color.Value.BrushFontDoing.Value;
-            BrushFontDone.Value = config_vm.Gui.Color.Value.BrushFontDone.Value;
-            BrushBackReady.Value = config_vm.Gui.Color.Value.BrushBackReady.Value;
-            BrushBackDoing.Value = config_vm.Gui.Color.Value.BrushBackDoing.Value;
-            BrushBackDone.Value = config_vm.Gui.Color.Value.BrushBackDone.Value;
+            BrushFontReady.Value = config_vm.Gui.Color.Items[(int)Config.Color.FontReady].Brush.Value;
+            BrushFontDoing.Value = config_vm.Gui.Color.Items[(int)Config.Color.FontDoing].Brush.Value;
+            BrushFontDone.Value = config_vm.Gui.Color.Items[(int)Config.Color.FontDone].Brush.Value;
+            BrushBackReady.Value = config_vm.Gui.Color.Items[(int)Config.Color.BackReady].Brush.Value;
+            BrushBackDoing.Value = config_vm.Gui.Color.Items[(int)Config.Color.BackDoing].Brush.Value;
+            BrushBackDone.Value = config_vm.Gui.Color.Items[(int)Config.Color.BackDone].Brush.Value;
             // Config.ToDoを制御用データに変換
             foreach (var c_todo in config_vm.ToDos)
             {

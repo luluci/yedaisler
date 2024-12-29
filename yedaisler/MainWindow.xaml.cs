@@ -200,63 +200,38 @@ namespace yedaisler
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is Menu.RootMenuHeader)
+            switch (value)
             {
-                return Menu.ItemType.RootMenuHeader;
-            }
-            if (value is Menu.SystemMenu)
-            {
-                return Menu.ItemType.SystemMenu;
-            }
-            if (value is Menu.SystemAppState)
-            {
-                return Menu.ItemType.SystemAppState;
-            }
-            if (value is Menu.SystemAppExit)
-            {
-                return Menu.ItemType.SystemAppExit;
-            }
-            if (value is Menu.SystemCommand)
-            {
-                return Menu.ItemType.SystemCommand;
-            }
+                case Menu.RootMenuHeader _:
+                    return Menu.ItemType.RootMenuHeader;
+                case Menu.SystemMenu _:
+                    return Menu.ItemType.SystemMenu;
+                case Menu.SystemAppState _:
+                    return Menu.ItemType.SystemAppState;
+                case Menu.SystemAppExit _:
+                    return Menu.ItemType.SystemAppExit;
+                case Menu.SystemCommand _:
+                    return Menu.ItemType.SystemCommand;
 
-            if (value is ToDo.Item)
-            {
-                return Menu.ItemType.ToDo;
-            }
-            if (value is Menu.ToDoHeader)
-            {
-                return Menu.ItemType.ToDoHeader;
-            }
-            if (value is Menu.ToDoAction)
-            {
-                return Menu.ItemType.ToDoAction;
-            }
-            if (value is Menu.ToDoManualAction)
-            {
-                return Menu.ItemType.ToDoManualAction;
-            }
-            if (value is Menu.ToDoManualState)
-            {
-                return Menu.ItemType.ToDoManualState;
-            }
-            if (value is Menu.ToDoDispInBox)
-            {
-                return Menu.ItemType.ToDoDispInBox;
-            }
+                case ToDo.Item _:
+                    return Menu.ItemType.ToDo;
+                case Menu.ToDoHeader _:
+                    return Menu.ItemType.ToDoHeader;
+                case Menu.ToDoAction _:
+                    return Menu.ItemType.ToDoAction;
+                case Menu.ToDoManualAction _:
+                    return Menu.ItemType.ToDoManualAction;
+                case Menu.ToDoManualState _:
+                    return Menu.ItemType.ToDoManualState;
+                case Menu.ToDoDispInBox _:
+                    return Menu.ItemType.ToDoDispInBox;
 
-            if (value is Menu.Separator)
-            {
-                return Menu.ItemType.Separator;
-            }
-            if (value is Menu.Command)
-            {
-                return Menu.ItemType.Command;
-            }
-            if (value is Menu.Label)
-            {
-                return Menu.ItemType.Label;
+                case Menu.Separator _:
+                    return Menu.ItemType.Separator;
+                case Menu.Command _:
+                    return Menu.ItemType.Command;
+                case Menu.Label _:
+                    return Menu.ItemType.Label;
             }
 
             return Menu.ItemType.None;

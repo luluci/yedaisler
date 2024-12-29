@@ -5,11 +5,34 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:yedaisler.Config"
         xmlns:util="clr-namespace:yedaisler.Utility"
+        d:DataContext="{d:DesignInstance Type=local:ConfigViewModel}"
         mc:Ignorable="d"
         Title="Config" Height="354" Width="448">
-    <Window.DataContext>
-        <local:ConfigViewModel/>
-    </Window.DataContext>
+    <Window.Resources>
+        <Style x:Key="ColorSetting" TargetType="{x:Type Button}">
+            <Style.Setters>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{TemplateBinding Content}" VerticalAlignment="Center"/>
+                                <Button Content="Color" Command="{TemplateBinding Command}" CommandParameter="{TemplateBinding CommandParameter}" Tag="{TemplateBinding Tag}"/>
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
+
+        <ObjectDataProvider x:Key="ColorList" MethodName="GetValues" ObjectType="{x:Type local:Color}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Color" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <local:BrushConverter x:Key="BrushConverter"/>
+        <local:DebugConverter x:Key="DebugConverter"/>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100"/>
@@ -62,6 +85,56 @@
                         <Label Content="起動時表示位置"/>
                         <ComboBox ItemsSource="{Binding Source={util:EnumBindingSource {x:Type local:StartupPosition}}}" SelectedValue="{Binding Gui.StartupPosition.View.Value}" />
                     </StackPanel>
+                    <GroupBox Header="Color">
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="color1"/>
+                                <Button Content="select" Command="{Binding OnColorPicker}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="color2"/>
+                            </StackPanel>
+                            <Button Style="{StaticResource ColorSetting}" Content="Blue" Command="{Binding OnColorPicker}" CommandParameter="{Binding RelativeSource={RelativeSource Self}}"/>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Color">
+                        <ListBox ItemsSource="{Binding Source={StaticResource ColorList}}" Tag="{Binding}">
+                            <ListBox.Template>
+                                <ControlTemplate TargetType="ItemsControl">
+                                    <StackPanel Orientation="Vertical">
+                                        <ItemsPresenter/>
+                                    </StackPanel>
+                                </ControlTemplate>
+                            </ListBox.Template>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ContentControl}">
+                                                <StackPanel Orientation="Horizontal" Margin="3">
+                                                    <TextBlock Text="{Binding}" Width="200"/>
+                                                    <Button Width="50">
+                                                        <Button.ContentTemplate>
+                                                            <DataTemplate>
+                                                                <Rectangle Width="20" Height="10">
+                                                                    <Rectangle.Fill>
+                                                                        <MultiBinding Converter="{StaticResource BrushConverter}">
+                                                                            <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType={x:Type ListBoxItem}}"/>
+                                                                            <Binding Path="DataContext" RelativeSource="{RelativeSource FindAncestor, AncestorType=ListBox}"/>
+                                                                        </MultiBinding>
+                                                                    </Rectangle.Fill>
+                                                                </Rectangle>
+                                                            </DataTemplate>
+                                                        </Button.ContentTemplate>
+                                                    </Button>
+                                                </StackPanel>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                    </GroupBox>
                 </StackPanel>
             </Grid>
             <Grid>

@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="yedaisler.Utility.ColorPicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:yedaisler.Utility"
+             mc:Ignorable="d" Height="292" Width="232">
+    <UserControl.DataContext>
+        <local:ColorPickerViewModel />
+    </UserControl.DataContext>
+    <Grid Background="#f0f0f0">
+        <StackPanel Orientation="Vertical">
+            <!-- SV image -->
+            <Image/>
+            <!-- RGB -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="R" Width="30" FontSize="18"/>
+                <Slider Value="{Binding Red.Value}" Minimum="0" Maximum="255" Width="100" VerticalAlignment="Center"/>
+                <TextBox Width="50" Text="{Binding Red.Value}"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

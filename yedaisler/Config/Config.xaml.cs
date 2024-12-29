@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +23,51 @@ namespace yedaisler.Config
         public Config()
         {
             InitializeComponent();
+
+            this.DataContext = new ConfigViewModel(this);
         }
 
+
+
+    }
+
+
+
+
+    public class BrushConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values.Length >= 2)
+            {
+                if (values[0] is yedaisler.Config.Color color && values[1] is ConfigViewModel config)
+                {
+                    return config.Gui.Color.Items[(int)color].Brush.Value;
+                }
+            }
+
+            return Utility.Color.DefaultColor;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class DebugConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            int i = 0;
+            i++;
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

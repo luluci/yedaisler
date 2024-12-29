@@ -74,15 +74,22 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Behaviors\ActualWidthBehavior.cs" />
+    <Compile Include="Config\ColorPickerDialog.xaml.cs">
+      <DependentUpon>ColorPickerDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config\ColorPickerDialogViewModel.cs" />
     <Compile Include="Config\Config.xaml.cs">
       <DependentUpon>Config.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\ConfigItem.cs" />
     <Compile Include="Config\ConfigViewModel.cs" />
     <Compile Include="Config\ConvertModel.cs" />
+    <Compile Include="Config\Define.cs" />
     <Compile Include="Config\Model\Config.cs" />
     <Compile Include="Config\Model\Gui.cs" />
     <Compile Include="Config\Model\ToDo.cs" />
+    <Compile Include="Config\ViewModel\Gui\Color.cs" />
+    <Compile Include="Config\ViewModel\Gui\Gui.cs" />
     <Compile Include="Menu\Item.cs" />
     <Compile Include="Notifier\Log.cs" />
     <Compile Include="Notifier\Notifier.xaml.cs">
@@ -93,12 +100,20 @@
     <Compile Include="ToDo\Item.cs" />
     <Compile Include="Utility\BindableBase.cs" />
     <Compile Include="Utility\Color.cs" />
+    <Compile Include="Utility\ColorPicker.xaml.cs">
+      <DependentUpon>ColorPicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utility\ColorPickerViewModel.cs" />
     <Compile Include="Utility\ConcatText.xaml.cs">
       <DependentUpon>ConcatText.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utility\EnumBindingSourceExtension.cs" />
     <Compile Include="Utility\EnumDisplayTypeConverter.cs" />
     <Compile Include="Utility\WindowsApi.cs" />
+    <Page Include="Config\ColorPickerDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Config\Config.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -117,6 +132,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Notifier\Notifier.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Utility\ColorPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
