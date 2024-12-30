@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using yedaisler.Utility;
 
 namespace yedaisler.Config
@@ -17,29 +18,56 @@ namespace yedaisler.Config
         public ReactiveCommand OnOk {  get; set; }
         public ReactiveCommand OnCancel { get; set; }
 
-        public ColorPickerDialogViewModel(ColorPickerDialog window)
+        public bool IsOk { get; set; }
+
+        ColorPickerDialog window;
+
+        public ColorPickerDialogViewModel(ColorPickerDialog window_)
         {
+            this.window = window_;
+
             ColorPicker = window.ColorPicker.DataContext as Utility.ColorPickerViewModel;
+
+            IsOk = false;
 
             OnOk = new ReactiveCommand();
             OnOk.Subscribe(x =>
             {
-                int i = 0;
-                i++;
+                IsOk = true;
                 window.Hide();
             })
             .AddTo(Disposables);
             OnCancel = new ReactiveCommand();
             OnCancel.Subscribe(x =>
             {
-                int i = 0;
-                i++;
+                IsOk = false;
                 window.Hide();
             })
             .AddTo(Disposables);
         }
 
+        public void ShowDialog()
+        {
+            IsOk = false;
+            window.ShowDialog();
+        }
 
+        public string GetColor()
+        {
+            return ColorPicker.Brush.Value.Color.ToString();
+        }
+        public SolidColorBrush GetBrush()
+        {
+            return ColorPicker.Brush.Value;
+        }
+
+        public void SetColor(byte a, byte r, byte g, byte b)
+        {
+            ColorPicker.Alpha.Value = a;
+            ColorPicker.Red.Value = r;
+            ColorPicker.Green.Value = g;
+            ColorPicker.Blue.Value = b;
+        }
 
 
         #region IDisposable Support

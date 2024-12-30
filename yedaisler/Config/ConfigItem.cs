@@ -61,8 +61,8 @@ namespace yedaisler.Config
 
         public bool IsAttachApply {  get; set; }
         public bool IsChanged { get; set; }
-        public ReactiveProperty<T> Model { get; set; }
-        public ReactiveProperty<T> View { get; set; }
+        public ReactivePropertySlim<T> Model { get; set; }
+        public ReactivePropertySlim<T> View { get; set; }
         public WriteBackHandler WriteBack {  get; set; }
         public ValidateHandler Validator { get; set; }
 
@@ -72,8 +72,8 @@ namespace yedaisler.Config
             WriteBack = null;
             Validator = null;
             IsChanged = false;
-            Model = new ReactiveProperty<T>(value);
-            View = new ReactiveProperty<T>(value);
+            Model = new ReactivePropertySlim<T>(value);
+            View = new ReactivePropertySlim<T>(value);
             View.Subscribe(x =>
             {
                 if (Model.Value.Equals(x))

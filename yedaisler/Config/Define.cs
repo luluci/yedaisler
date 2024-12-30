@@ -28,10 +28,15 @@ namespace yedaisler.Config
     {
         [Display(Name = "Ready状態文字色")]
         FontReady,
+        [Display(Name = "Doing状態文字色")]
         FontDoing,
+        [Display(Name = "Done状態文字色")]
         FontDone,
+        [Display(Name = "Ready状態背景色")]
         BackReady,
+        [Display(Name = "Doing状態背景色")]
         BackDoing,
+        [Display(Name = "Done状態背景色")]
         BackDone,
     }
 }

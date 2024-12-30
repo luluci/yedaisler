@@ -16,13 +16,8 @@ namespace yedaisler.Config.ViewModel.Gui
     {
         public yedaisler.Config.Color Id { get; internal set; }
         public ConfigItem<string> Str { get; set; }
-        public ReactivePropertySlim<SolidColorBrush> Brush { get; set; }
+        public ConfigItem<SolidColorBrush> Brush { get; set; }
 
-        // RGB
-        public int R { get; set; }
-        public int G { get; set; }
-        public int B { get; set; }
-        public int A { get; set; }
         // 解析パターン
         static Regex re_rgba = new Regex(@"#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})", RegexOptions.Compiled);
 
@@ -34,27 +29,23 @@ namespace yedaisler.Config.ViewModel.Gui
             Id = id;
 
             //
-            R = 255;
-            G = 255;
-            B = 255;
-            A = 255;
-            //
             Str = new ConfigItem<string>("#FFFFFFFF", applier);
-            Brush = new ReactivePropertySlim<SolidColorBrush>(Str.View.Value.ToSolidColorBrush());
-            Brush.AddTo(disposables);
+            Brush = new ConfigItem<SolidColorBrush>(Str.View.Value.ToSolidColorBrush(), applier);
         }
 
         public void Init(Model.Color color)
         {
             model_ref = color;
 
+            // 色指定文字列初期化
             Str.View.Value = GetModelStr();
             Str.WriteBack = (string str) =>
             {
                 SetModelStr(str);
-                Brush.Value = str.ToSolidColorBrush();
-                UpdateArgb(str);
             };
+            // Brush初期化
+            // Model(json)には文字列のみ保存するためWriteBackの設定はしない
+            Brush.View.Value = Str.View.Value.ToSolidColorBrush();
         }
 
         private string GetModelStr()
@@ -105,30 +96,31 @@ namespace yedaisler.Config.ViewModel.Gui
                     throw new Exception("unknown id");
             }
         }
-
-        private void UpdateArgb(string str)
+        public (byte A, byte R, byte G, byte B) GetArgb()
         {
-            var match = re_rgba.Match(str);
+            (byte A, byte R, byte G, byte B) result = (A: 0, R: 0, G: 0, B: 0);
+            var match = re_rgba.Match(Str.View.Value);
             if (match.Success)
             {
-                int value;
-                if (Int32.TryParse(match.Groups[1].Value, System.Globalization.NumberStyles.HexNumber, null, out value))
+                byte value;
+                if (byte.TryParse(match.Groups[1].Value, System.Globalization.NumberStyles.HexNumber, null, out value))
                 {
-                    A = value;
+                    result.A = value;
                 }
-                if (Int32.TryParse(match.Groups[2].Value, System.Globalization.NumberStyles.HexNumber, null, out value))
+                if (byte.TryParse(match.Groups[2].Value, System.Globalization.NumberStyles.HexNumber, null, out value))
                 {
-                    R = value;
+                    result.R = value;
                 }
-                if (Int32.TryParse(match.Groups[3].Value, System.Globalization.NumberStyles.HexNumber, null, out value))
+                if (byte.TryParse(match.Groups[3].Value, System.Globalization.NumberStyles.HexNumber, null, out value))
                 {
-                    G = value;
+                    result.G = value;
                 }
-                if (Int32.TryParse(match.Groups[4].Value, System.Globalization.NumberStyles.HexNumber, null, out value))
+                if (byte.TryParse(match.Groups[4].Value, System.Globalization.NumberStyles.HexNumber, null, out value))
                 {
-                    B = value;
+                    result.B = value;
                 }
             }
+            return result;
         }
     }
 

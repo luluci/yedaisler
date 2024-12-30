@@ -34,7 +34,8 @@ namespace yedaisler.Config
         private ConfigItemApplier applier;
 
         // GUI
-        public ColorPickerDialog ColorPickerDialog { get; set; }
+        public ColorPickerDialog ColorPickerDialog_ { get; set; }
+        public ColorPickerDialogViewModel ColorPickerDialog { get; set; }
         public ReactiveCommand OnColorPicker { get; set; }
 
         Config window;
@@ -50,17 +51,35 @@ namespace yedaisler.Config
             ToDos.AddTo(Disposables);
 
             //
-            ColorPickerDialog = new ColorPickerDialog();
+            ColorPickerDialog_ = new ColorPickerDialog();
+            ColorPickerDialog = ColorPickerDialog_.DataContext as ColorPickerDialogViewModel;
             //
             OnColorPicker = new ReactiveCommand();
             OnColorPicker.Subscribe(x => {
-                if (x is FrameworkElement elem)
+                // 
+                if (x is Button btn && btn.Tag is yedaisler.Config.Color color)
                 {
-                    var pos = Utility.Screen.GetPopupPos(window, elem, ColorPickerDialog);
-                    ColorPickerDialog.Top = pos.Y;
-                    ColorPickerDialog.Left = pos.X;
+                    // 色選択対象取得
+                    var tgt = Gui.Color.Items[(int)color];
+
+                    // ColorPickerDialog現在値設定
+                    var argb = tgt.GetArgb();
+                    ColorPickerDialog.SetColor(argb.A, argb.R, argb.G, argb.B);
+                    // ColorPickerDialog表示位置設定
+                    var pos = Utility.Screen.GetPopupPos(window, btn, ColorPickerDialog_);
+                    ColorPickerDialog_.Top = pos.Y;
+                    ColorPickerDialog_.Left = pos.X;
+
+                    // ColorPickerDialog表示
+                    ColorPickerDialog.ShowDialog();
+                    // 色変更があった場合
+                    if (ColorPickerDialog.IsOk)
+                    {
+                        // 変更を反映
+                        tgt.Str.View.Value = ColorPickerDialog.GetColor();
+                        tgt.Brush.View.Value = ColorPickerDialog.GetBrush();
+                    }
                 }
-                ColorPickerDialog.ShowDialog();
             })
             .AddTo(Disposables);
 
@@ -68,10 +87,10 @@ namespace yedaisler.Config
 
         public void OnLoaded()
         {
-            ColorPickerDialog.Owner = window;
-            ColorPickerDialog.Visibility = Visibility.Hidden;
-            ColorPickerDialog.Show();
-            ColorPickerDialog.Hide();
+            ColorPickerDialog_.Owner = window;
+            ColorPickerDialog_.Visibility = Visibility.Hidden;
+            ColorPickerDialog_.Show();
+            ColorPickerDialog_.Hide();
         }
 
         public async Task InitAsync()

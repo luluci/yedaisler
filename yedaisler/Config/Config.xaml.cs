@@ -48,7 +48,7 @@ namespace yedaisler.Config
             {
                 if (values[0] is yedaisler.Config.Color color && values[1] is ConfigViewModel config)
                 {
-                    return config.Gui.Color.Items[(int)color].Brush.Value;
+                    return config.Gui.Color.Items[(int)color].Brush.View.Value;
                 }
             }
 
