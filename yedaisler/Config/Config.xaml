@@ -7,7 +7,7 @@
         xmlns:util="clr-namespace:yedaisler.Utility"
         d:DataContext="{d:DesignInstance Type=local:ConfigViewModel}"
         mc:Ignorable="d"
-        Title="Config" Height="354" Width="448">
+        Title="Config" Height="354" Width="448" Loaded="Window_Loaded">
     <Window.Resources>
         <Style x:Key="ColorSetting" TargetType="{x:Type Button}">
             <Style.Setters>

@@ -109,6 +109,7 @@
     </Compile>
     <Compile Include="Utility\EnumBindingSourceExtension.cs" />
     <Compile Include="Utility\EnumDisplayTypeConverter.cs" />
+    <Compile Include="Utility\Screen.cs" />
     <Compile Include="Utility\WindowsApi.cs" />
     <Page Include="Config\ColorPickerDialog.xaml">
       <SubType>Designer</SubType>

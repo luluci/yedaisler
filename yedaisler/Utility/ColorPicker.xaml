@@ -4,20 +4,41 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:yedaisler.Utility"
-             mc:Ignorable="d" Height="292" Width="232">
+             mc:Ignorable="d" Height="224" Width="193"
+             x:Name="Root">
     <UserControl.DataContext>
         <local:ColorPickerViewModel />
     </UserControl.DataContext>
     <Grid Background="#f0f0f0">
         <StackPanel Orientation="Vertical">
             <!-- SV image -->
-            <Image/>
+            <!--<Image/>-->
+            <Border BorderThickness="1" BorderBrush="Black" Margin="20,10,20,10">
+                <TextBlock Background="Aqua"/>
+            </Border>
             <!-- RGB -->
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="R" Width="30" FontSize="18"/>
-                <Slider Value="{Binding Red.Value}" Minimum="0" Maximum="255" Width="100" VerticalAlignment="Center"/>
-                <TextBox Width="50" Text="{Binding Red.Value}"/>
+                <TextBlock Text="A" Width="20" FontSize="18" VerticalAlignment="Center" Margin="2" TextAlignment="Center"/>
+                <Slider Value="{Binding Alpha.Value}" Minimum="0" Maximum="255" Width="100" VerticalAlignment="Center"/>
+                <TextBox Width="50" Text="{Binding Alpha.Value}" Margin="10,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="R" Width="20" FontSize="18" VerticalAlignment="Center" Margin="2" TextAlignment="Center"/>
+                <Slider Value="{Binding Red.Value}" Minimum="0" Maximum="255" Width="100" VerticalAlignment="Center"/>
+                <TextBox Width="50" Text="{Binding Red.Value}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="G" Width="20" FontSize="18" VerticalAlignment="Center" Margin="2" TextAlignment="Center"/>
+                <Slider Value="{Binding Green.Value}" Minimum="0" Maximum="255" Width="100" VerticalAlignment="Center"/>
+                <TextBox Width="50" Text="{Binding Green.Value}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="B" Width="20" FontSize="18" VerticalAlignment="Center" Margin="2" TextAlignment="Center"/>
+                <Slider Value="{Binding Blue.Value}" Minimum="0" Maximum="255" Width="100" VerticalAlignment="Center"/>
+                <TextBox Width="50" Text="{Binding Blue.Value}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+            <Button Command="{Binding OnOk, ElementName=Root}" Content="OK" Margin="15,10,15,0"/>
+            <Button Command="{Binding OnCancel, ElementName=Root}" Content="キャンセル" Margin="15,10,15,0"/>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -5,9 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:yedaisler.Config"
         xmlns:util="clr-namespace:yedaisler.Utility"
+        d:DataContext="{d:DesignInstance Type=local:ColorPickerDialogViewModel}"
         mc:Ignorable="d"
         Title="ColorPickerDialog" Loaded="Window_Loaded" ResizeMode="NoResize" WindowStyle="None">
     <Grid>
-        <util:ColorPicker x:Name="ColorPicker"/>
+        <util:ColorPicker x:Name="ColorPicker"
+                          OnOk="{Binding DataContext.OnOk, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                          OnCancel="{Binding DataContext.OnCancel, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
     </Grid>
 </Window>

@@ -12,7 +12,10 @@ namespace yedaisler.Utility
     internal class ColorPickerViewModel : BindableBase, IDisposable
     {
 
+        public ReactivePropertySlim<int> Alpha { get; set; }
         public ReactivePropertySlim<int> Red {  get; set; }
+        public ReactivePropertySlim<int> Blue { get; set; }
+        public ReactivePropertySlim<int> Green { get; set; }
 
         public ColorPickerViewModel()
         {
@@ -20,8 +23,14 @@ namespace yedaisler.Utility
             // https://gogowaten.hatenablog.com/entry/2023/04/20/164232
 
 
+            Alpha = new ReactivePropertySlim<int>(255);
+            Alpha.AddTo(Disposables);
             Red = new ReactivePropertySlim<int>(255);
             Red.AddTo(Disposables);
+            Blue = new ReactivePropertySlim<int>(255);
+            Blue.AddTo(Disposables);
+            Green = new ReactivePropertySlim<int>(255);
+            Green.AddTo(Disposables);
         }
 
 

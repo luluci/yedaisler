@@ -20,6 +20,24 @@ namespace yedaisler.Utility
     /// </summary>
     public partial class ColorPicker : UserControl
     {
+
+        public ICommand OnOk
+        {
+            get { return (ICommand)GetValue(OnOkProperty); }
+            set { SetValue(OnOkProperty, value); }
+        }
+        public static readonly DependencyProperty OnOkProperty =
+            DependencyProperty.Register(nameof(OnOk), typeof(ICommand), typeof(ColorPicker));
+
+        public ICommand OnCancel
+        {
+            get { return (ICommand)GetValue(OnCancelProperty); }
+            set { SetValue(OnCancelProperty, value); }
+        }
+        public static readonly DependencyProperty OnCancelProperty =
+            DependencyProperty.Register(nameof(OnCancel), typeof(ICommand), typeof(ColorPicker));
+
+
         public ColorPicker()
         {
             InitializeComponent();

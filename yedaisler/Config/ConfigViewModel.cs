@@ -37,8 +37,12 @@ namespace yedaisler.Config
         public ColorPickerDialog ColorPickerDialog { get; set; }
         public ReactiveCommand OnColorPicker { get; set; }
 
-        public ConfigViewModel(Config window)
+        Config window;
+
+        public ConfigViewModel(Config window_)
         {
+            window = window_;
+
             applier = new ConfigItemApplier();
 
             Gui = new ViewModel.Gui.Gui(applier);
@@ -50,19 +54,24 @@ namespace yedaisler.Config
             //
             OnColorPicker = new ReactiveCommand();
             OnColorPicker.Subscribe(x => {
-                ColorPickerDialog.Owner = window;
-                if (x is Button btn)
+                if (x is FrameworkElement elem)
                 {
-                    var pt = btn.PointToScreen(new Point(0.0d, 0.0d));
-                    var transform = PresentationSource.FromVisual(window).CompositionTarget.TransformFromDevice;
-                    var pos = transform.Transform(pt);
-                    ColorPickerDialog.Top = pos.Y + btn.ActualHeight;
+                    var pos = Utility.Screen.GetPopupPos(window, elem, ColorPickerDialog);
+                    ColorPickerDialog.Top = pos.Y;
                     ColorPickerDialog.Left = pos.X;
                 }
                 ColorPickerDialog.ShowDialog();
             })
             .AddTo(Disposables);
 
+        }
+
+        public void OnLoaded()
+        {
+            ColorPickerDialog.Owner = window;
+            ColorPickerDialog.Visibility = Visibility.Hidden;
+            ColorPickerDialog.Show();
+            ColorPickerDialog.Hide();
         }
 
         public async Task InitAsync()
