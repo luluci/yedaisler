@@ -12,9 +12,14 @@
     <Grid Background="#f0f0f0">
         <StackPanel Orientation="Vertical">
             <!-- SV image -->
-            <!--<Image/>-->
+            <!--
+            <Border BorderThickness="1" Height="20" BorderBrush="Black" Margin="20,10,20,10">
+                <Image x:Name="SVImage" Stretch="Fill"/>
+            </Border>
+             -->
+            
             <Border BorderThickness="1" BorderBrush="Black" Margin="20,10,20,10">
-                <TextBlock Background="Aqua"/>
+                <TextBlock Background="{Binding Brush.Value}"/>
             </Border>
             <!-- RGB -->
             <StackPanel Orientation="Horizontal">
