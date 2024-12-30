@@ -16,6 +16,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Shapes;
+using yedaisler.Config.ViewModel.Gui;
 using yedaisler.Utility;
 
 namespace yedaisler.Config
@@ -57,13 +58,10 @@ namespace yedaisler.Config
             OnColorPicker = new ReactiveCommand();
             OnColorPicker.Subscribe(x => {
                 // 
-                if (x is Button btn && btn.Tag is yedaisler.Config.Color color)
+                if (x is Button btn && btn.Tag is ColorInfo color)
                 {
-                    // 色選択対象取得
-                    var tgt = Gui.Color.Items[(int)color];
-
                     // ColorPickerDialog現在値設定
-                    var argb = tgt.GetArgb();
+                    var argb = color.GetArgb();
                     ColorPickerDialog.SetColor(argb.A, argb.R, argb.G, argb.B);
                     // ColorPickerDialog表示位置設定
                     var pos = Utility.Screen.GetPopupPos(window, btn, ColorPickerDialog_);
@@ -76,8 +74,8 @@ namespace yedaisler.Config
                     if (ColorPickerDialog.IsOk)
                     {
                         // 変更を反映
-                        tgt.Str.View.Value = ColorPickerDialog.GetColor();
-                        tgt.Brush.View.Value = ColorPickerDialog.GetBrush();
+                        color.Str.View.Value = ColorPickerDialog.GetColor();
+                        color.Brush.View.Value = ColorPickerDialog.GetBrush();
                     }
                 }
             })

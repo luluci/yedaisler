@@ -126,7 +126,7 @@ namespace yedaisler.Config.ViewModel.Gui
 
     internal class Color : BindableBase, IDisposable
     {
-        public ReactiveCollection<ColorInfo> Items;
+        public ReactiveCollection<ColorInfo> Items { get; set; }
 
         public Color(ConfigItemApplier applier)
         {
